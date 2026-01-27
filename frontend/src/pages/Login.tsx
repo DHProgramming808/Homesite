@@ -13,7 +13,7 @@ export default function Login() {
 
     try {
       const result = await login(username, password);
-      setToken(result.token);
+      setToken(result.accessToken);
       navigate("/stub");
     } catch {
       alert("Login failed");
