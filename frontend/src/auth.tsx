@@ -13,15 +13,18 @@ export const clearToken = () => {
 };
 
 export const isAuthenticated = () => {
-  return !!getToken();
-}
+  const token = getToken();
+  if (!token) return false;
+
+  return !isTokenExpired();
+};
 
 export interface DecodedToken {
   unique_name?: string;
   name?: string;
   exp?: number;
   iat?: number;
-}
+};
 
 export const decodeToken = (): DecodedToken | null => {
   const token = getToken();
@@ -37,6 +40,22 @@ export const decodeToken = (): DecodedToken | null => {
   }
 };
 
+export const logout = () => {
+  clearToken();
+  window.location.href = "/login";
+};
 
+export const getTokenExpiration = (): number | null => {
+  const decoded = decodeToken();
+  return decoded?.exp ?? null;
+};
+
+export const isTokenExpired = (): boolean => {
+  const exp = getTokenExpiration();
+  if (!exp) return true;
+
+  const now = Math.floor(Date.now() / 1000);
+  return exp < now;
+};
 
 //TODO we want to 1. move to cookies. 2. add refresh token. 3. decode JWT claims.

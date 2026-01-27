@@ -12,6 +12,7 @@ namespace Api.Controllers.V1;
 public class UserController : ControllerBase
 {
     private readonly string secretKey = "temp_key_temp_key_temp_key_temp_key"; // TODO change keys
+    private static readonly Dictionary<string, string> RefreshTokens = new(); // TODO we will move refreshToken->user mapping to DB
 
     [HttpPost("login")]
     public IActionResult Login([FromBody] LoginRequest request)
@@ -19,17 +20,65 @@ public class UserController : ControllerBase
         // TODO stub username and password
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(secretKey);
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[]
             {
                 new Claim(ClaimTypes.Name, request.Username)
             }),
-            Expires = DateTime.UtcNow.AddHours(1),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            Expires = DateTime.UtcNow.AddMinutes(1), // TODO configure for prod
+            SigningCredentials = new SigningCredentials(
+                new SymmetricSecurityKey(key),
+                SecurityAlgorithms.HmacSha256Signature
+            )
         };
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        return Ok(new { token = tokenHandler.WriteToken(token) });
+
+        var accessToken = tokenHandler.CreateToken(tokenDescriptor);
+        var accessTokenString = tokenHandler.WriteToken(accessToken);
+
+        var refreshToken = Guid.NewGuid().ToString();
+        RefreshTokens[refreshToken] = request.Username;
+
+        return Ok(new
+        {
+            accessToken = accessTokenString,
+            refreshToken
+        });
+    }
+
+    [HttpPost("refrsh")]
+    public IActionResult Refresh([FromBody] RefreshRequest request)
+    {
+        if (!RefreshTokens.TryGetValue(request.RefreshToken, out var username))
+        {
+            return Unauthorized();
+        }
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes(secretKey);
+
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(new[]
+            {
+                new Claim(ClaimTypes.Name, request.Username)
+            }),
+            Expires = DateTime.UtcNow.AddMinutes(5),
+            SigningCredentials = new SigningCredentials(
+                new SymmetricSecurityKey(key),
+                SecurityAlgorithms.HmacSha256Signature
+            )
+        };
+
+        var newAccessToken = CreateToken(tokenDescriptor);
+        var newAccessTokenString = tokenHandler.WriteToken(newAccessToken);
+
+
+        return Ok(new
+        {
+            accessToken = newAccessTokenString
+        });
     }
 
 
@@ -56,5 +105,18 @@ public class LoginRequest
     {
         Username = username;
         Password = password;
+    }
+}
+
+public class RefreshRequest{
+    public string RefreshToken { get; set; }
+
+    //TODO refactor for better authentication handling
+    public RefreshRequest() {
+        RefreshToken = "refresh_token"
+    }
+
+    public RefreshRequest(string refreshToken) {
+        RefreshToken = refreshToken;
     }
 }

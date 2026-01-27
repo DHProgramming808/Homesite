@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getProtectedStub } from "../api";
 import { decodeToken } from "../auth";
+import { logout, isTokenExpired } from "../auth"
 import type { DecodedToken } from "../auth";
 
 export default function Stub() {
@@ -8,16 +9,27 @@ export default function Stub() {
   const [user, setUser] = useState<DecodedToken | null>(null);
 
   useEffect(() => {
+    const interval = setInterval(() => {
+      if (isTokenExpired()) {
+        logout();
+        return;
+      }
+    })
+
     setUser(decodeToken());
 
     getProtectedStub()
       .then(data => setMessage(data.message))
-      .catch(() => setMessage("Unauthorized"));
-  }, []);
+      .catch(() => logout()); // TODO set 3 second message for "Unauthorized" or "Timeout" then run logout function
+
+    return () => clearInterval(interval)
+    }, []);
 
   return (
     <div>
       <h2>Protected Stub Page</h2>
+
+      <button onClick = {logout}>Logout</button>
 
       {user && (
         <div style = {{ marginBottom: "1rem"}}>
