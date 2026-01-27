@@ -24,7 +24,7 @@ export const login = async (username: string, password: string) => {
   const response = await fetch(`${API_BASE}/user/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password })
+    body: JSON.stringify({ username, password }),
   });
 
   if (!response.ok) {
@@ -51,7 +51,7 @@ export const refreshAccessToken = async () => {
   }
 
   const data = await response.json();
-  localStorage.SetItem("access", data.accessToken); // TODO move this function to auth.tsx?
+  localStorage.SetItem("access_token", data.accessToken); // TODO move this function to auth.tsx?
 }
 
 

@@ -17,7 +17,8 @@ export default function Login() {
       setTokens(result.accessToken, result.refreshToken);
       navigate("/stub");
 
-    } catch {
+    } catch (error) {
+      console.error(error);
       alert("Login failed");
     }
   };

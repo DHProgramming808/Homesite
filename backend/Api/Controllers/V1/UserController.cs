@@ -47,7 +47,7 @@ public class UserController : ControllerBase
         });
     }
 
-    [HttpPost("refrsh")]
+    [HttpPost("refresh")]
     public IActionResult Refresh([FromBody] RefreshRequest request)
     {
         if (!RefreshTokens.TryGetValue(request.RefreshToken, out var username))
