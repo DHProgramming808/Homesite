@@ -1,6 +1,6 @@
 export const getInfo = async () => {
   try {
-    const response = await fetch("https://localhost:5086/api/v1/info"); //TODO configure this for local and remote hosting
+    const response = await fetch("http://localhost:5086/api/v1/info"); //TODO configure this for local and remote hosting
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);

@@ -12,7 +12,7 @@ public class InfoController : ControllerBase
         return Ok(new
         {
             name = "Personal Website API",
-            framework = ".NET 8",
+            framework = ".NET 10",
             version = "v1"
         });
     }
