@@ -12,7 +12,7 @@ namespace Api.Controllers.V1;
 public class UserController : ControllerBase
 {
     private readonly string secretKey = "temp_key_temp_key_temp_key_temp_key"; // TODO change keys
-    private static readonly Dictionary<string, string> RefreshTokens = new(); // TODO we will move refreshToken->user mapping to DB
+    private static readonly Dictionary<string, RefreshTokenEntry> RefreshTokens = new(); // TODO we will move refreshToken->user mapping to DB
 
     [HttpPost("login")]
     public IActionResult Login([FromBody] LoginRequest request)
@@ -38,7 +38,11 @@ public class UserController : ControllerBase
         var accessTokenString = tokenHandler.WriteToken(accessToken);
 
         var refreshToken = Guid.NewGuid().ToString();
-        RefreshTokens[refreshToken] = request.Username;
+        RefreshTokens[refreshToken] = new RefreshTokenEntry
+        {
+            Username = request.Username,
+            Expires = DateTime.UtcNow.AddDays(7)
+        };
 
         return Ok(new
         {
@@ -50,10 +54,17 @@ public class UserController : ControllerBase
     [HttpPost("refresh")]
     public IActionResult Refresh([FromBody] RefreshRequest request)
     {
-        if (!RefreshTokens.TryGetValue(request.RefreshToken, out var username))
+        if (!RefreshTokens.TryGetValue(request.RefreshToken, out var entry))
         {
             return Unauthorized();
         }
+
+        if (entry.Expries < DateTime.UtcNow)
+        {
+            return Unauthorized()
+        }
+
+        RefreshTokens.Remove(request.RefreshToken);
 
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(secretKey);
@@ -64,7 +75,7 @@ public class UserController : ControllerBase
             {
                 new Claim(ClaimTypes.Name, username)
             }),
-            Expires = DateTime.UtcNow.AddMinutes(5),
+            Expires = DateTime.UtcNow.AddMinutes(1), // TODO configuration
             SigningCredentials = new SigningCredentials(
                 new SymmetricSecurityKey(key),
                 SecurityAlgorithms.HmacSha256Signature
@@ -74,10 +85,17 @@ public class UserController : ControllerBase
         var newAccessToken = tokenHandler.CreateToken(tokenDescriptor);
         var newAccessTokenString = tokenHandler.WriteToken(newAccessToken);
 
+        var newRefreshToken = Guid.NewGuid().ToString();
+        RefreshTokens[newRefreshToken] = new RefreshTokenEntry
+        {
+            Username = request.Username,
+            Expires = DateTime.UtcNow.AddDays(7)
+        };
 
         return Ok(new
         {
-            accessToken = newAccessTokenString
+            accessToken = newAccessTokenString,
+            refreshToken = newRefreshToken
         });
     }
 
@@ -108,7 +126,8 @@ public class LoginRequest
     }
 }
 
-public class RefreshRequest{
+public class RefreshRequest
+{
     public string RefreshToken { get; set; }
 
     //TODO refactor for better authentication handling
@@ -119,4 +138,10 @@ public class RefreshRequest{
     public RefreshRequest(string refreshToken) {
         RefreshToken = refreshToken;
     }
+}
+
+class RefreshTokenEntry
+{
+    public string Username { get; set; }
+    public DateTime Expires { get; set; }
 }
