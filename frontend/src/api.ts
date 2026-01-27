@@ -41,7 +41,7 @@ export const refreshAccessToken = async () => {
 
   const response = await fetch(`${API_BASE}/user/refresh`, {
     method: "POST",
-    headers: { "Content-Type": "application.json" },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ refreshToken }),
   });
 
@@ -51,7 +51,7 @@ export const refreshAccessToken = async () => {
   }
 
   const data = await response.json();
-  localStorage.SetItem("access_token", data.accessToken); // TODO move this function to auth.tsx?
+  localStorage.SetTokens(data.accessToken, data.refreshToken); // TODO move this function to auth.tsx?
 }
 
 
