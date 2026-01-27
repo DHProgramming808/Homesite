@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -39,7 +41,15 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+//Authorization
+builder.Services.AddAuthorization();
+
 // ---End Section ---
+
+// ---MySQL EF CORE---
+var connString = builder.Configuration.GetConnectionString("Defaultconnection");
+builder.Services.AddDbContext<AuthDbContext>(options =>
+    options.UseMySql(connString, ServerVersion.AutoDetect(connString)));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
