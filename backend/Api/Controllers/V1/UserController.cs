@@ -62,7 +62,7 @@ public class UserController : ControllerBase
         {
             Subject = new ClaimsIdentity(new[]
             {
-                new Claim(ClaimTypes.Name, request.Username)
+                new Claim(ClaimTypes.Name, username)
             }),
             Expires = DateTime.UtcNow.AddMinutes(5),
             SigningCredentials = new SigningCredentials(
@@ -71,7 +71,7 @@ public class UserController : ControllerBase
             )
         };
 
-        var newAccessToken = CreateToken(tokenDescriptor);
+        var newAccessToken = tokenHandler.CreateToken(tokenDescriptor);
         var newAccessTokenString = tokenHandler.WriteToken(newAccessToken);
 
 
@@ -113,7 +113,7 @@ public class RefreshRequest{
 
     //TODO refactor for better authentication handling
     public RefreshRequest() {
-        RefreshToken = "refresh_token"
+        RefreshToken = "refresh_token";
     }
 
     public RefreshRequest(string refreshToken) {
