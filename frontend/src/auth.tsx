@@ -12,7 +12,7 @@ export const clearToken = () => {
   localStorage.removeItem(TOKEN_KEY);
 };
 
-export const isauthenticated = () => {
+export const isAuthenticated = () => {
   return !!getToken();
 }
 
