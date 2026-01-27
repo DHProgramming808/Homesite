@@ -59,9 +59,9 @@ public class UserController : ControllerBase
             return Unauthorized();
         }
 
-        if (entry.Expries < DateTime.UtcNow)
+        if (entry.Expires < DateTime.UtcNow)
         {
-            return Unauthorized()
+            return Unauthorized();
         }
 
         RefreshTokens.Remove(request.RefreshToken);
@@ -73,7 +73,7 @@ public class UserController : ControllerBase
         {
             Subject = new ClaimsIdentity(new[]
             {
-                new Claim(ClaimTypes.Name, username)
+                new Claim(ClaimTypes.Name, entry.Username)
             }),
             Expires = DateTime.UtcNow.AddMinutes(1), // TODO configuration
             SigningCredentials = new SigningCredentials(
@@ -88,7 +88,7 @@ public class UserController : ControllerBase
         var newRefreshToken = Guid.NewGuid().ToString();
         RefreshTokens[newRefreshToken] = new RefreshTokenEntry
         {
-            Username = request.Username,
+            Username = entry.Username,
             Expires = DateTime.UtcNow.AddDays(7)
         };
 
