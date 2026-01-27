@@ -1,25 +1,32 @@
-const TOKEN_KEY = "auth_token" // TODO deprecate gracefully
-const ACCESS_TOKEN_KEY = "access_token" // TODO make sure key hygeine is observed
-const REFRESH_TOKEN_KEY = "refresh_token"
+const TOKEN_KEY = "auth_token"; // TODO deprecate gracefully
+const ACCESS_TOKEN_KEY = "access_token"; // TODO make sure key hygeine is observed
+const REFRESH_TOKEN_KEY = "refresh_token";
 
 
 export const setTokens = (access: string, refresh: string) => {
   localStorage.setItem(ACCESS_TOKEN_KEY, access);
   localStorage.setItem(REFRESH_TOKEN_KEY, refresh);
-}
+};
 
 export const getAccessToken = () => {
   return localStorage.getItem(ACCESS_TOKEN_KEY);
-}
+};
 
 export const getRefreshToken = () => {
   return localStorage.getItem(REFRESH_TOKEN_KEY);
-}
+};
 
 export const clearTokens = () => {
   localStorage.removeItem(ACCESS_TOKEN_KEY);
   localStorage.removeItem(REFRESH_TOKEN_KEY);
-}
+};
+
+export const isAuthenticated = () => {
+  const token = getAccessToken();
+  if (!token) return false;
+
+  return !isTokenExpired();
+};
 
 // TODO deprecate BLOCK gracefully
 // START BLOCK old token functions
@@ -34,13 +41,6 @@ export const getToken = () => {
 export const clearToken = () => {
   localStorage.removeItem(TOKEN_KEY);
 };
-
-export const isAuthenticated = () => {
-  const token = getToken();
-  if (!token) return false;
-
-  return !isTokenExpired();
-};
 // BLOCK END
 
 export interface DecodedToken {
@@ -51,7 +51,7 @@ export interface DecodedToken {
 };
 
 export const decodeToken = (): DecodedToken | null => {
-  const token = getToken();
+  const token = getAccessToken();
   if (!token) return null;
 
 

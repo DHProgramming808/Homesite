@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { login } from "../api";
-import { setTokens }  from "../auth";
+import { setToken, setTokens }  from "../auth";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
@@ -14,7 +14,15 @@ export default function Login() {
     try {
 
       const result = await login(username, password);
-      setTokens(result.accessToken, result.refreshToken);
+      //setToken(result.accessToken);
+      var accessToken = result.accessToken;
+      var refreshToken = result.refreshToken;
+
+      console.log(accessToken);
+      console.log(refreshToken);
+      console.log(result);
+
+      setTokens(accessToken, refreshToken);
       navigate("/stub");
 
     } catch (error) {
