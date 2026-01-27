@@ -11,7 +11,7 @@ namespace Api.Controllers.V1;
 [Route("api/v1/user")]
 public class UserController : ControllerBase
 {
-    private readonly string secretKey = "temp_key"; // TODO change keys
+    private readonly string secretKey = "temp_key_temp_key_temp_key_temp_key"; // TODO change keys
 
     [HttpPost("login")]
     public IActionResult Login([FromBody] LoginRequest request)
@@ -37,13 +37,24 @@ public class UserController : ControllerBase
     [HttpGet("stub-protected")]
     public IActionResult StubProtected()
     {
-        return Ok(new { message = $"Hello {User.Identity.Name}, this is a protected stub page"}) // TODO change this to redirect to user profile page
+        return Ok(new { message = $"Hello {User.Identity.Name}, this is a protected stub page"}); // TODO change this to redirect to user profile page
     }
 }
 
 
 public class LoginRequest
 {
-    public string Username { get; set; }
-    public string Password { get; set; }
+    public String Username { get; set; }
+    public String Password { get; set; }
+
+    //TODO refactor for better authentication handling
+    public LoginRequest() {
+        Username = "username";
+        Password = "password";
+    }
+    public LoginRequest(string username, string password)
+    {
+        Username = username;
+        Password = password;
+    }
 }

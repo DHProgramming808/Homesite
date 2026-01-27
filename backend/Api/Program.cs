@@ -20,7 +20,7 @@ builder.Services.AddCors(options =>
 });
 
 // ---JWT Authentication Setup ---
-var key = encoding.ASCII.GetBytes("temp_key"); // TODO change keys
+var key = Encoding.ASCII.GetBytes("temp_key_temp_key_temp_key_temp_key"); // TODO change keys
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
