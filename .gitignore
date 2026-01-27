@@ -27,3 +27,4 @@ appsettings.*.json
 .idea/
 *.user
 *.suo
+TODO.md
