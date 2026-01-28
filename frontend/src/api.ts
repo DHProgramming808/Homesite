@@ -35,13 +35,26 @@ export const login = async (email: string, password: string) => {
 };
 
 
+export const handleLogout = async () => {
+  try {
+    await logout();
+  } catch (error) {
+    console.error("Logout failed:", error);
+  } finally {
+    clearTokens();
+  }
+};
+
+
 export const logout = async () => {
   const refreshToken = getRefreshToken();
   if (!refreshToken) return;
 
   await fetch(`${API_BASE}/user/logout`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json",
+      Authorization: `Bearer ${getAccessToken()}`
+     },
     body: JSON.stringify({ refreshToken }),
   });
 };

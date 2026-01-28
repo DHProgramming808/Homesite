@@ -61,7 +61,7 @@ public class UserController : ControllerBase
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.Role, user.Role)
             }),
-            Expires = DateTime.UtcNow.AddMinutes(1), // TODO configure for prod
+            Expires = DateTime.UtcNow.AddMinutes(5), // TODO configure for prod
             SigningCredentials = new SigningCredentials(
                 new SymmetricSecurityKey(key),
                 SecurityAlgorithms.HmacSha256Signature
@@ -88,14 +88,16 @@ public class UserController : ControllerBase
         });
     }
 
-
+    [Authorize]
     [HttpPost("logout")]
     public IActionResult Logout([FromBody] LogoutRequest request)
     {
-        var token = _authDb.RefreshTokens
-            .SingleOrDefault(rt => rt.Token == request.RefreshToken);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); //TODO null check
 
-        if (token == null || token.Revoked || token.Expires < DateTime.UtcNow)
+        var token = _authDb.RefreshTokens
+            .SingleOrDefault(rt => rt.Token == request.RefreshToken && rt.Revoked != true);
+
+        if (userId == null || token == null || token.Revoked || token.Expires < DateTime.UtcNow)
         {
             return Unauthorized();
         }
@@ -107,7 +109,7 @@ public class UserController : ControllerBase
     }
 
 
-    //
+    // TODO harness this endpoint in the frontend. the current stub page will become the user profile page, with a "logout all devices" button that calls this endpoint
     [Authorize]
     [HttpPost("logout-all")]
     public IActionResult LogoutAll()
@@ -151,7 +153,7 @@ public class UserController : ControllerBase
                 new Claim(ClaimTypes.Role, stored.User.Role)
 
             }),
-            Expires = DateTime.UtcNow.AddMinutes(1), // TODO configuration
+            Expires = DateTime.UtcNow.AddMinutes(5), // TODO configuration
             SigningCredentials = new SigningCredentials(
                 new SymmetricSecurityKey(key),
                 SecurityAlgorithms.HmacSha256Signature

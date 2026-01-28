@@ -11,10 +11,12 @@ import Navbar from "./components/Navbar";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
 
+import { AuthProvider } from "./context/AuthContext";
+
 
 export default function App() {
   return (
-    <>
+    <AuthProvider>
       <Navbar />
       <Routes>
         <Route path = "/" element = {<Home />}/>
@@ -30,7 +32,7 @@ export default function App() {
           }
         />
       </Routes>
-    </>
+    </AuthProvider>
   );
 }
 

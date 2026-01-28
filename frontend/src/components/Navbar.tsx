@@ -1,8 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
 import { clearTokens, getAccessToken } from "../auth";
-import { logout } from "../api";
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
+
+import { useAuth } from "../context/AuthContext";
 
 type JwtPayload = {
   unique_name?: string;
@@ -12,7 +13,7 @@ type JwtPayload = {
 
 export default function Navbar() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState<string | null>(null);
+  const { username, logout } = useAuth();
 
   useEffect(() => {
     const token = getAccessToken();

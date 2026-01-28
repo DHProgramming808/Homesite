@@ -8,8 +8,9 @@ export const setTokens = (access: string, refresh: string) => {
   localStorage.setItem(REFRESH_TOKEN_KEY, refresh);
 };
 
-export const getAccessToken = () => {
-  return localStorage.getItem(ACCESS_TOKEN_KEY);
+export const getAccessToken = (): string | null => {
+  const token = localStorage.getItem(ACCESS_TOKEN_KEY);
+  return token && token.length > 0 ? token : null;
 };
 
 export const getRefreshToken = () => {
@@ -64,8 +65,9 @@ export const decodeToken = (): DecodedToken | null => {
   }
 };
 
+// TODO determine if this needs to be cleaned up further with the old token functions
 export const logout = () => {
-  clearToken();
+  clearTokens();
   window.location.href = "/login";
 };
 
