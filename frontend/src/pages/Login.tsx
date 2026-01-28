@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { login } from "../api";
+import { loginApi } from "../api";
 import { setToken, setTokens }  from "../auth";
 import { useNavigate } from "react-router-dom";
+
+import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
   const [email, setUsername] = useState("");
@@ -13,7 +15,7 @@ export default function Login() {
 
     try {
 
-      const result = await login(email, password);
+      const result = await loginApi(email, password);
       //setToken(result.accessToken);
       var accessToken = result.accessToken;
       var refreshToken = result.refreshToken;

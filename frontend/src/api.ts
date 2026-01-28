@@ -1,5 +1,6 @@
 import { getToken } from "./auth";
 import { getAccessToken, getRefreshToken, setTokens, clearTokens } from "./auth";
+import { Navigate } from "react-router-dom";
 
 
 const API_BASE = "http://localhost:5086/api/v1" // TODO configure this for local and remote hosts
@@ -20,7 +21,7 @@ export const getInfo = async () => {
 };
 
 
-export const login = async (email: string, password: string) => {
+export const loginApi = async (email: string, password: string) => {
   const response = await fetch(`${API_BASE}/user/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -35,18 +36,7 @@ export const login = async (email: string, password: string) => {
 };
 
 
-export const handleLogout = async () => {
-  try {
-    await logout();
-  } catch (error) {
-    console.error("Logout failed:", error);
-  } finally {
-    clearTokens();
-  }
-};
-
-
-export const logout = async () => {
+export const logoutApi = async () => {
   const refreshToken = getRefreshToken();
   if (!refreshToken) return;
 

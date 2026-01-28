@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
-import { getAccessToken, isTokenExpired, logout, getRefreshToken, clearTokens } from "../auth";
+import { getAccessToken, isTokenExpired, logoutApi, getRefreshToken, clearTokens } from "../auth";
 import { jwtDecode } from "jwt-decode";
 
 
