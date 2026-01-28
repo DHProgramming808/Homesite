@@ -1,11 +1,15 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
+//using Api.Data;
 using Api.DTOs.Auth;
+//using Api.Models;
 
 namespace Api.Controllers.V1;
 
@@ -16,10 +20,10 @@ public class UserController : ControllerBase
     private readonly string secretKey = "temp_key_temp_key_temp_key_temp_key"; // TODO change keys
     private static readonly Dictionary<string, RefreshTokenEntry> RefreshTokens = new(); // TODO we will move refreshToken->user mapping to _authDb
 
-    private readonly Auth_authDbContext _authDb;
-    private readonly Iconfiguration _config;
+    private readonly AuthDbContext _authDb;
+    private readonly IConfiguration _config;
 
-    public UserController(Auth_authDbContext authDb, Iconfiguration config)
+    public UserController(AuthDbContext authDb, IConfiguration config)
     {
         _authDb = authDb;
         _config = config; // TODO use _config to get secretKey, and configure config files
@@ -71,7 +75,7 @@ public class UserController : ControllerBase
         {
             Token = Guid.NewGuid().ToString(),
             UserId = user.Id,
-            ExpiresAt = DateTime.UtcNow.AddDays(7)
+            Expires = DateTime.UtcNow.AddDays(7)
         };
 
         _authDb.RefreshTokens.Add(refreshToken); //TODO create a nightly jobs class, one job of which is to clear expired refresh tokens
@@ -91,7 +95,7 @@ public class UserController : ControllerBase
             .Include(rt => rt.User)
             .SingleOrDefault(rt => rt.Token == request.RefreshToken);
 
-        if (stored == null || stored.Revoked || stored.ExpiresAt < DateTime.UtcNow)
+        if (stored == null || stored.Revoked || stored.Expires < DateTime.UtcNow)
         {
             return Unauthorized();
         }
@@ -125,7 +129,7 @@ public class UserController : ControllerBase
         var newRefreshToken = new RefreshToken{
             Token = Guid.NewGuid().ToString(),
             UserId = stored.UserId,
-            ExpiresAt = DateTime.UtcNow.AddDays(7)
+            Expires = DateTime.UtcNow.AddDays(7)
         };
 
         _authDb.RefreshTokens.Add(newRefreshToken);
@@ -134,7 +138,7 @@ public class UserController : ControllerBase
         return Ok(new
         {
             accessToken = newAccessTokenString,
-            refreshToken = refreshToken.Token
+            refreshToken = newRefreshToken.Token
         });
     }
 
@@ -142,11 +146,11 @@ public class UserController : ControllerBase
     [HttpPost("register")]
     public IActionResult Register([FromBody] RegisterRequest request)
     {
-        if (_authDb.User.Any(u => u.Email ==request.Email))
+        if (_authDb.Users.Any(u => u.Email ==request.Email))
         {
             return BadRequest("Email already in use");
         }
-        if (_authDb.User.Any(u => u.Username ==request.Username))
+        if (_authDb.Users.Any(u => u.Username ==request.Username))
         {
             return BadRequest("Username already in use");
         }
@@ -156,9 +160,9 @@ public class UserController : ControllerBase
         var user = new User{
             Email = request.Email,
             Username = request.Username,
-            PasswordHash - hasher.HashPassword(null!, request.Password),
+            PasswordHash = hasher.HashPassword(null!, request.Password),
             Role = "User"
-        }
+        };
 
         _authDb.Users.Add(user);
         _authDb.SaveChanges();
