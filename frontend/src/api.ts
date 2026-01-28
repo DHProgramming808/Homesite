@@ -1,4 +1,5 @@
 import { getToken } from "./auth";
+import { getAccessToken, getRefreshToken, setTokens, clearTokens } from "./auth";
 
 
 const API_BASE = "http://localhost:5086/api/v1" // TODO configure this for local and remote hosts
@@ -19,11 +20,11 @@ export const getInfo = async () => {
 };
 
 
-export const login = async (username: string, password: string) => {
+export const login = async (email: string, password: string) => {
   const response = await fetch(`${API_BASE}/user/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password })
+    body: JSON.stringify({ email, password }),
   });
 
   if (!response.ok) {
@@ -34,14 +35,45 @@ export const login = async (username: string, password: string) => {
 };
 
 
-export const getProtectedStub = async () => {
-  const token = getToken();
+export const refreshAccessToken = async () => {
+  const refreshToken = getRefreshToken();
+  if (!refreshToken) throw new Error("No refresh token");
 
-  const response = await fetch(`${API_BASE}/user/stub-protected`, {
+  const response = await fetch(`${API_BASE}/user/refresh`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ refreshToken }),
+  });
+
+  if (!response.ok) {
+    clearTokens();
+    throw new Error("Refresh failed");
+  }
+
+  const data = await response.json();
+  localStorage.SetTokens(data.accessToken, data.refreshToken); // TODO move this function to auth.tsx?
+}
+
+
+export const getProtectedStub = async () => {
+  let token = getAccessToken();
+
+  let response = await fetch(`${API_BASE}/user/stub-protected`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
+
+  if (response.status === 401) {
+    await refreshAccessToken();
+    token = getAccessToken();
+
+    response = await fetch(`${API_BASE}/user/stub-protected`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  }
 
   if (!response.ok) {
     throw new Error("Unauthorized");
@@ -49,3 +81,4 @@ export const getProtectedStub = async () => {
 
   return response.json();
 };
+

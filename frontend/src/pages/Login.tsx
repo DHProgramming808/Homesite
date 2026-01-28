@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { login } from "../api";
-import { setToken }  from "../auth";
+import { setToken, setTokens }  from "../auth";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-  const [username, setUsername] = useState("");
+  const [email, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
@@ -12,10 +12,21 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      const result = await login(username, password);
-      setToken(result.token);
+
+      const result = await login(email, password);
+      //setToken(result.accessToken);
+      var accessToken = result.accessToken;
+      var refreshToken = result.refreshToken;
+
+      console.log(accessToken);
+      console.log(refreshToken);
+      console.log(result);
+
+      setTokens(accessToken, refreshToken);
       navigate("/stub");
-    } catch {
+
+    } catch (error) {
+      console.error(error);
       alert("Login failed");
     }
   };
@@ -25,8 +36,8 @@ export default function Login() {
       <h2>Login</h2>
       <form onSubmit = {handleSubmit}>
         <input
-          placeholder = "Username"
-          value = {username}
+          placeholder = "Email"
+          value = {email}
           onChange = {e => setUsername(e.target.value)}
         />
         <input
