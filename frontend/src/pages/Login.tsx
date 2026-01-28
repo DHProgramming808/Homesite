@@ -4,7 +4,7 @@ import { setToken, setTokens }  from "../auth";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-  const [username, setUsername] = useState("");
+  const [email, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
@@ -13,7 +13,7 @@ export default function Login() {
 
     try {
 
-      const result = await login(username, password);
+      const result = await login(email, password);
       //setToken(result.accessToken);
       var accessToken = result.accessToken;
       var refreshToken = result.refreshToken;
@@ -36,8 +36,8 @@ export default function Login() {
       <h2>Login</h2>
       <form onSubmit = {handleSubmit}>
         <input
-          placeholder = "Username"
-          value = {username}
+          placeholder = "Email"
+          value = {email}
           onChange = {e => setUsername(e.target.value)}
         />
         <input
