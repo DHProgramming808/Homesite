@@ -12,6 +12,7 @@ import Register from "./pages/Register";
 import Home from "./pages/Home";
 
 import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 
 export default function App() {

@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
-import { getAccessToken, isTokenExpired, logoutApi, getRefreshToken, clearTokens } from "../auth";
+import { getAccessToken, isTokenExpired, getRefreshToken, clearTokens, setTokens, isAuthenticated } from "../auth";
 import { jwtDecode } from "jwt-decode";
+import { loginApi, logoutApi } from "../api";
 
 
 type JwtPayload = {
@@ -16,6 +17,7 @@ interface AuthContextType {
   refreshToken: string | null;
   login: (accessToken: string, refreshToken: string) => void;
   logout: () => void;
+  isAuth: () => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -42,14 +44,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = (newAccessToken: string, newRefreshToken: string) => {
     setAccessToken(newAccessToken);
     setRefreshToken(newRefreshToken);
+    setTokens(newAccessToken, newRefreshToken);
   };
 
   const logout = () => {
+    logoutApi();
     clearTokens();
     setAccessToken(null);
     setRefreshToken(null);
     setUsername(null);
   };
+
+  const isAuth = () => {
+    const token = getAccessToken();
+    return token !== null && isAuthenticated();
+  }
 
   useEffect(() => {
       const handleStorageChange = () => {
@@ -74,7 +83,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
   return (
-    <AuthContext.Provider value={{ username, accesstoken: accessToken, refreshToken, login, logout: logout }}>
+    <AuthContext.Provider value={{ username, accesstoken: accessToken, refreshToken, login, logout: logout, isAuth }}>
       {children}
     </AuthContext.Provider>
   );

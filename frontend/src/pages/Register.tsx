@@ -15,6 +15,7 @@ export default function Register() {
     try {
       await register(email, username, password);
       navigate("/login");
+      console.log("Registration successful"); // TODO make this more apparent to the user
     } catch (error) {
       console.error(error);
       alert("Registration failed");
