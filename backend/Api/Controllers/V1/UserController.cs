@@ -88,6 +88,43 @@ public class UserController : ControllerBase
         });
     }
 
+
+    [HttpPost("logout")]
+    public IActionResult Logout([FromBody] LogoutRequest request)
+    {
+        var token = _authDb.RefreshTokens
+            .SingleOrDefault(rt => rt.Token == request.RefreshToken);
+
+        if (token == null || token.Revoked || token.Expires < DateTime.UtcNow)
+        {
+            return Unauthorized();
+        }
+
+        token.Revoked = true;
+        _authDb.SaveChanges();
+
+        return Ok();
+    }
+
+
+    //
+    [Authorize]
+    [HttpPost("logout-all")]
+    public IActionResult LogoutAll()
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)); //TODO null check
+
+        var userTokens = _authDb.RefreshTokens.Where(rt => rt.UserId == userId);
+        foreach (var userToken in userTokens)
+        {
+            userToken.Revoked = true;
+        }
+
+        _authDb.SaveChanges();
+        return Ok();
+    }
+
+
     [HttpPost("refresh")]
     public IActionResult Refresh([FromBody] RefreshRequest request)
     {
