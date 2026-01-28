@@ -45,11 +45,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleLogout = () => {
-    logout();
-    setUsername(null);
+    clearTokens();;
     setAccessToken(null);
     setRefreshToken(null);
+    setUsername(null);
+
   };
+
+  useEffect(() => {
+      const handleStorageChange = () => {
+        const token = getAccessToken();
+        if (!token) {
+          setUsername(null);
+          return;
+        }
+
+        try {
+          const decoded = jwtDecode<JwtPayload>(token);
+          setUsername(decoded.name || decoded.unique_name || null);
+        } catch {
+          setUsername(null);
+        }
+      };
+
+      window.addEventListener("storage", handleStorageChange);
+      return () => {
+        window.removeEventListener("storage", handleStorageChange);
+      };
+    }, []);
 
   return (
     <AuthContext.Provider value={{ username, accesstoken: accessToken, refreshToken, login, logout: handleLogout }}>
