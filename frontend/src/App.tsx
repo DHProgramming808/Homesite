@@ -7,27 +7,38 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Stub from "./pages/Stub";
 import { isAuthenticated } from "./auth";
+import Navbar from "./components/Navbar";
+import Register from "./pages/Register";
+import Home from "./pages/Home";
+
+
+export default function App() {
+  return (
+    <>
+      <Navbar />
+      <Routes>
+        <Route path = "/" element = {<Home />}/>
+        <Route path = "/login" element = {<Login />} />
+        <Route path = "/register" element = {<Register />} />
+
+        <Route
+          path = "/stub"
+          element = {
+            <ProtectedRoute>
+              <Stub />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </>
+  );
+}
+
 
 function ProtectedRoute({ children }: { children: React.JSX.Element }) {
   return isAuthenticated() ? children : <Navigate to = "/login" />;
 }
 
-export default function App() {
-  return (
-    <Routes>
-      <Route path = "/login" element = {<Login />} />
-      <Route
-        path = "/stub"
-        element = {
-          <ProtectedRoute>
-            <Stub />
-          </ProtectedRoute>
-        }
-      />
-      <Route path = "*" element = {<Navigate to = "/login" />} />
-    </Routes>
-  );
-}
 
 function GetInfo() {
   const [info, setInfo] = useState<{ name?: string; framework?: string; version?: string } | null>(null);
@@ -47,3 +58,5 @@ function GetInfo() {
   )
 
 }
+
+

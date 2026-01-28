@@ -35,6 +35,18 @@ export const login = async (email: string, password: string) => {
 };
 
 
+export const logout = async () => {
+  const refreshToken = getRefreshToken();
+  if (!refreshToken) return;
+
+  await fetch(`${API_BASE}/user/logout`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ refreshToken }),
+  });
+};
+
+
 export const refreshAccessToken = async () => {
   const refreshToken = getRefreshToken();
   if (!refreshToken) throw new Error("No refresh token");
@@ -54,6 +66,20 @@ export const refreshAccessToken = async () => {
   localStorage.SetTokens(data.accessToken, data.refreshToken); // TODO move this function to auth.tsx?
 }
 
+
+export const register = async (email: string, username: string, password: string) => {
+  const response = await fetch(`${API_BASE}/user/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, username, password }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Registration failed");
+  } else {
+    console.log("Registration successful");
+  }
+};
 
 export const getProtectedStub = async () => {
   let token = getAccessToken();
