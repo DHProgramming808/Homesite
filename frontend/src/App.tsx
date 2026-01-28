@@ -6,7 +6,6 @@ import './App.css'
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Stub from "./pages/Stub";
-import { isAuthenticated } from "./auth";
 import Navbar from "./components/Navbar";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
@@ -37,10 +36,10 @@ export default function App() {
   );
 }
 
-
-function ProtectedRoute({ children }: { children: React.JSX.Element }) {
-  return isAuthenticated() ? children : <Navigate to = "/login" />;
-}
+// TODO remove
+//function ProtectedRoute({ children }: { children: React.JSX.Element }) {
+//  return isAuthenticated() ? children : <Navigate to = "/login" />;
+//}
 
 
 function GetInfo() {

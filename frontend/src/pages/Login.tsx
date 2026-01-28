@@ -9,22 +9,24 @@ export default function Login() {
   const [email, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
 
-      const result = await loginApi(email, password);
+      const result = await loginApi(email, password); // TODO maybe move this to inside Authcontext?
       //setToken(result.accessToken);
       var accessToken = result.accessToken;
       var refreshToken = result.refreshToken;
+
+      login(accessToken, refreshToken);
 
       console.log(accessToken);
       console.log(refreshToken);
       console.log(result);
 
-      setTokens(accessToken, refreshToken);
       navigate("/stub");
 
     } catch (error) {

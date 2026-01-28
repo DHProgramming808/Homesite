@@ -2,13 +2,14 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import { getAccessToken, isTokenExpired, getRefreshToken, clearTokens, setTokens, isAuthenticated } from "../auth";
 import { jwtDecode } from "jwt-decode";
-import { loginApi, logoutApi } from "../api";
+import { loginApi, logoutApi, refreshAccessToken } from "../api";
 
 
 type JwtPayload = {
   unique_name?: string;
   name?: string;
   email?: string;
+  exp?: number;
 };
 
 interface AuthContextType {
@@ -29,17 +30,37 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 
   useEffect(() => {
-    if (!accessToken) {
+    if (!accessToken || !refreshToken) {
       setUsername(null);
       return;
     }
     try {
       const decoded = jwtDecode<JwtPayload>(accessToken);
+
       setUsername(decoded.name || decoded.unique_name || null);
-    } catch {
+
+      const exp = decoded.exp ? decoded.exp * 1000 : 0;
+      const timeout = exp - Date.now() - 60000; // Refresh 1 minute before expiry
+
+      if (timeout <=0) {
+        logout();
+        return;
+      }
+
+      const timer = setTimeout(async () => {
+        const data = await refreshAccessToken();
+        setAccessToken(data.accessToken);
+        setRefreshToken(data.refreshToken);
+        setTokens(data.accessToken, data.refreshToken);
+      }, timeout);
+
+      return () => clearTimeout(timer);
+    } catch (error) {
       setUsername(null);
+      logout();
+      console.error(error);
     }
-  }, [accessToken]);
+  }, [accessToken, refreshToken]);
 
   const login = (newAccessToken: string, newRefreshToken: string) => {
     setAccessToken(newAccessToken);
@@ -60,6 +81,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return token !== null && isAuthenticated();
   }
 
+  // TODO remove duplicate
   useEffect(() => {
       const handleStorageChange = () => {
         const token = getAccessToken();
@@ -81,6 +103,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         window.removeEventListener("storage", handleStorageChange);
       };
     }, []);
+
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key !== "accessToken" && event.key !== "refreshToken") {
+        setUsername(null);
+        return;
+      }
+
+      const newAccessToken = getAccessToken();
+      const newRefreshToken = getRefreshToken();
+
+      setAccessToken(newAccessToken);
+      setRefreshToken(newRefreshToken);
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
 
   return (
     <AuthContext.Provider value={{ username, accesstoken: accessToken, refreshToken, login, logout: logout, isAuth }}>

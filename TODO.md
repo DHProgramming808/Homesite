@@ -11,15 +11,17 @@ Jan 26 checkpoint
 
 🚀 Prep for AWS deployment
 
-🧠 Decode JWT and show user info
+🧠 Decode JWT and show user info -- did
 
 
 
 ---
-move refresh token to DB from Backend memory
+move refresh token to DB from Backend memory -- mostly did
 
 
 ---
 
 
-introduce auth context
+introduce auth context -- currently doing
+
+fix bug where once the accesstoken expires, it's not doing the refresh behavior correctly

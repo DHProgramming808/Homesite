@@ -33,7 +33,21 @@ export default function Navbar() {
       {username ? (
         <>
           <span style={{ marginRight: "1rem" }}>
-            Logged in as <strong>{username}</strong>
+            Logged in as{" "}
+            <button
+              onClick={() => navigate("/stub")}
+              style={{
+                fontWeight: "bold",
+                cursor: "pointer",
+                background: "gray",
+                border: "none",
+                padding: 0,
+                textDecoration: "underline",
+                color: "blue",
+              }}
+            >
+              {username}
+            </button>
           </span>
           <button onClick={handleLogout}>Logout</button>
         </>

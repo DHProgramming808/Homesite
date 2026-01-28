@@ -67,6 +67,8 @@ export const refreshAccessToken = async () => {
 
   const data = await response.json();
   localStorage.SetTokens(data.accessToken, data.refreshToken); // TODO move this function to auth.tsx?
+
+  return data as Promise<{ accessToken: string; refreshToken: string }>;
 }
 
 

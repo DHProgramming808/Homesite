@@ -30,8 +30,6 @@ export default function Stub() {
     <div>
       <h2>Protected Stub Page</h2>
 
-      <button onClick = {logoutApi}>Logout</button>
-
       {user && (
         <div style = {{ marginBottom: "1rem"}}>
           <h3>User Info</h3>
