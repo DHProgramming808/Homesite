@@ -44,12 +44,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setRefreshToken(newRefreshToken);
   };
 
-  const handleLogout = () => {
-    clearTokens();;
+  const logout = () => {
+    clearTokens();
     setAccessToken(null);
     setRefreshToken(null);
     setUsername(null);
-
   };
 
   useEffect(() => {
@@ -75,7 +74,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
   return (
-    <AuthContext.Provider value={{ username, accesstoken: accessToken, refreshToken, login, logout: handleLogout }}>
+    <AuthContext.Provider value={{ username, accesstoken: accessToken, refreshToken, login, logout: logout }}>
       {children}
     </AuthContext.Provider>
   );

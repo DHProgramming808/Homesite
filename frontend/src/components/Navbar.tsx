@@ -15,44 +15,6 @@ export default function Navbar() {
   const navigate = useNavigate();
   const { username, logout } = useAuth();
 
-  useEffect(() => {
-    const token = getAccessToken();
-    if (!token) {
-      setUsername(null);
-      return;
-    }
-
-    try {
-      const decoded = jwtDecode<JwtPayload>(token);
-      setUsername(decoded.name || decoded.unique_name || null);
-    } catch {
-      setUsername(null);
-    }
-
-  }, []);
-
-  useEffect(() => {
-    const handleStorageChange = () => {
-      const token = getAccessToken();
-      if (!token) {
-        setUsername(null);
-        return;
-      }
-
-      try {
-        const decoded = jwtDecode<JwtPayload>(token);
-        setUsername(decoded.name || decoded.unique_name || null);
-      } catch {
-        setUsername(null);
-      }
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, []);
-
   const handleLogout = async () => {
     try {
       await logout();
