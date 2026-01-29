@@ -15,31 +15,30 @@ Jan 26 checkpoint
 
 
 
----
-move refresh token to DB from Backend memory -- need verification of completion
+---- General
+-add graceful error handling
 
 
----
+
+---- Architecture
+--refactor the current backend/Api that handles tokens, users, auth -> backend/Auth.Api -- need verify
 
 
+
+---- Roles/Auth
+-move roles to Enums.
+-add premium user role
+-add email verification functionality to registration
 --introduce auth context -- need verification of completion
---make sure we have sql injection hygiene in the EF
-
-fix bug where once the accesstoken expires, it's not doing the refresh behavior correctly
-
-
---
-add email verification functionality to registration
+-make sure we have sql injection hygiene in the EF
+--move refresh token to DB from Backend memory -- need to verification of completion
+-fix bug where once the accesstoken expires, it's not doing the refresh behavior correctly
+-add unique_primary identifier for User table
 
 
---
-add graceful error handling
+
+---- Database/Mongo
 
 
---
-refactor the current backend/Api that handles tokens, users, auth -> backend/Auth.Api
 
---add a solution file for the backend
-
---move roles to Enums.
---add premium user role
+---- Database/EF
