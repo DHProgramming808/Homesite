@@ -139,7 +139,7 @@ public class UserController : ControllerBase
             return Unauthorized();
         }
 
-
+        // TODO move token/claims generation to a separate service so that both login and refresh can use it
         var tokenHandler = new JwtSecurityTokenHandler(); // TODO change to var jwtKey = _config.GetValue<string>("JwtKey");
         var key = Encoding.ASCII.GetBytes(secretKey);
 

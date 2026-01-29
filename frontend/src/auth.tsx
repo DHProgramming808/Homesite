@@ -49,6 +49,8 @@ export interface DecodedToken {
   name?: string;
   exp?: number;
   iat?: number;
+  email?: string;
+  role?: string;
 };
 
 export const decodeToken = (): DecodedToken | null => {

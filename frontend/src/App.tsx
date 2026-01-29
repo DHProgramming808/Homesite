@@ -9,9 +9,12 @@ import Stub from "./pages/Stub";
 import Navbar from "./components/Navbar";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
+import AdminStub from "./pages/AdminStub";
 
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
+
 
 
 export default function App() {
@@ -29,6 +32,15 @@ export default function App() {
             <ProtectedRoute>
               <Stub />
             </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path = "/adminstub"
+          element = {
+            <AdminRoute>
+              <AdminStub />
+            </AdminRoute>
           }
         />
       </Routes>
