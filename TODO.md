@@ -59,13 +59,19 @@ Jan 26 checkpoint
 -CICD
 -docker containers
 -databases
+-GraphQL
+-Build out and configure Gateway Api from scaffold
+
 
 
 ---- Documentation
 -environent setup
 -architecture review/overview explaning my thoughts in an open portfolio style
 
+
+
 ---- Modules
 -using AI
 -demo of agentic/cerebral AI companion
 -Big data -> hadoop
+-creating my own AI model -> including architecture.

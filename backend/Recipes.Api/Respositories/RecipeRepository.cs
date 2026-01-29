@@ -27,7 +27,7 @@ public class RecipeRepository
         await _recipes.InsertOneAsync(recipe);
     }
 
-    public async Task UpdateRecipeAsync(string id, Recipe updatedRecipe)
+    public async Task UpdateRecipeAsync(string id, Recipe updatedRecipe) //TODO check ownership
     {
         await _recipes.ReplaceOneAsync(r => r.Id == id, updatedRecipe);
     }
