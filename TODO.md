@@ -93,6 +93,8 @@ Jan 26 checkpoint
 
 --Strong DTO types in the BFF (instead of object)
 -Actually use these DTOs instead of leaving them hanging and using raw json with the frontend
+-In web.bff.api authcontroller.cs, change the return to use the _response.cs DTOs and make sure the frontend can handle them
+-switch frontend to hit the gateway instead of auth.api
 
 -Standard error mapping (Auth.Api returns text sometimes; make it consistent JSON)
 
