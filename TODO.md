@@ -42,3 +42,30 @@ Jan 26 checkpoint
 
 
 ---- Database/EF
+
+
+
+---- Security
+-add cybersec
+-DDOS protections?
+-if client is hitting the service too often
+-api gateway / admin layer
+-content monitoring/moderating (use AI)
+
+
+---- Infrastructure
+-AWS account -> IAM
+-AWS environment scripts
+-CICD
+-docker containers
+-databases
+
+
+---- Documentation
+-environent setup
+-architecture review/overview explaning my thoughts in an open portfolio style
+
+---- Modules
+-using AI
+-demo of agentic/cerebral AI companion
+-Big data -> hadoop
