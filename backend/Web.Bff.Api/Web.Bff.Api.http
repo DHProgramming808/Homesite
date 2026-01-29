@@ -1,4 +1,4 @@
-@Web.Bff.Api_HostAddress = http://localhost:5074
+@Web.Bff.Api_HostAddress = http://localhost:7000
 
 GET {{Web.Bff.Api_HostAddress}}/weatherforecast/
 Accept: application/json
