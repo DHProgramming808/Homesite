@@ -22,7 +22,8 @@ move refresh token to DB from Backend memory -- need verification of completion
 ---
 
 
-introduce auth context -- need verification of completion
+--introduce auth context -- need verification of completion
+--make sure we have sql injection hygiene in the EF
 
 fix bug where once the accesstoken expires, it's not doing the refresh behavior correctly
 
