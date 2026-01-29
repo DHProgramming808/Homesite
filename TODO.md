@@ -22,6 +22,8 @@ Jan 26 checkpoint
 
 ---- Architecture
 --refactor the current backend/Api that handles tokens, users, auth -> backend/Auth.Api -- need verify
+-configure CORS only on Gateway before BFF
+-Remove browser facing CORS from auth.api and recipes.api
 
 
 
@@ -68,6 +70,8 @@ Jan 26 checkpoint
 ---- Documentation
 -environent setup
 -architecture review/overview explaning my thoughts in an open portfolio style
+-Maintenance plan
+  -If endpoint in microservice layer, make sure bff layer also is updated with that endpoint
 
 
 
@@ -76,3 +80,17 @@ Jan 26 checkpoint
 -demo of agentic/cerebral AI companion
 -Big data -> hadoop
 -creating my own AI model -> including architecture.
+
+
+
+
+
+---- IMMEDIATELY UP NEXT ON THE DOCKET
+
+-Strong DTO types in the BFF (instead of object)
+
+-Standard error mapping (Auth.Api returns text sometimes; make it consistent JSON)
+
+-Correlation IDs + logging in BFF for request tracing
+
+-Move Auth.Api behind Gateway only (no direct browser access)
