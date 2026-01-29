@@ -61,6 +61,7 @@ Jan 26 checkpoint
 -databases
 -GraphQL
 -Build out and configure Gateway Api from scaffold
+-rewire auth.api and recipes.api to only accept calls from web.bff.api or admin tests
 
 
 
