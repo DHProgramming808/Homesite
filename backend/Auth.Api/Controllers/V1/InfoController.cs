@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Controllers.V1;
+namespace Auth.Api.Controllers.V1;
 
 [ApiController]
 [Route("api/v1/info")]

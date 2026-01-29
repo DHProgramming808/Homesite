@@ -8,10 +8,10 @@ using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 
 //using Api.Data;
-using Api.DTOs.Auth;
+using Shared.DTOs.Auth;
 //using Api.Models;
 
-namespace Api.Controllers.V1;
+namespace Auth.Api.Controllers.V1;
 
 [ApiController]
 [Route("api/v1/user")]

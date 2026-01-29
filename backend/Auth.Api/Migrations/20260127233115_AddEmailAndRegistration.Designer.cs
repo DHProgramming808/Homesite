@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Api.Migrations
+namespace Auth.Api.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
     [Migration("20260127233115_AddEmailAndRegistration")]

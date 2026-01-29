@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Api.Migrations
+namespace Auth.Api.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration

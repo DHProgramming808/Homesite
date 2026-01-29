@@ -1,4 +1,4 @@
-namespace Api.DTOs.Auth;
+namespace Shared.DTOs.Auth;
 
 public class LogoutRequest
 {
