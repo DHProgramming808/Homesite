@@ -96,8 +96,13 @@ public class UserController : ControllerBase
 
         var token = _authDb.RefreshTokens
             .SingleOrDefault(rt => rt.Token == request.RefreshToken && rt.Revoked != true);
+        // TODO check if we also need the AccessToken for extra security / revoke the Access token
 
         if (userId == null || token == null || token.Revoked || token.Expires < DateTime.UtcNow)
+        {
+            return Unauthorized();
+        }
+        if (token.UserId != int.Parse(userId))
         {
             return Unauthorized();
         }
@@ -116,7 +121,14 @@ public class UserController : ControllerBase
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)); //TODO null check
 
-        var userTokens = _authDb.RefreshTokens.Where(rt => rt.UserId == userId);
+        var userTokens = _authDb.RefreshTokens.Where(rt => rt.UserId == userId && rt.Revoked != true).ToList();
+        // TODO check if we also need the AccessToken for extra security / revoke the Access token
+
+        if (userId == null || userTokens == null || !userTokens.Any())
+        {
+            return Unauthorized();
+        }
+
         foreach (var userToken in userTokens)
         {
             userToken.Revoked = true;
