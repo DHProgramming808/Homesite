@@ -1,6 +1,6 @@
-namespace Web.Bff.Api.DTOs;
+namespace Web.Bff.Api.DTOs.Auth;
 
-public class RefreshResponse
+public class AuthResponse
 {
     public string AccessToken { get; set; } = null!;
     public string RefreshToken { get; set; } = null!;

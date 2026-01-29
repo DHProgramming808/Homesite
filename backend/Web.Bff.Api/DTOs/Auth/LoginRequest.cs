@@ -1,6 +1,6 @@
-namespace Web.Bff.Api.DTOs;
+namespace Web.Bff.Api.DTOs.Auth;
 
-public class AuthResponse
+public class LoginRequest
 {
     public string Email { get; set; } = null!;
     public string Password { get; set; } = null!;

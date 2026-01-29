@@ -1,5 +1,5 @@
 // TODO flesh out when we properly implement Info endpoint
- namespace Web.Bff.Api.DTOs;
+ namespace Web.Bff.Api.DTOs.Auth;
 
  public class InfoResponse
  {

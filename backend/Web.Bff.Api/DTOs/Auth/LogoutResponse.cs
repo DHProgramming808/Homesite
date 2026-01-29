@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace Web.Bff.Api.DTOs;
+namespace Web.Bff.Api.DTOs.Auth;
 
 public class LogoutResponse
 {

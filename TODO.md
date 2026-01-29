@@ -24,6 +24,8 @@ Jan 26 checkpoint
 --refactor the current backend/Api that handles tokens, users, auth -> backend/Auth.Api -- need verify
 -configure CORS only on Gateway before BFF
 -Remove browser facing CORS from auth.api and recipes.api
+-Add S3 logging
+-Expose some logging to showcase logging and S3 calling
 
 
 
@@ -80,6 +82,8 @@ Jan 26 checkpoint
 -demo of agentic/cerebral AI companion
 -Big data -> hadoop
 -creating my own AI model -> including architecture.
+-Merch Store
+-Paid Premium account
 
 
 
@@ -87,7 +91,8 @@ Jan 26 checkpoint
 
 ---- IMMEDIATELY UP NEXT ON THE DOCKET
 
--Strong DTO types in the BFF (instead of object)
+--Strong DTO types in the BFF (instead of object)
+-Actually use these DTOs instead of leaving them hanging and using raw json with the frontend
 
 -Standard error mapping (Auth.Api returns text sometimes; make it consistent JSON)
 
