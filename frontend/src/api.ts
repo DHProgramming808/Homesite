@@ -4,11 +4,13 @@ import { Navigate } from "react-router-dom";
 
 
 const API_BASE = "http://localhost:5000/api/v1" // TODO configure this for local and remote hosts
+//const API_BASE = "https://localhost:8080/api/v1" // TODO configure this for local and remote hosts
 
 
 export const getInfo = async () => {
   try {
     const response = await fetch("http://localhost:5000/api/v1/info"); //TODO configure this for local and remote hosting
+
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);

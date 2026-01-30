@@ -80,6 +80,7 @@ Jan 26 checkpoint
 ---- Modules
 -using AI
 -demo of agentic/cerebral AI companion
+-programming assistant
 -Big data -> hadoop
 -creating my own AI model -> including architecture.
 -Merch Store

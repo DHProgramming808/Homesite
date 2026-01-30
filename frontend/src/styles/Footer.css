@@ -1,0 +1,27 @@
+.footer {
+  border-top: 1px solid var(--border);
+  background: rgba(255,255,255,.03);
+  padding: 40px 0;
+}
+
+.footerTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.footerLinks {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.footer a { color: var(--muted); }
+.footer a:hover { color: var(--text); }
+
+.footerSmall {
+  margin-top: 18px;
+  color: rgba(255,255,255,.5);
+  font-size: 13px;
+}
