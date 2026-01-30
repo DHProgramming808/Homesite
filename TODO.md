@@ -20,6 +20,11 @@ Jan 26 checkpoint
 
 
 
+---- Frontend
+-redo the colors and stuff
+
+
+
 ---- Architecture
 --refactor the current backend/Api that handles tokens, users, auth -> backend/Auth.Api -- need verify
 -configure CORS only on Gateway before BFF
@@ -85,6 +90,7 @@ Jan 26 checkpoint
 -creating my own AI model -> including architecture.
 -Merch Store
 -Paid Premium account
+-Angular 
 
 
 
