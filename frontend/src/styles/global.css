@@ -94,7 +94,6 @@ button:focus-visible {
 .subhead {
   font-size: clamp(16px, 1.4vw, 18px);
   color: var(--muted);
-  max-width: 56ch;
 }
 
 .reveal {
