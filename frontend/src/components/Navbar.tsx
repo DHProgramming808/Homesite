@@ -18,8 +18,14 @@ export default function Navbar() {
   const { username, logout } = useAuth();
 
   const [scrolled, setScrolled] = useState(false);
-  const [hidden, setHidden] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const lastY = useRef(0);
+
+  const NAV_LINKS = [
+    { name: "Projects", path: "/projects" },
+    { name: "About Me", path: "/aboutme" },
+    { name: "Contact", path: "/contact" },
+  ];
 
   useEffect(() => {
     lastY.current = window.scrollY;
@@ -28,15 +34,19 @@ export default function Navbar() {
       const y = window.scrollY;
       setScrolled(y > 12);
 
-      const goingDown = y > lastY.current;
-      setHidden(goingDown && y > 180);
-
       lastY.current = y;
     };
 
     window.addEventListener("scroll", onScroll, {passive: true});
+    onScroll();
 
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const close = () => setMenuOpen(false);
+    window.addEventListener("scroll", close, { passive: true });
+    return () => window.removeEventListener("scroll", close);
   }, []);
 
   const handleLogout = async () => {
@@ -46,29 +56,58 @@ export default function Navbar() {
       console.error("Logout failed:", error);
     } finally {
       clearTokens();
-      navigate("/login");
+      navigate("/");
     }
   };
 
   return (
     <header
-      className={`navbar ${scrolled ? "navbarScrolled" : ""} ${hidden ? "navbarHidden" : ""}`}
+      className={`navbar ${scrolled ? "navbarScrolled" : ""}`}
     >
       <div className = "navInner">
         {/* LEFT - Logo and Home link */}
-        <a href="/" className="logo">
+        <Link to="/" className="logo">
           Home
-        </a>
+        </Link>
 
         {/*FLEX SPACER*/}
         <div className = "navSpacer" />
 
         {/* RIGHT BIAS NAV */}
         <nav className="navLinks">
-          <a href = "/projects">Projects</a>
-          <a href = "/aboutme">About Me</a>
-          <a href = "/contact">Contact</a>
+        {NAV_LINKS.map(link => (
+          <Link key={link.path} to={link.path}>
+            {link.name}
+          </Link>
+        ))}
         </nav>
+
+        <div className="navMenuWrapper">
+          <button
+              className = "navMenuButton"
+              onClick = {() => setMenuOpen(prev => !prev)}
+              type = "button"
+              aria-label = "Open menu"
+              aria-expanded = {menuOpen}
+          >
+            <span className="menuIcon">☰</span>
+          </button>
+          {menuOpen && (
+            <div className="navMobilePanel" role="menu">
+              {NAV_LINKS.map(link => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  role="menuitem"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+
 
         {/* RIGHT - Auth Links */}
         {username ? (
@@ -77,19 +116,12 @@ export default function Navbar() {
             Logged in as{" "}
             <button
               onClick={() => navigate("/stub")}
-              style={{
-                fontWeight: "bold",
-                cursor: "pointer",
-                background: "gray",
-                border: "none",
-                padding: 0,
-                textDecoration: "underline",
-                color: "blue",
-              }}
             >
               {username}
             </button>
           </span>
+
+
           <button onClick={handleLogout}>Logout</button>
         </>
       ) : (
