@@ -170,6 +170,60 @@ button:focus-visible {
   transform: translateY(6px);
 }
 
+/* Still part of Hero */
+.scrollCue {
+  margin-top: 18px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  color: rgba(255,255,255,.92);
+  border-radius: 999px;
+  padding: 10px 14px;
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: opacity .6s ease, transform .6s ease;
+  will-change: opacity, transform;
+}
+
+.scrollCueIcon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* hidden until done */
+.scrollCueOff {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(6px);
+}
+
+/* visible + pulsing when done TODO make this more smooth*/
+.scrollCueOn {
+  opacity: 1;
+  transform: translateY(0);
+  animation: scrollCuePulse 1.6s ease-in-out infinite;
+
+  transition-delay: 3s;
+  animation-delay: 1.5s;
+
+  animation-iteration-count: 2;
+  animation-fill-mode: backwards;
+}
+
+@keyframes scrollCuePulse {
+  0%, 100% { opacity: 0.35; transform: translateY(0); }
+  50%      { opacity: 1;    transform: translateY(6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrollCueOn { animation: none; }
+}
+/* End of Hero */
+
+
 .grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);

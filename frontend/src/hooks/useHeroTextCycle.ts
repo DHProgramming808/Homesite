@@ -13,11 +13,10 @@ export function useHeroTextCycle(texts: string[], options: Options = {}) {
 
   const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(true);
+  const done = index >= texts.length - 1;
 
   useEffect(() => {
-    const lastIndex = texts.length - 1;
-
-    if (index >= lastIndex) {
+    if (done) {
       if (!visible) {
         setVisible(true);
       }
@@ -40,10 +39,11 @@ export function useHeroTextCycle(texts: string[], options: Options = {}) {
       clearTimeout(timeout1);
       clearTimeout(timeout2);
     };
-  }, [index, texts.length, fadeDuration, holdDuration]);
+  }, [done, index, texts.length, fadeDuration, holdDuration]);
 
   return {
     text: texts[index],
     visible,
+    done
   };
 }
