@@ -109,6 +109,39 @@ button:focus-visible {
   padding: 120px 0 64px;
   position: relative;
   overflow: clip;
+
+  isolation: isolate
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: -40px;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.78) 80%),
+    url("/Homesite_homepage_background.png") center / cover no-repeat;
+  filter: saturate(0.95) contrast(1.05);
+  transform: translate3d(0, var(--hero-parallax, 0px), 0) scale(1.05);
+  z-index: 0;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(700px 420px at 30% 35%, rgba(0,0,0,0.0), rgba(0,0,0,0.65));
+  z-index: -1;
+}
+
+.heroGrain {
+  pointer-events: none;
+  position: absolute;
+  inset: 0px;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("/grain.png");
+  background-size: contain;
+  z-index: 1;
 }
 
 .grid {
@@ -141,6 +174,10 @@ button:focus-visible {
 .cardBody { padding: 16px 16px 18px; }
 .cardTitle { margin: 0 0 6px; font-size: 18px; letter-spacing: -0.02em; }
 .cardMeta { color: var(--muted); font-size: 14px; }
+
+:target {
+  scroll-margin-top: 96px;
+}
 
 
 @media (prefers-reduced-motion: reduce) {

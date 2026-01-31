@@ -10,6 +10,7 @@ import Navbar from "./components/Navbar";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
 import AdminStub from "./pages/AdminStub";
+import AboutMe from "./pages/AboutMe";
 
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -25,6 +26,7 @@ export default function App() {
         <Route path = "/" element = {<Home />}/>
         <Route path = "/login" element = {<Login />} />
         <Route path = "/register" element = {<Register />} />
+        <Route path = "/aboutme" element = {<AboutMe />} />
 
         <Route
           path = "/stub"

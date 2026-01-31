@@ -56,7 +56,7 @@ export default function Navbar() {
     >
       <div className = "navInner">
         {/* LEFT - Logo and Home link */}
-        <a href="#top" className="logo">
+        <a href="/" className="logo">
           Home
         </a>
 
@@ -65,9 +65,9 @@ export default function Navbar() {
 
         {/* RIGHT BIAS NAV */}
         <nav className="navLinks">
-          <a href = "#projects">Projects</a>
-          <a href = "#about">About Me</a>
-          <a href = "#contact">Contact</a>
+          <a href = "/projects">Projects</a>
+          <a href = "/aboutme">About Me</a>
+          <a href = "/contact">Contact</a>
         </nav>
 
         {/* RIGHT - Auth Links */}
