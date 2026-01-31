@@ -150,6 +150,7 @@ public class AuthController : ControllerBase
 
 
     // TODO stubs
+    // TODO Also Move these functions to a different controller like UserController once implemented properly
     [Authorize]
     [HttpGet("stub-protected")] // TODO make sure to change this to profile once the auth.api.usercontroller.cs is updated with the profile endpoint
     public async Task<IResult> StubProtected()

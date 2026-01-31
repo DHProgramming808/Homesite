@@ -4,6 +4,7 @@ import { Navigate } from "react-router-dom";
 
 
 const API_BASE = "http://localhost:5000/api/v1" // TODO configure this for local and remote hosts
+//const API_BASE = "https://localhost:8080/api/v1" // TODO configure this for local and remote hosts
 
 
 export const getInfo = async () => {

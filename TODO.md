@@ -20,6 +20,17 @@ Jan 26 checkpoint
 
 
 
+---- Frontend
+-redo the colors and stuff
+-move the register button to the login page
+-move the Login/profile button inside the menu bar if the website is squeezed
+-fix logo
+-fix logo in footer
+
+-(longterm) light/dark theme
+
+
+
 ---- Architecture
 --refactor the current backend/Api that handles tokens, users, auth -> backend/Auth.Api -- need verify
 -configure CORS only on Gateway before BFF
@@ -37,6 +48,7 @@ Jan 26 checkpoint
 -make sure we have sql injection hygiene in the EF
 --move refresh token to DB from Backend memory -- need to verification of completion
 -fix bug where once the accesstoken expires, it's not doing the refresh behavior correctly
+-also kick out of username once refresh token is unauthed
 -add unique_primary identifier for User table
 
 
@@ -80,10 +92,12 @@ Jan 26 checkpoint
 ---- Modules
 -using AI
 -demo of agentic/cerebral AI companion
+-programming assistant
 -Big data -> hadoop
 -creating my own AI model -> including architecture.
 -Merch Store
 -Paid Premium account
+-Angular 
 
 
 
