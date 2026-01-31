@@ -34,38 +34,41 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Social Buttons */}
-          <div className="footerSocials">
-            {SOCIALS.map((social) => (
-              <a
-                className="footerSocialPill"
-                key={social.label}
-                href={social.href}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <span className="footerSocialLabel">{social.label}</span>
-              </a>
-            ))}
-          </div>
-
-          {/* Contact */}
-          {/* Add PO box and diverted cell phone */}
-          <div className="footerContact">
-            <div className="footerContactRow">
-              <div className="footerContactActions">
-                <Link className="footerLink" to="/contact">
-                  Contact Me
-                </Link>
-                <span className="footerDot">•</span>
-                <a className="footerLink" href="mailto:Daniel.Youngmin.Hong@gmail.com">
-                  Daniel.Youngmin.Hong@gmail.com
+          <div className="footerRow">
+            {/* Social Buttons */}
+            <div className="footerSocials" aria-label="Social Links">
+              {SOCIALS.map((social) => (
+                <a
+                  className="footerSocialPill"
+                  key={social.label}
+                  href={social.href}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <span className="footerSocialLabel">{social.label}</span>
                 </a>
+              ))}
+            </div>
+
+            {/* Contact */}
+            {/* Add PO box and diverted cell phone */}
+            <div className="footerContact">
+              <div className="footerContactRow">
+                <div className="footerContactActions">
+                  <Link className="footerLink" to="/contact">
+                    Contact Me
+                  </Link>
+                  <span className="footerDot">•</span>
+                  <a className="footerLink" href="mailto:Daniel.Youngmin.Hong@gmail.com">
+                    Daniel.Youngmin.Hong@gmail.com
+                  </a>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Botton */}
+
+          {/* Bottom */}
           <div className="footerBottom">
             <span>© {year} DHProgramming808. All rights reserved.</span>
             <span className="footerBottomSpacer" />
