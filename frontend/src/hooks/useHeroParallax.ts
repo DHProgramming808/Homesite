@@ -15,8 +15,10 @@ export function useHeroParallax(enabled = true) {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
         const y = window.scrollY || 0;
+        console.log("Scroll Y:", y);
         // Small movement: 0px to ~24px over first ~600px of scroll
-        const offset = Math.min(24, y * 0.04);
+        const offset = Math.min(160, y * 0.30);
+
         document.documentElement.style.setProperty("--hero-parallax", `${offset}px`);
       });
     };

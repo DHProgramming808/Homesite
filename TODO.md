@@ -22,6 +22,11 @@ Jan 26 checkpoint
 
 ---- Frontend
 -redo the colors and stuff
+-move the register button to the login page
+-fix logo
+-fix logo in footer
+
+-(longterm) light/dark theme
 
 
 
@@ -42,6 +47,7 @@ Jan 26 checkpoint
 -make sure we have sql injection hygiene in the EF
 --move refresh token to DB from Backend memory -- need to verification of completion
 -fix bug where once the accesstoken expires, it's not doing the refresh behavior correctly
+-also kick out of username once refresh token is unauthed
 -add unique_primary identifier for User table
 
 

@@ -44,6 +44,12 @@ body {
   line-height: 1.35;
 }
 
+main {
+  width: 100%;
+  max-width: 3840px;
+  margin: 0 auto;
+}
+
 a {
   font-weight: 500;
   color: #ffffff;
@@ -108,20 +114,29 @@ button:focus-visible {
   align-items: center;
   padding: 120px 0 64px;
   position: relative;
-  overflow: clip;
+  overflow: hidden;
 
-  isolation: isolate
+  isolation: isolate;
 }
 
 .hero::before {
   content: "";
   position: absolute;
-  inset: -40px;
+  inset: 0px;
+
   background:
-    linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.78) 80%),
-    url("/Homesite_homepage_background.png") center / cover no-repeat;
+    linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.45) 80%),
+    url("/Homesite_homepage_background.png");
+
   filter: saturate(0.95) contrast(1.05);
-  transform: translate3d(0, var(--hero-parallax, 0px), 0) scale(1.05);
+
+  background-size: cover !important;
+  background-position: center 35%;
+  background-repeat: no-repeat;
+
+  transform: translate3d(0, var(--hero-parallax, 0px), 0) scale(1.15);
+  will-change: transform;
+
   z-index: 0;
 }
 
@@ -129,19 +144,13 @@ button:focus-visible {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(700px 420px at 30% 35%, rgba(0,0,0,0.0), rgba(0,0,0,0.65));
-  z-index: -1;
+  background: radial-gradient(700px 420px at 30% 35%, rgba(0,0,0,0.0), rgba(0,0,0,0.005));
+  z-index: 1;
 }
 
-.heroGrain {
-  pointer-events: none;
-  position: absolute;
-  inset: 0px;
-  opacity: 0.05;
-  mix-blend-mode: overlay;
-  background-image: url("/grain.png");
-  background-size: contain;
-  z-index: 1;
+.hero > .container {
+  position: relative;
+  z-index: 2;
 }
 
 .grid {

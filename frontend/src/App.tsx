@@ -7,6 +7,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Stub from "./pages/Stub";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
 import AdminStub from "./pages/AdminStub";
@@ -46,6 +47,7 @@ export default function App() {
           }
         />
       </Routes>
+      <Footer />
     </AuthProvider>
   );
 }
