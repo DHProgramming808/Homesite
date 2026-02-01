@@ -1,6 +1,7 @@
 import { useRevealOnScroll } from "../hooks/useRevealOnScroll";
 import { useHeroParallax } from "../hooks/useHeroParallax";
 import { useHeroTextCycle } from "../hooks/useHeroTextCycle";
+import { ProjectsPreview } from "../components/ProjectsPreview";
 
 import { Link } from "react-router-dom";
 
@@ -46,12 +47,18 @@ export default function Home() {
 
       <section id="content_section" className="container">
         {/* Content Sections */}
+        <div id="projects">
+          <ProjectsPreview />
+        </div>
+
+
+
         <div className="homeWelcome">
           <div className="homeWelcomeCard">
             <div className="homeWelcomeKicker">It's so nice to meet you!</div>
 
             <h2 className="homeWelcomeTitle">
-              I’m Daniel — I build reliable software and sweat the small UX details.
+              I’m Daniel
             </h2>
 
             <p className="homeWelcomeBody">
@@ -67,20 +74,6 @@ export default function Home() {
               </Link>
             </div>
           </div>
-
-          {/* Optional “quick chips” row — non-boring, not resume-y */}
-          <div id="projects" className="homeWelcomeChips" aria-label="Highlights">
-            <span className="homeChip">Backend-first</span>
-            <span className="homeChip">Full-stack capable</span>
-            <span className="homeChip">Likes boring reliability</span>
-            <span className="homeChip">Loves smooth UI</span>
-          </div>
-        </div>
-
-
-
-        <div className="projects_overview">
-         <h2 className="h2">Projects</h2>
         </div>
       </section>
     </main>
