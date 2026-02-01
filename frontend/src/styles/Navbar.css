@@ -17,6 +17,14 @@
     backdrop-filter .35s var(--ease),
     border-color .35s var(--ease),
     box-shadow .35s var(--ease);
+
+  font-size: 1.1rem;
+}
+
+.navbarScrolled {
+  background: rgba(10, 12, 16, .75);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
 }
 
 .navbarScrolled {
@@ -38,7 +46,8 @@
 }
 
 .navHome {
-  font-weight: 600;
+  font-size: 1.5rem;
+  font-weight: 1000;
   letter-spacing: -0.02em;
 }
 

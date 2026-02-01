@@ -66,8 +66,8 @@ export default function Navbar() {
     >
       <div className = "navInner">
         {/* LEFT - Logo and Home link */}
-        <Link to="/" className="logo">
-          Home
+        <Link to="/" className="navHome">
+          D Y H
         </Link>
 
         {/*FLEX SPACER*/}

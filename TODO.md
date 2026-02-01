@@ -23,8 +23,12 @@ Jan 26 checkpoint
 ---- Frontend
 -redo the colors and stuff
 -move the register button to the login page
+-move the Login/profile button inside the menu bar if the website is squeezed
 -fix logo
 -fix logo in footer
+-make the FAQs prettier
+
+-make the technical me, an expandable section in the About me
 
 -(longterm) light/dark theme
 

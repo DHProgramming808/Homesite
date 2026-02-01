@@ -1,5 +1,5 @@
 :root {
-  --bg: #0b0c0f;
+  --bg: #14120f;
   --text: rgba(255,255,255,.92);
   --muted: rgba(255,255,255,.66);
 
@@ -11,7 +11,7 @@
   --radius-lg: 20px;
 
   --shadow: 0 14px 50px rgba(0,0,0,.45);
-  --maxw: 1120px;
+  --maxw: 1920px;
 
   --ease: cubic-bezier(.2,.8,.2,1);
 
@@ -46,8 +46,6 @@ body {
 
 main {
   width: 100%;
-  max-width: 3840px;
-  margin: 0 auto;
 }
 
 a {
@@ -94,7 +92,6 @@ button:focus-visible {
 .subhead {
   font-size: clamp(16px, 1.4vw, 18px);
   color: var(--muted);
-  max-width: 56ch;
 }
 
 .reveal {
@@ -153,6 +150,77 @@ button:focus-visible {
   z-index: 2;
 }
 
+.heroTitle {
+  will-change: opacity;
+  transition:
+    opacity 0.6s var(--ease),
+    transform 0.6s var(--ease);
+}
+
+.heroTitle.isVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.heroTitle.isHidden {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+/* Still part of Hero */
+.scrollCue {
+  margin-top: 18px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  color: rgba(255,255,255,.92);
+  border-radius: 999px;
+  padding: 10px 14px;
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: opacity .6s ease, transform .6s ease;
+  will-change: opacity, transform;
+}
+
+.scrollCueIcon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* hidden until done */
+.scrollCueOff {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(6px);
+}
+
+/* visible + pulsing when done TODO make this more smooth*/
+.scrollCueOn {
+  opacity: 1;
+  transform: translateY(0);
+  animation: scrollCuePulse 1.6s ease-in-out infinite;
+
+  transition-delay: 3s;
+  animation-delay: 1.5s;
+
+  animation-iteration-count: 2;
+  animation-fill-mode: backwards;
+}
+
+@keyframes scrollCuePulse {
+  0%, 100% { opacity: 0.35; transform: translateY(0); }
+  50%      { opacity: 1;    transform: translateY(6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrollCueOn { animation: none; }
+}
+/* End of Hero */
+
+
 .grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
@@ -188,6 +256,108 @@ button:focus-visible {
   scroll-margin-top: 96px;
 }
 
+
+/* Home Projects section */
+.homeProjects {
+  margin-top: 28px;
+  margin-bottom: 72px;
+}
+
+.homeProjectsHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.homeProjectsTitle {
+  margin: 0;
+}
+
+.projectsGrid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 14px;
+}
+
+/* Card */
+.projectCard {
+  grid-column: span 6;
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  min-height: 220px;
+
+  border: 1px solid rgba(255,255,255,.10);
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.05), rgba(255,255,255,.02)),
+    var(--card-bg) center / cover no-repeat;
+
+  transition: transform .35s var(--ease), box-shadow .35s var(--ease), border-color .35s var(--ease);
+  will-change: transform;
+}
+
+.projectCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 60px rgba(0,0,0,.45);
+  border-color: rgba(255,255,255,.16);
+}
+
+.projectCardOverlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.72) 78%);
+}
+
+.projectCardBody {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 16px;
+  z-index: 1;
+}
+
+.projectCardTitle {
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+  color: rgba(255,255,255,.92);
+}
+
+.projectCardTags {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.projectTag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(0,0,0,.35);
+  color: rgba(255,255,255,.86);
+  font-size: 13px;
+}
+
+.homeProjectsFooter {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .projectCard {
+    grid-column: span 12;
+    min-height: 200px;
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
