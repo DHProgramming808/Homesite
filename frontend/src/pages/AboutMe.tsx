@@ -81,7 +81,7 @@ export default function AboutMe() {
             </div>
 
             <div className = "aboutLead" style={{textAlign: "left"}}>
-              And the latest trends cutting edge technology is not the only thing he dives into. When he’s not writing code, he’s likely underwater as a PADI-certified rescue SCUBA diver, experimenting in the kitchen, or up in the air flying a bug smasher. He tends to approach software the same way he approaches everything else: plan ahead, stay curious, and keep a steady hand when things get interesting.
+              The latest trends cutting edge technology is not the only thing he dives into. When he’s not writing code, he’s likely underwater as a PADI-certified rescue SCUBA diver, experimenting in the kitchen, or up in the air flying a bug smasher. He tends to approach software the same way he approaches everything else: plan ahead, stay curious, and keep a steady hand when things get interesting.
             </div>
 
             <div className = "aboutTldr">

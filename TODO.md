@@ -28,6 +28,8 @@ Jan 26 checkpoint
 -fix logo in footer
 -make the FAQs prettier
 
+-make the technical me, an expandable section in the About me
+
 -(longterm) light/dark theme
 
 

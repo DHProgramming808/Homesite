@@ -2,6 +2,8 @@ import { useRevealOnScroll } from "../hooks/useRevealOnScroll";
 import { useHeroParallax } from "../hooks/useHeroParallax";
 import { useHeroTextCycle } from "../hooks/useHeroTextCycle";
 
+import { Link } from "react-router-dom";
+
 export default function Home() {
   useRevealOnScroll();
   useHeroParallax(true);
@@ -44,10 +46,39 @@ export default function Home() {
 
       <section id="content_section" className="container">
         {/* Content Sections */}
-        <div className = "me">
-          <h1 className = "h2">Who I am</h1>
-          <p className = "subhead">Ipsum Lorem</p>
+        <div className="homeWelcome">
+          <div className="homeWelcomeCard">
+            <div className="homeWelcomeKicker">It's so nice to meet you!</div>
+
+            <h2 className="homeWelcomeTitle">
+              I’m Daniel — I build reliable software and sweat the small UX details.
+            </h2>
+
+            <p className="homeWelcomeBody">
+              This site is a quick tour of what I’ve built and what I’m building next.
+              If you’re here for the highlights: start with Projects. If you want the human
+              version: About has the story.
+            </p>
+
+            <div className="homeWelcomeActions">
+
+              <Link className="btn" to="/aboutme">
+                Get to know me better
+              </Link>
+            </div>
+          </div>
+
+          {/* Optional “quick chips” row — non-boring, not resume-y */}
+          <div id="projects" className="homeWelcomeChips" aria-label="Highlights">
+            <span className="homeChip">Backend-first</span>
+            <span className="homeChip">Full-stack capable</span>
+            <span className="homeChip">Likes boring reliability</span>
+            <span className="homeChip">Loves smooth UI</span>
+          </div>
         </div>
+
+
+
         <div className="projects_overview">
          <h2 className="h2">Projects</h2>
         </div>

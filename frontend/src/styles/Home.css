@@ -1,0 +1,67 @@
+.homeWelcome {
+  margin-top: 32px;
+  margin-bottom: 36px;
+  display: grid;
+  gap: 14px;
+}
+
+.homeWelcomeCard {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 22px;
+  backdrop-filter: blur(10px);
+  padding: 18px;
+}
+
+.homeWelcomeKicker {
+  display: inline-flex;
+  padding: 9px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  color: rgba(255,255,255,.88);
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  margin-bottom: 12px;
+}
+
+.homeWelcomeTitle {
+  margin: 0;
+  font-size: clamp(20px, 2.2vw, 28px);
+  letter-spacing: -0.02em;
+  color: rgba(255,255,255,.92);
+  max-width: 60ch;
+}
+
+.homeWelcomeBody {
+  margin: 12px 0 0;
+  color: rgba(255,255,255,.70);
+  line-height: 1.6;
+  max-width: 70ch;
+}
+
+.homeWelcomeActions {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Chips row */
+.homeWelcomeChips {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.homeChip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  color: rgba(255,255,255,.86);
+  font-size: 14px;
+}
