@@ -3,6 +3,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 
+using Auth.Api.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services
@@ -11,18 +13,34 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// -- Bind Configurations --
+builder.Services.Configure<JwtOptions>(
+    builder.Configuration.GetSection("Jwt"));
+builder.Services.Configure<CorsOptions>(
+    builder.Configuration.GetSection("Cors"));
+
+// ---CORS Setup---
+var cors = builder.Configuration.GetSection("Cors").Get<CorsOptions>() ?? new CorsOptions();
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:5173") //TODO configure this for both localhost and remote host
+        policy.WithOrigins(cors.AllowedOrigins)
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
 });
 
 // ---JWT Authentication Setup ---
-var key = Encoding.ASCII.GetBytes("temp_key_temp_key_temp_key_temp_key"); // TODO change keys
+var jwt = builder.Configuration.GetSection("Jwt").Get<JwtOptions>() ?? new JwtOptions();
+
+if (string.IsNullOrEmpty(jwt.Key) || jwt.Key.Length < 16)
+{
+    throw new InvalidOperationException("JWT Signing Key is not configured.");
+}
+
+var key = Encoding.UTF8.GetBytes(jwt.Key); // TODO change keys
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -30,18 +48,28 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-    options.RequireHttpsMetadata = false; // TODO change for higher environments
+    options.RequireHttpsMetadata = jwt.RequireHttpsMetadata; // TODO change for higher environments
     options.SaveToken = true;
+
     options.TokenValidationParameters = new TokenValidationParameters //TODO
     {
         ValidateIssuer = false,
+        ValidIssuer = jwt.Issuer,
+
         ValidateAudience = false,
+        ValidAudience = jwt.Audience,
+
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(key)
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.FromMinutes(2)
     };
 });
 
 //Authorization
+
+builder.Services.AddScoped<JwtTokenService>();
 builder.Services.AddAuthorization();
 
 // ---End Section ---
@@ -70,6 +98,4 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-
 app.Run();
