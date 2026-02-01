@@ -1,0 +1,208 @@
+/* ---------- About: hero ---------- */
+.aboutHero {
+  padding-top: 120px;     /* clears fixed navbar */
+  padding-bottom: 48px;
+}
+
+.aboutHeroInner {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+/* left media */
+.aboutHeroMedia {
+  position: relative;
+  min-height: 420px;
+  display: grid;
+  place-items: center;
+  overflow: visible;
+}
+
+.aboutMyImageWrapper {
+  width: 100%;
+  max-width: 520px;
+  min-width: 320px;
+  height: auto;
+
+  overflow: hidden;
+  border-radius: 24px;
+  box-shadow: 0 16px 60px rgba(0,0,0,.45);
+}
+
+.aboutMyImage {
+  width: min(520px, 92%);
+  height: auto;
+  border-radius: 24px;
+  filter: drop-shadow(0 16px 60px rgba(0,0,0,.45));
+  position: relative;
+  z-index: 2;
+}
+
+/* splat accents (subtle, not the crazy colors from the example) */
+.aboutSplat {
+  position: absolute;
+  inset: auto;
+  width: 78%;
+  height: 78%;
+  border-radius: 28px;
+  background: radial-gradient(circle at 30% 30%, rgba(120,160,255,.22), transparent 55%),
+              radial-gradient(circle at 70% 60%, rgba(255,255,255,.10), transparent 60%),
+              rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.10);
+  z-index: 1;
+  transform: rotate(-4deg);
+}
+
+.aboutSplatA { transform: rotate(-6deg) translate(-14px, 8px); }
+.aboutSplatB { transform: rotate(5deg) translate(18px, -10px); opacity: .55; }
+
+/* right text */
+.aboutHeroText{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.aboutKicker {
+  display: inline-flex;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  backdrop-filter: blur(10px);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  margin-bottom: 14px;
+}
+
+.aboutLead {
+  margin: 0;
+  font-size: clamp(20px, 2.2vw, 26px);
+  color: rgba(255,255,255,.92);
+  max-width: 60ch;
+}
+
+.aboutBody {
+  margin: 14px 0 0;
+  color: rgba(255,255,255,.74);
+  max-width: 68ch;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.aboutTldr {
+  margin-top: 18px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(0,0,0,.45);
+  border: 1px solid rgba(255,255,255,.10);
+  color: rgba(255,255,255,.92);
+  text-align: center;
+  font-weight: 600;
+}
+
+/* CTAs */
+.aboutCtas {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* ---------- About: body ---------- */
+.pageBody {
+  padding-bottom: 96px;
+}
+
+.aboutGrid {
+  display: grid;
+  gap: 18px;
+}
+
+.aboutCard {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  padding: 18px;
+}
+
+.aboutCards3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.aboutMiniCard {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 16px;
+  padding: 14px;
+}
+
+.aboutMiniTitle {
+  margin: 0 0 8px;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+}
+
+.aboutBullets {
+  margin: 12px 0 0;
+  padding-left: 1.2rem;
+}
+
+.aboutBullets li { margin: .35rem 0; }
+
+.aboutFAQs {
+  margin-top: 36px;
+  display: grid;
+  gap: 24px;
+
+  text-align: left;
+}
+
+.faqList {
+  display: grid;
+  gap: 18px;
+}
+
+.faqItem {
+  border-radius: 16px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+
+}
+
+/* cleanup facts since they were converted to FAQs */
+.aboutFacts {
+  display: grid;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.aboutFact {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.aboutFactLabel {
+  color: rgba(255,255,255,.60);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+}
+
+.aboutFactValue { color: rgba(255,255,255,.90); }
+
+/* Responsive */
+@media (max-width: 980px) {
+  .aboutHeroInner { grid-template-columns: 1fr; }
+  .aboutHeroMedia { min-height: 340px; }
+  .aboutCards3 { grid-template-columns: 1fr; }
+}

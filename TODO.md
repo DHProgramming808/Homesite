@@ -26,6 +26,7 @@ Jan 26 checkpoint
 -move the Login/profile button inside the menu bar if the website is squeezed
 -fix logo
 -fix logo in footer
+-make the FAQs prettier
 
 -(longterm) light/dark theme
 

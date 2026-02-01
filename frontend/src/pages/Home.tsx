@@ -27,7 +27,6 @@ export default function Home() {
   return (
     <main id ="top">
       <section className = "hero">
-        {/*grain*/}
         <div className="container reveal" >
           <h1 className = {`h1 heroTitle ${visible ? "isVisible" : "isHidden"}`}>
             {text}

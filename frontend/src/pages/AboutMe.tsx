@@ -1,18 +1,128 @@
 import "../styles/ContactMe.css";
+import "../styles/AboutMe.css";
 
 import { Link } from "react-router-dom";
 
 export default function AboutMe() {
 
+  const FAQs = [
+    {
+      question: "What is your favorite place to SCUBA dive?",
+      answer: "From my time living in Hawaii, I am biased to say Maunalua Bay just off of Kalaniana'ole Hwy on Oahu. Such an incredibly diverse and rich ecosystem!. An easy second place is the Caribbean, beautiful clear water and vibrant marine life.",
+    },
+    {
+      question: "What does you SCUBA setup look like?",
+      answer: "I use a 12L aluminum tank mounted on a backplate and wings with a 5ft primary regulator and a short backup octopus reg in case of emergencies. I'm not a gear snob, but I do like to keep things simple and reliable. DIR. Do. It. Right.",
+    },
+    {
+    question: "What tech do you use most?",
+      answer: "While my area of expertise is largely backend, I have experience with Full Stack development. React + TypeScript on the frontend, plus APIs (Node/.NET/Java), databases (SQL/MongoDB), and AWS when hosting.",
+    },
+    {
+      question: "Where are you located?",
+      answer: "I am currently based in NY/NJ, but I am open to remote opportunities and relocation as well. This world is too vast to stay in one place!",
+    },
+    {
+      question: "Are you open to freelance / contract work?",
+      answer: "Yes — especially for projects where quality and UX matter. While I'm primarily looking for full-time roles, I enjoy contributing to projects that are a good fit for me.",
+    },
+    {
+      question: "What do you like building?",
+      answer: "Apps that work. Clean, simple, reliable products that solve real problems. I've worked on tax solutions, clinical decision support APIs, and research data management apps for the federal government. While not the most flashy or cutting edge, I enjoy building systems that are designed to help people get their work done effectively.",
+    },
+    {
+      question: "What do you like doing when you're not coding?",
+      answer: "I enjoy SCUBA diving, reading, cooking, and playing tennis. Exercise for the body and exercise for the soul. And as much as I seem like a homebody, I am a glut for traveling as much as I can, and love exploring new places and cultures.",
+    },
+    {
+      question: "What is your favorite dish to cook?",
+      answer: "I love to make a mean Bulgogi Gumbo over rice with a side of Mac salad. A fusion of my Korean heritage and my experience living in both in the boot (Louisiana) and Hawaii. These dishes aren't fancy haute cuisine, instead born out of necessity and resourcefulness. I think it speaks to my personality, a scrappy underdog fighter who will do whatever it takes to get the job done.",
+    },
+    {
+      question: "What's your dream job?",
+      answer: "To be sipping a Mai Tai on a beach in Hawaii. Just kidding (sort of). To be honest, any role where I can build meaningful products that help people, while working with a talented and driven team. I see myself as a big picture person who enjoys both the technical and human sides of software development, so an ideal environment would be one where I can contribute on multiple levels.",
+    }
+  ];
+
   return (
     <main className="container">
       {/* Header */}
-      <header className="aboutHeader">
-        <h1 className="h1">About Me</h1>
-        <p className="subhead" style={{ marginTop: "12px" }}>
-          It's good to meet you! I'm Daniel
-        </p>
-        </header>
+      <section className="aboutHero">
+        <div className = "aboutHeroInner container">
+          {/* Left column */}
+          <div className="aboutHeroMedia">
+            <div className="aboutMyImageWrapper">
+              <img
+                src= "/Dan_Hong_Crab.jpg"
+                alt="MEMEMEMEME"
+                className="aboutMyImage"
+              />
+              {/* <div optional splash/accent layer */}
+            </div>
+
+          </div>
+
+          {/* Right column */}
+          <div className = "aboutHeroText">
+            <h1 className = "h1" style={{marginBottom: "75px", textAlign: "left"}}>
+              Who is this guy?
+            </h1>
+
+            <div className = "aboutLead" style={{textAlign: "left"}}>
+              I'm <strong>Daniel Hong</strong> Ipsum Lorem
+            </div>
+
+            <div className = "aboutTldr">
+              TLDR: Ipsum Lorem
+            </div>
+
+            {/* CTAs */}
+            <div className="aboutCtas">
+              <Link className="btn" to="/projects">
+                Come look at my portfolio!
+              </Link>
+              <a className  = "btn btnPrimary" href="files/Daniel_Hong_Resume.pdf">
+                View Resume
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQs Section */}
+      {/* TODO justify text left */}
+      <section className = "container pageBody">
+        <div className = "aboutFAQs">
+          <h1 className = "h1 aboutFAQsTitle"> FAQs</h1>
+
+          <div className="faqList">
+            {FAQs.map((item) => (
+              <details key={item.question} className="faqItem">
+                <summary className="faqSummary">
+                  <span className="faqQuestion">{item.question}</span>
+                  <span className="faqChevron" aria-hidden="true">▾</span>
+                </summary>
+
+                <div className="faqAnswer subhead">
+                  {item.answer}
+                </div>
+              </details>
+            ))}
+          </div>
+
+
+        </div>
+      </section>
+
+      {/* Contact me Section */}
+      {/* TODO justify text left */}
+      <section className = "contactMe">
+        <h2 className = "h2 contactMeTitle">Still have questions? Want to get in touch?</h2>
+        <Link className="btn btnPrimary contactMeCta" to="/contact">
+          Contact Me
+        </Link>
+      </section>
+
     </main>
   );
 }
