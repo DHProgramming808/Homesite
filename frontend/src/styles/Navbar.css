@@ -27,10 +27,16 @@
   box-shadow: 0 10px 30px rgba(0,0,0,.35);
 }
 
+.navbarScrolled {
+  background: rgba(10, 12, 16, .75);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+
 .navInner {
   max-width: var(--maxw);
   margin: 0 auto;
-  padding: 16px 24px;
+  padding: 0px 24px;
 
   display: flex;
   align-items: center;

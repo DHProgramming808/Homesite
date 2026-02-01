@@ -11,7 +11,12 @@ import Footer from "./components/Footer";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
 import AdminStub from "./pages/AdminStub";
+import TechnicalMe from "./pages/TechnicalMe";
 import AboutMe from "./pages/AboutMe";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
+import Contact from "./pages/Contact";
+
 
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -28,6 +33,14 @@ export default function App() {
         <Route path = "/login" element = {<Login />} />
         <Route path = "/register" element = {<Register />} />
         <Route path = "/aboutme" element = {<AboutMe />} />
+
+        <Route path = "/aboutme" element = {<AboutMe />} />
+
+        <Route path = "/technicalme" element = {<TechnicalMe />} />
+        <Route path = "/contact" element = {<Contact />} />
+
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
 
         <Route
           path = "/stub"
