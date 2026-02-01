@@ -22,7 +22,7 @@
 
 .aboutMyImageWrapper {
   width: 100%;
-  max-width: 520px;
+  max-width: 700px;
   min-width: 320px;
   height: auto;
 
@@ -32,7 +32,7 @@
 }
 
 .aboutMyImage {
-  width: min(520px, 92%);
+  width: min(700px, 92%);
   height: auto;
   border-radius: 24px;
   filter: drop-shadow(0 16px 60px rgba(0,0,0,.45));
@@ -63,6 +63,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  scroll-margin-top: 100px;
 }
 
 .aboutKicker {
@@ -170,11 +171,23 @@
 }
 
 .faqItem {
-  border-radius: 16px;
   overflow: hidden;
   backdrop-filter: blur(10px);
   transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
 
+}
+
+.faqQuestion {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.faqAnswer {
+  max-width: 920px;
+  font-size: 20px;
+  margin-bottom: 30px;
+  margin-top: 15px
 }
 
 /* cleanup facts since they were converted to FAQs */
@@ -205,4 +218,7 @@
   .aboutHeroInner { grid-template-columns: 1fr; }
   .aboutHeroMedia { min-height: 340px; }
   .aboutCards3 { grid-template-columns: 1fr; }
+  .aboutHeroText {
+    scroll-margin-top: 52px;
+  }
 }

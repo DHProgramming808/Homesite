@@ -44,11 +44,18 @@ export default function AboutMe() {
     }
   ];
 
+  const scrollToNext = () => {
+    const element = document.getElementById("aboutHeroText");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  }
+
   return (
     <main className="container">
       {/* Header */}
       <section className="aboutHero">
-        <div className = "aboutHeroInner container">
+        <div className = "aboutHeroInner">
           {/* Left column */}
           <div className="aboutHeroMedia">
             <div className="aboutMyImageWrapper">
@@ -56,6 +63,7 @@ export default function AboutMe() {
                 src= "/Dan_Hong_Crab.jpg"
                 alt="MEMEMEMEME"
                 className="aboutMyImage"
+                onClick={scrollToNext}
               />
               {/* <div optional splash/accent layer */}
             </div>
@@ -63,23 +71,30 @@ export default function AboutMe() {
           </div>
 
           {/* Right column */}
-          <div className = "aboutHeroText">
+          <div id="aboutHeroText" className = "aboutHeroText">
             <h1 className = "h1" style={{marginBottom: "75px", textAlign: "left"}}>
               Who is this guy?
             </h1>
 
+            <div className = "aboutLead" style={{textAlign: "left", marginBottom: "24px"}}>
+              Daniel Hong is a pragmatic backend engineer with full-stack experience, quickly diving into the world of AI. He’s most at home untangling complex problems, designing systems that make sense a month later, and aiming for software that’s boring for all the right reasons.
+            </div>
+
             <div className = "aboutLead" style={{textAlign: "left"}}>
-              I'm <strong>Daniel Hong</strong> Ipsum Lorem
+              And the latest trends cutting edge technology is not the only thing he dives into. When he’s not writing code, he’s likely underwater as a PADI-certified rescue SCUBA diver, experimenting in the kitchen, or up in the air flying a bug smasher. He tends to approach software the same way he approaches everything else: plan ahead, stay curious, and keep a steady hand when things get interesting.
             </div>
 
             <div className = "aboutTldr">
-              TLDR: Ipsum Lorem
+              TLDR: Turns chaos into something that works, usually on purpose.
             </div>
 
             {/* CTAs */}
             <div className="aboutCtas">
               <Link className="btn" to="/projects">
                 Come look at my portfolio!
+              </Link>
+              <Link className="btn" to="/technicalme">
+                My Tech Skills
               </Link>
               <a className  = "btn btnPrimary" href="files/Daniel_Hong_Resume.pdf">
                 View Resume
@@ -90,9 +105,8 @@ export default function AboutMe() {
       </section>
 
       {/* FAQs Section */}
-      {/* TODO justify text left */}
       <section className = "container pageBody">
-        <div className = "aboutFAQs">
+        <div className = "aboutFAQs" style = {{marginLeft: "140px"}}>
           <h1 className = "h1 aboutFAQsTitle"> FAQs</h1>
 
           <div className="faqList">
@@ -100,7 +114,6 @@ export default function AboutMe() {
               <details key={item.question} className="faqItem">
                 <summary className="faqSummary">
                   <span className="faqQuestion">{item.question}</span>
-                  <span className="faqChevron" aria-hidden="true">▾</span>
                 </summary>
 
                 <div className="faqAnswer subhead">
