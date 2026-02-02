@@ -1,15 +1,23 @@
-import { getToken } from "./auth";
 import { getAccessToken, getRefreshToken, setTokens, clearTokens } from "./auth";
-import { Navigate } from "react-router-dom";
 
 
-const API_BASE = "http://localhost:5000/api/v1" // TODO configure this for local and remote hosts
-//const API_BASE = "https://localhost:8080/api/v1" // TODO configure this for local and remote hosts
+declare global {
+  interface Window {
+    __CONFIG__?: {
+      API_BASE_URL?: string;
+    };
+  }
+}
+
+const GATEWAY_BASE = window.__CONFIG__?.API_BASE_URL ??
+  import.meta.env.VITE_API_BASE_URL ??
+  "http://localhost:5000";
 
 
+// TODO move get Auth.Api /info and Auth.Api /health to separate api file?
 export const getInfo = async () => {
   try {
-    const response = await fetch("http://localhost:5000/api/v1/info"); //TODO configure this for local and remote hosting
+    const response = await fetch(`${GATEWAY_BASE}/auth/get-info`); //TODO configure this for local and remote hosting
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -23,7 +31,7 @@ export const getInfo = async () => {
 
 
 export const loginApi = async (email: string, password: string) => {
-  const response = await fetch(`${API_BASE}/user/login`, {
+  const response = await fetch(`${GATEWAY_BASE}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
@@ -41,13 +49,18 @@ export const logoutApi = async () => {
   const refreshToken = getRefreshToken();
   if (!refreshToken) return;
 
-  await fetch(`${API_BASE}/user/logout`, {
+  var response = await fetch(`${GATEWAY_BASE}/auth/logout`, {
     method: "POST",
     headers: { "Content-Type": "application/json",
       Authorization: `Bearer ${getAccessToken()}`
      },
     body: JSON.stringify({ refreshToken }),
   });
+  if (!response.ok) {
+    throw new Error("Logout failed");
+  }
+
+  clearTokens();
 };
 
 
@@ -55,7 +68,7 @@ export const refreshAccessToken = async () => {
   const refreshToken = getRefreshToken();
   if (!refreshToken) throw new Error("No refresh token");
 
-  const response = await fetch(`${API_BASE}/user/refresh`, {
+  const response = await fetch(`${GATEWAY_BASE}/auth/refresh-token`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ refreshToken }),
@@ -67,14 +80,14 @@ export const refreshAccessToken = async () => {
   }
 
   const data = await response.json();
-  localStorage.SetTokens(data.accessToken, data.refreshToken); // TODO move this function to auth.tsx?
+  setTokens(data.accessToken, data.refreshToken); // TODO move this function to auth.tsx?
 
-  return data as Promise<{ accessToken: string; refreshToken: string }>;
+  return data as { accessToken: string; refreshToken: string };
 }
 
 
 export const register = async (email: string, username: string, password: string) => {
-  const response = await fetch(`${API_BASE}/user/register`, {
+  const response = await fetch(`${GATEWAY_BASE}/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, username, password }),
@@ -90,7 +103,7 @@ export const register = async (email: string, username: string, password: string
 export const getProtectedStub = async () => {
   let token = getAccessToken();
 
-  let response = await fetch(`${API_BASE}/user/stub-protected`, {
+  let response = await fetch(`${GATEWAY_BASE}/auth/stub-protected`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -100,7 +113,7 @@ export const getProtectedStub = async () => {
     await refreshAccessToken();
     token = getAccessToken();
 
-    response = await fetch(`${API_BASE}/user/stub-protected`, {
+    response = await fetch(`${GATEWAY_BASE}/auth/stub-protected`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -111,6 +124,7 @@ export const getProtectedStub = async () => {
     throw new Error("Unauthorized");
   }
 
-  return response.json();
+  const text = await response.text();
+  return text ? JSON.parse(text) : null;
 };
 
