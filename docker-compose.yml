@@ -100,7 +100,7 @@ services:
       context: ./backend
       dockerfile: Gateway.Api/Dockerfile
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Docker
       # if gateway needs internal service discovery, add env vars here similarly
     depends_on:
       auth-api:
