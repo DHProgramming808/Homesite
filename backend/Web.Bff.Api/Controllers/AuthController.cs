@@ -52,7 +52,7 @@ public class AuthController : ControllerBase
 
         var body = await response.Content.ReadAsStringAsync();
 
-        return Results.Json(body); // TODO make sure we are returning the correct structure of the call. status code?
+        return Results.Ok(JsonDocument.Parse(body).RootElement); // TODO make sure we are returning the correct structure of the call. status code?
     }
 
 
@@ -77,7 +77,7 @@ public class AuthController : ControllerBase
 
         var body = await response.Content.ReadAsStringAsync();
 
-        return Results.Json(body); // TODO make sure we are returning the correct structure of the call. status code?
+        return Results.Ok(JsonDocument.Parse(body).RootElement); // TODO make sure we are returning the correct structure of the call. status code?
     }
 
 
@@ -95,8 +95,8 @@ public class AuthController : ControllerBase
 
         var body = await response.Content.ReadAsStringAsync();
 
-        return Results.Json(body); // TODO make sure we are returning the correct structure of the call. status code?
-    }
+        return Results.Ok(JsonDocument.Parse(body).RootElement); // TODO make sure we are returning the correct structure of the call. status code?
+     }
 
 
     [Authorize]

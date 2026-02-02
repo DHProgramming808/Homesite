@@ -68,6 +68,8 @@ services:
       - ConnectionStrings__DefaultConnection=server=mysql;port=3306;database=${MYSQL_DATABASE};user=${MYSQL_USER};password=${MYSQL_PASSWORD}
       - Mongo__ConnectionString=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongo:27017
       - Jwt__Key=${JWT_KEY}
+      - Jwt__Issuer=Auth.Api
+      - Jwt__Audience=Homesite
     depends_on:
       mysql:
         condition: service_healthy
@@ -86,9 +88,11 @@ services:
       dockerfile: Web.Bff.Api/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      # internal docker-to-docker URLs
-      - Services__Auth=http://auth-api:8080
-      - Services__Recipes=http://recipes-api:8080
+      - Services__Auth=http://auth-api:8080/
+      # - Services__Recipes=http://recipes-api:8080/
+      - Jwt__Key=${JWT_KEY}
+      - Jwt__Issuer=Auth.Api
+      - Jwt__Audience=Homesite
     depends_on:
       auth-api:
         condition: service_started

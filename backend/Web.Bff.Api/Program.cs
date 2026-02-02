@@ -12,22 +12,59 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
+// -- Bind Configurations --
+builder.Services.Configure<JwtOptions>(
+    builder.Configuration.GetSection("Jwt"));
+builder.Services.Configure<CorsOptions>(
+    builder.Configuration.GetSection("Cors"));
 
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes("temp_key_temp_key_temp_key_temp_key")) // TODO change keys and get from config
-        };
+// ---CORS Setup---
+var cors = builder.Configuration.GetSection("Cors").Get<CorsOptions>() ?? new CorsOptions();
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins(cors.AllowedOrigins)
+            .AllowAnyHeader()
+            .AllowAnyMethod();
     });
+});
+
+// ---JWT Authentication Setup ---
+var jwt = builder.Configuration.GetSection("Jwt").Get<JwtOptions>() ?? new JwtOptions();
+
+if (string.IsNullOrEmpty(jwt.Key) || jwt.Key.Length < 16)
+{
+    throw new InvalidOperationException("JWT Signing Key is not configured.");
+}
+
+var key = Encoding.UTF8.GetBytes(jwt.Key); // TODO change keys
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = jwt.RequireHttpsMetadata; // TODO change for higher environments
+    options.SaveToken = true;
+
+    options.TokenValidationParameters = new TokenValidationParameters //TODO
+    {
+        ValidateIssuer = false,
+        ValidIssuer = jwt.Issuer,
+
+        ValidateAudience = false,
+        ValidAudience = jwt.Audience,
+
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.FromMinutes(2)
+    };
+});
 
 builder.Services.AddAuthorization();
 
@@ -36,15 +73,13 @@ builder.Services.AddTransient<CorrelationIdHandler>();
 
 builder.Services.AddHttpClient("Auth", c =>
 {
-    c.BaseAddress = new Uri("http://localhost:5000/"); //TODO get from config
+    var baseUrl = builder.Configuration["Services:Auth"];
+    if (string.IsNullOrWhiteSpace(baseUrl))
+        throw new InvalidOperationException("Services:Auth is not configured.");
+
+    c.BaseAddress = new Uri(baseUrl);
 })
-.AddHttpMessageHandler<CorrelationIdHandler>(); // TODO verify if we need the handler here as well
-builder.Services.AddHttpClient("Recipes", c =>
-{
-    c.BaseAddress = new Uri("http://localhost:6000/"); //TODO get from config
-}); // TODO check if we also need a correlation handler here
-
-
+.AddHttpMessageHandler<CorrelationIdHandler>();
 
 
 
