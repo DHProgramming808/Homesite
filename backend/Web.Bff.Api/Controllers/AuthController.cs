@@ -320,7 +320,7 @@ public class AuthController : ControllerBase
 
 
     [AllowAnonymous]
-    [HttpGet("get-health")]
+    [HttpGet("health")]
     public async Task<IResult> GetHealth()
     {
         var client = _httpClientFactory.CreateClient("Auth");

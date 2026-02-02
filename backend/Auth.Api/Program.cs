@@ -82,7 +82,36 @@ builder.Services.AddDbContext<AuthDbContext>(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddHealthChecks();
+
 var app = builder.Build();
+
+app.Use(async (context, next) =>
+{
+    const string header = "X-Correlation-ID";
+
+    var correlationId = context.Request.Headers[header].FirstOrDefault();
+    if (string.IsNullOrEmpty(correlationId))
+    {
+        correlationId = Guid.NewGuid().ToString("N");
+    }
+
+    context.Items[header] = correlationId;
+    context.Response.OnStarting(() =>
+    {
+        context.Response.Headers[header] = correlationId;
+        return Task.CompletedTask;
+    });
+
+    using (app.Logger.BeginScope(new Dictionary<string, object>
+    {
+        [header] = correlationId
+    }))
+    {
+        await next();
+    }
+
+});
 
 // Configure middleware
 if (app.Environment.IsDevelopment())
