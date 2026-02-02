@@ -24,12 +24,14 @@ public class UserController : ControllerBase
     private readonly AuthDbContext _authDb;
     private readonly IConfiguration _config;
     private readonly JwtTokenService _jwtTokenService;
+    private readonly ILogger<UserController> _logger;
 
-    public UserController(AuthDbContext authDb, IConfiguration config, JwtTokenService jwtTokenService)
+    public UserController(AuthDbContext authDb, IConfiguration config, JwtTokenService jwtTokenService, ILogger<UserController> logger)
     {
         _authDb = authDb;
         _config = config; // TODO use _config to get secretKey, and configure config files
         _jwtTokenService = jwtTokenService;
+        _logger = logger;
     }
 
 
@@ -48,10 +50,11 @@ public class UserController : ControllerBase
 
         if (result == PasswordVerificationResult.Failed)
         {
+            _logger.LogWarning("Failed login attempt for user {Email}", request.Email);
             return Unauthorized("Invalid password");
         }
 
-
+        _logger.LogInformation("Login success for userId={UserId}", user.Id);
         var AccessTokenString = _jwtTokenService.WriteAccessToken(user);  //tokenHandler.WriteToken(AccessToken);
         var refreshToken = _jwtTokenService.CreateRefreshToken(user);
 
@@ -75,6 +78,7 @@ public class UserController : ControllerBase
             .SingleOrDefault(rt => rt.Token == request.RefreshToken && rt.Revoked != true);
         // TODO check if we also need the AccessToken for extra security / revoke the Access token
 
+        _logger.LogInformation("Logout attempt userId={UserId}", userId);
         if (userId == null || token == null || token.Revoked || token.Expires < DateTime.UtcNow)
         {
             return Unauthorized();
@@ -101,6 +105,7 @@ public class UserController : ControllerBase
         var userTokens = _authDb.RefreshTokens.Where(rt => rt.UserId == userId && rt.Revoked != true).ToList();
         // TODO check if we also need the AccessToken for extra security / revoke the Access token
 
+        _logger.LogInformation("Logout attempt userId={UserId}", userId);
         if (userId == null || userTokens == null || !userTokens.Any())
         {
             return Unauthorized();
@@ -123,6 +128,7 @@ public class UserController : ControllerBase
             .Include(rt => rt.User)
             .SingleOrDefault(rt => rt.Token == request.RefreshToken);
 
+        _logger.LogInformation("Refresh attempt for token={TokenPrefix}", request.RefreshToken[..8]);
         if (stored == null || stored.Revoked || stored.Expires < DateTime.UtcNow)
         {
             return Unauthorized();
@@ -148,12 +154,16 @@ public class UserController : ControllerBase
     [HttpPost("register")]
     public IActionResult Register([FromBody] RegisterRequest request)
     {
+        _logger.LogInformation("Registration attempt for email={Email}, username={Username}", request.Email, request.Username);
+
         if (_authDb.Users.Any(u => u.Email ==request.Email))
         {
+            _logger.LogWarning("Registration failed: email already in use: {Email}", request.Email);
             return BadRequest("Email already in use");
         }
         if (_authDb.Users.Any(u => u.Username ==request.Username))
         {
+            _logger.LogWarning("Registration failed: username already in use: {Username}", request.Username);
             return BadRequest("Username already in use");
         }
 
@@ -169,6 +179,7 @@ public class UserController : ControllerBase
         _authDb.Users.Add(user);
         _authDb.SaveChanges();
 
+        _logger.LogInformation("Registration successful for userId={UserId}", user.Id);
         return Ok(new { message = "registered" });
     }
 
