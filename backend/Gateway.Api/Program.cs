@@ -25,6 +25,8 @@ builder.Services.AddCors(options =>
 builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
+builder.Services.AddHealthChecks();
+
 var app = builder.Build();
 
 app.UseCors("Frontend");
@@ -33,5 +35,7 @@ app.MapMethods("{**path}", new[] { "OPTIONS" }, () => Results.Ok())
     .RequireCors("Frontend");
 
 app.MapReverseProxy();
+
+app.MapHealthChecks("/health");
 
 app.Run();

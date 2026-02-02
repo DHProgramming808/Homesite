@@ -81,6 +81,7 @@ builder.Services.AddHttpClient("Auth", c =>
 })
 .AddHttpMessageHandler<CorrelationIdHandler>();
 
+builder.Services.AddHealthChecks();
 
 
 var app = builder.Build();
@@ -118,6 +119,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHealthChecks("/health");
 
 
 app.Run();
