@@ -51,8 +51,22 @@ public class AuthController : ControllerBase
         }
 
         var body = await response.Content.ReadAsStringAsync();
+        var statusCode = (int)response.StatusCode;
+        var mediaType = response.Content.Headers.ContentType?.MediaType;
 
-        return Results.Ok(JsonDocument.Parse(body).RootElement); // TODO make sure we are returning the correct structure of the call. status code?
+        if (!string.IsNullOrWhiteSpace(body) && mediaType != null && mediaType.Contains("json"))
+        {
+            return Results.Json(
+                JsonDocument.Parse(body).RootElement,
+                statusCode: statusCode
+            );
+        }
+
+        return Results.Content(
+            body ?? "",
+            mediaType ?? "text/plain",
+            statusCode: statusCode
+        ); // TODO make sure we are returning the correct structure of the call. status code?
     }
 
 
@@ -76,8 +90,22 @@ public class AuthController : ControllerBase
         }
 
         var body = await response.Content.ReadAsStringAsync();
+        var statusCode = (int)response.StatusCode;
+        var mediaType = response.Content.Headers.ContentType?.MediaType;
 
-        return Results.Ok(JsonDocument.Parse(body).RootElement); // TODO make sure we are returning the correct structure of the call. status code?
+        if (!string.IsNullOrWhiteSpace(body) && mediaType != null && mediaType.Contains("json"))
+        {
+            return Results.Json(
+                JsonDocument.Parse(body).RootElement,
+                statusCode: statusCode
+            );
+        }
+
+        return Results.Content(
+            body ?? "",
+            mediaType ?? "text/plain",
+            statusCode: statusCode
+        );
     }
 
 
@@ -93,10 +121,24 @@ public class AuthController : ControllerBase
             return await HttpErrorMapper.ToErrorResultAsync(response, CorrelationId);
         }
 
-        var body = await response.Content.ReadAsStringAsync();
+                var body = await response.Content.ReadAsStringAsync();
+        var statusCode = (int)response.StatusCode;
+        var mediaType = response.Content.Headers.ContentType?.MediaType;
 
-        return Results.Ok(JsonDocument.Parse(body).RootElement); // TODO make sure we are returning the correct structure of the call. status code?
-     }
+        if (!string.IsNullOrWhiteSpace(body) && mediaType != null && mediaType.Contains("json"))
+        {
+            return Results.Json(
+                JsonDocument.Parse(body).RootElement,
+                statusCode: statusCode
+            );
+        }
+
+        return Results.Content(
+            body ?? "",
+            mediaType ?? "text/plain",
+            statusCode: statusCode
+        );
+    }
 
 
     [Authorize]
@@ -110,6 +152,7 @@ public class AuthController : ControllerBase
         {
             client.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse(authHeader);
         }
+        // TODO currently refresh token is not being sent. Auth.Api technically doesn't need it, but for extra security we might want to send it along and verify it there before logging out
 
         var response = await client.PostAsync("api/v1/user/logout", null); // TODO change the endpoint address from api to auth or something and sync it with the Controller in Auth.Api
 
@@ -119,8 +162,22 @@ public class AuthController : ControllerBase
         }
 
         var body = await response.Content.ReadAsStringAsync();
+        var statusCode = (int)response.StatusCode;
+        var mediaType = response.Content.Headers.ContentType?.MediaType;
 
-        return Results.Ok(JsonDocument.Parse(body).RootElement); // TODO make sure we are returning the correct structure of the call. status code?
+        if (!string.IsNullOrWhiteSpace(body) && mediaType != null && mediaType.Contains("json"))
+        {
+            return Results.Json(
+                JsonDocument.Parse(body).RootElement,
+                statusCode: statusCode
+            );
+        }
+
+        return Results.Content(
+            body ?? "",
+            mediaType ?? "text/plain",
+            statusCode: statusCode
+        ); // TODO make sure we are returning the correct structure of the call. status code?
     }
 
 
@@ -144,31 +201,48 @@ public class AuthController : ControllerBase
         }
 
         var body = await response.Content.ReadAsStringAsync();
+        var statusCode = (int)response.StatusCode;
+        var mediaType = response.Content.Headers.ContentType?.MediaType;
 
-        return Results.Ok(JsonDocument.Parse(body).RootElement); // TODO make sure we are returning the correct structure of the call. status code?
+        if (!string.IsNullOrWhiteSpace(body) && mediaType != null && mediaType.Contains("json"))
+        {
+            return Results.Json(
+                JsonDocument.Parse(body).RootElement,
+                statusCode: statusCode
+            );
+        }
+
+        return Results.Content(
+            body ?? "",
+            mediaType ?? "text/plain",
+            statusCode: statusCode
+        ); // TODO make sure we are returning the correct structure of the call. status code?
     }
 
 
     // TODO stubs
     // TODO Also Move these functions to a different controller like UserController once implemented properly
     [Authorize]
-    [HttpGet("stub-protected")] // TODO make sure to change this to profile once the auth.api.usercontroller.cs is updated with the profile endpoint
-    public async Task<IResult> StubProtected()
+    [HttpGet("stub-protected")]
+    public IResult StubProtected()
     {
-        var client = _httpClientFactory.CreateClient("Auth");
+        // If we reached here, JWT auth already succeeded.
+        // Return some useful info for debugging wiring.
+        var claims = User.Claims
+            .Select(c => new { type = c.Type, value = c.Value })
+            .ToList();
 
-        var authHeader = Request.Headers.Authorization.ToString();
-        if (!string.IsNullOrEmpty(authHeader))
+        return Results.Ok(new
         {
-            client.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse(authHeader);
-        }
-
-        client.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse(authHeader);
-
-        var response = await client.PostAsync("api/v1/user/logout-all", null); // TODO change the endpoint address from api to auth or something and sync it with the Controller in Auth.Api
-        var body = await response.Content.ReadAsStringAsync();
-
-        return Results.Ok(JsonDocument.Parse(body).RootElement); // TODO make sure we are returning the correct structure of the call. status code?
+            ok = true,
+            message = "JWT validated by BFF",
+            user = new
+            {
+                name = User.Identity?.Name,
+                isAuthenticated = User.Identity?.IsAuthenticated ?? false
+            },
+            claims
+        });
     }
 
 
@@ -194,8 +268,22 @@ public class AuthController : ControllerBase
         }
 
         var body = await response.Content.ReadAsStringAsync();
+        var statusCode = (int)response.StatusCode;
+        var mediaType = response.Content.Headers.ContentType?.MediaType;
 
-        return Results.Ok(JsonDocument.Parse(body).RootElement); // TODO make sure we are returning the correct structure of the call. status code?
+        if (!string.IsNullOrWhiteSpace(body) && mediaType != null && mediaType.Contains("json"))
+        {
+            return Results.Json(
+                JsonDocument.Parse(body).RootElement,
+                statusCode: statusCode
+            );
+        }
+
+        return Results.Content(
+            body ?? "",
+            mediaType ?? "text/plain",
+            statusCode: statusCode
+        ); // TODO make sure we are returning the correct structure of the call. status code?
     }
 
 
@@ -212,8 +300,22 @@ public class AuthController : ControllerBase
         }
 
         var body = await response.Content.ReadAsStringAsync();
+        var statusCode = (int)response.StatusCode;
+        var mediaType = response.Content.Headers.ContentType?.MediaType;
 
-        return Results.Ok(JsonDocument.Parse(body).RootElement); // TODO make sure we are returning the correct structure of the call. status code?
+        if (!string.IsNullOrWhiteSpace(body) && mediaType != null && mediaType.Contains("json"))
+        {
+            return Results.Json(
+                JsonDocument.Parse(body).RootElement,
+                statusCode: statusCode
+            );
+        }
+
+        return Results.Content(
+            body ?? "",
+            mediaType ?? "text/plain",
+            statusCode: statusCode
+        ); // TODO make sure we are returning the correct structure of the call. status code?
     }
 
 
@@ -230,7 +332,21 @@ public class AuthController : ControllerBase
         }
 
         var body = await response.Content.ReadAsStringAsync();
+        var statusCode = (int)response.StatusCode;
+        var mediaType = response.Content.Headers.ContentType?.MediaType;
 
-        return Results.Ok(JsonDocument.Parse(body).RootElement); // TODO make sure we are returning the correct structure of the call. status code?
+        if (!string.IsNullOrWhiteSpace(body) && mediaType != null && mediaType.Contains("json"))
+        {
+            return Results.Json(
+                JsonDocument.Parse(body).RootElement,
+                statusCode: statusCode
+            );
+        }
+
+        return Results.Content(
+            body ?? "",
+            mediaType ?? "text/plain",
+            statusCode: statusCode
+        ); // TODO make sure we are returning the correct structure of the call. status code?
     }
 }

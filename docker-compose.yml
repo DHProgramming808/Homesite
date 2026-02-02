@@ -105,6 +105,8 @@ services:
       dockerfile: Gateway.Api/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
+      - Cors__AllowedOrigins__0=http://localhost:3000
+      - Cors__AllowedOrigins__1=http://localhost:5173
       # if gateway needs internal service discovery, add env vars here similarly
     depends_on:
       auth-api:
@@ -124,7 +126,7 @@ services:
         condition: service_started
     environment:
       # IMPORTANT: browser should call localhost, not docker DNS
-      - API_BASE_URL=http://localhost:5000
+      - API_BASE_URL=${API_BASE_URL}
 
 volumes:
   mysql_data:

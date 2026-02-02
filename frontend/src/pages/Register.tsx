@@ -23,7 +23,7 @@ export default function Register() {
   };
 
   return (
-    <form onSubmit={submit}>
+    <form onSubmit={submit} style = {{ marginTop: "120px" }}>
       <input placeholder="Email" onChange={e => setEmail(e.target.value)} />
       <input placeholder="Username" onChange={e => setUsername(e.target.value)} />
       <input type="password" placeholder="Password" onChange={e => setPassword(e.target.value)}

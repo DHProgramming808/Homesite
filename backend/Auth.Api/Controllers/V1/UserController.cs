@@ -169,7 +169,7 @@ public class UserController : ControllerBase
         _authDb.Users.Add(user);
         _authDb.SaveChanges();
 
-        return Ok();
+        return Ok(new { message = "registered" });
     }
 
 
