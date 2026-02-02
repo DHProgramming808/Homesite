@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 //using Api.Data;
 using Shared.DTOs.Auth;
+using Auth.Api.Services;
 //using Api.Models;
 
 namespace Auth.Api.Controllers.V1;
@@ -22,11 +23,13 @@ public class UserController : ControllerBase
 
     private readonly AuthDbContext _authDb;
     private readonly IConfiguration _config;
+    private readonly JwtTokenService _jwtTokenService;
 
-    public UserController(AuthDbContext authDb, IConfiguration config)
+    public UserController(AuthDbContext authDb, IConfiguration config, JwtTokenService jwtTokenService)
     {
         _authDb = authDb;
         _config = config; // TODO use _config to get secretKey, and configure config files
+        _jwtTokenService = jwtTokenService;
     }
 
 
@@ -49,34 +52,8 @@ public class UserController : ControllerBase
         }
 
 
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(secretKey);
-
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Role, user.Role)
-            }),
-            Expires = DateTime.UtcNow.AddMinutes(5), // TODO configure for prod
-            SigningCredentials = new SigningCredentials(
-                new SymmetricSecurityKey(key),
-                SecurityAlgorithms.HmacSha256Signature
-            )
-        };
-
-        var AccessToken = tokenHandler.CreateToken(tokenDescriptor);
-        var AccessTokenString = tokenHandler.WriteToken(AccessToken);
-
-        var refreshToken = new RefreshToken
-        {
-            Token = Guid.NewGuid().ToString(),
-            UserId = user.Id,
-            Expires = DateTime.UtcNow.AddDays(7)
-        };
+        var AccessTokenString = _jwtTokenService.WriteAccessToken(user);  //tokenHandler.WriteToken(AccessToken);
+        var refreshToken = _jwtTokenService.CreateRefreshToken(user);
 
         _authDb.RefreshTokens.Add(refreshToken); //TODO create a nightly jobs class, one job of which is to clear expired refresh tokens
         _authDb.SaveChanges();
@@ -151,37 +128,11 @@ public class UserController : ControllerBase
             return Unauthorized();
         }
 
-        // TODO move token/claims generation to a separate service so that both login and refresh can use it
-        var tokenHandler = new JwtSecurityTokenHandler(); // TODO change to var jwtKey = _config.GetValue<string>("JwtKey");
-        var key = Encoding.ASCII.GetBytes(secretKey);
-
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, stored.User.Id.ToString()),
-                new Claim(ClaimTypes.Email, stored.User.Email),
-                new Claim(ClaimTypes.Name, stored.User.Username),
-                new Claim(ClaimTypes.Role, stored.User.Role)
-
-            }),
-            Expires = DateTime.UtcNow.AddMinutes(5), // TODO configuration
-            SigningCredentials = new SigningCredentials(
-                new SymmetricSecurityKey(key),
-                SecurityAlgorithms.HmacSha256Signature
-            )
-        };
-
-        var newAccessToken = tokenHandler.CreateToken(tokenDescriptor);
-        var newAccessTokenString = tokenHandler.WriteToken(newAccessToken);
+        var newAccessTokenString = _jwtTokenService.WriteAccessToken(stored.User);;
 
         stored.Revoked = true;
 
-        var newRefreshToken = new RefreshToken{
-            Token = Guid.NewGuid().ToString(),
-            UserId = stored.UserId,
-            Expires = DateTime.UtcNow.AddDays(7)
-        };
+        var newRefreshToken = _jwtTokenService.CreateRefreshToken(stored.User);
 
         _authDb.RefreshTokens.Add(newRefreshToken);
         _authDb.SaveChanges();
@@ -218,7 +169,7 @@ public class UserController : ControllerBase
         _authDb.Users.Add(user);
         _authDb.SaveChanges();
 
-        return Ok();
+        return Ok(new { message = "registered" });
     }
 
 

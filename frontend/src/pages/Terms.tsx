@@ -1,4 +1,4 @@
-import '../styles/termsprivacy.css'
+import '../styles/TermsPrivacy.css'
 
 export default function Terms() {
   return (
