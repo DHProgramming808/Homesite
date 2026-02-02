@@ -75,7 +75,7 @@ builder.Services.AddAuthorization();
 // ---End Section ---
 
 // ---MySQL EF CORE---
-var connString = builder.Configuration.GetConnectionString("Defaultconnection");
+var connString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AuthDbContext>(options =>
     options.UseMySql(connString, ServerVersion.AutoDetect(connString)));
 

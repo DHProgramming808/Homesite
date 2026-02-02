@@ -1,11 +1,13 @@
+name: homesite
+
 services:
   mysql:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
@@ -19,8 +21,8 @@ services:
   mongo:
     image: mongo:7
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
     ports:
       - "27017:27017"
     volumes:
@@ -31,69 +33,7 @@ services:
       timeout: 5s
       retries: 20
 
-  auth-api:
-    build:
-      context: ./backend
-      dockerfile: Auth.Api/Dockerfile
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__MySql: >
-       Server=mysql;
-       Port=3306;
-       Database=${MYSQL_DATABASE};
-       User=${MYSQL_USER};
-       Password=${MYSQL_PASSWORD};"
-
-      Mongo__ConnectionString: "mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongo:27017"
-
-      Jwt__Key: "${JWT_KEY}"
-
-    depends_on:
-      mysql:
-        condition: service_healthy
-      mongo:
-        condition: service_healthy
-    ports:
-      - "5001:8080"
-
-  gateway-api:
-    build:
-      context: ./backend
-      dockerfile: Gateway.Api/Dockerfile
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
-    depends_on:
-      - auth-api
-      - web-bff-api
-    ports:
-      - "5000:8080"
-
-  web-bff-api:
-    build:
-      context: ./backend
-      dockerfile: Web.Bff.Api/Dockerfile
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      # examples if BFF needs to call the other APIs *inside docker*
-      Services__Auth: "http://auth-api:8080"
-      Services__Recipes: "http://recipes-api:8080"
-    depends_on:
-      - auth-api
-    ports:
-      - "5002:8080"
-
-  frontend:
-    build:
-      context: ./frontend
-    depends_on:
-      - gateway-api
-    ports:
-      - "3000:80"
-    environment:
-      # if your frontend build can bake in env vars
-      API_BASE_URL: "http://gateway-api:8080"
-
-
+  # One-shot migrator (run on demand, or as a dependency before auth-api starts)
   auth-ef-migrations:
     build:
       context: ./backend
@@ -101,17 +41,86 @@ services:
       target: build
     working_dir: /src
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__MySql: "Server=mysql;Port=3306;Database=${MYSQL_DATABASE};User=${MYSQL_USER};Password=${MYSQL_PASSWORD};"
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=server=mysql;port=3306;database=${MYSQL_DATABASE};user=${MYSQL_USER};password=${MYSQL_PASSWORD}
+      - Jwt__Key=${JWT_KEY}
     depends_on:
       mysql:
         condition: service_healthy
-    command: >
-      sh -c "configs:
-      dotnet tool restore ||
-      true;
-      dotnet ef database update --project Auth.Api/Auth.Api.csproj --startup-project Auth.Api/Auth.Api.csproj -s Auth.Api
-      "
+    command:
+      [
+        "/bin/sh",
+        "-lc",
+        "set -eux;
+        dotnet --info;
+        dotnet tool install -g dotnet-ef;
+        /root/.dotnet/tools/dotnet-ef --version;
+        /root/.dotnet/tools/dotnet-ef database update --project Auth.Api/Auth.Api.csproj --startup-project Auth.Api/Auth.Api.csproj --verbose;
+        echo MIGRATIONS_DONE;"
+      ]
+
+  auth-api:
+    build:
+      context: ./backend
+      dockerfile: Auth.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=server=mysql;port=3306;database=${MYSQL_DATABASE};user=${MYSQL_USER};password=${MYSQL_PASSWORD}
+      - Mongo__ConnectionString=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongo:27017
+      - Jwt__Key=${JWT_KEY}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      auth-ef-migrations:
+        condition: service_completed_successfully
+    ports:
+      - "5001:8080"
+
+  # TODO make Recipes.Api and get it running
+
+  web-bff-api:
+    build:
+      context: ./backend
+      dockerfile: Web.Bff.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      # internal docker-to-docker URLs
+      - Services__Auth=http://auth-api:8080
+      - Services__Recipes=http://recipes-api:8080
+    depends_on:
+      auth-api:
+        condition: service_started
+    ports:
+      - "5002:8080"
+
+  gateway-api:
+    build:
+      context: ./backend
+      dockerfile: Gateway.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      # if gateway needs internal service discovery, add env vars here similarly
+    depends_on:
+      auth-api:
+        condition: service_started
+      web-bff-api:
+        condition: service_started
+    ports:
+      - "5000:8080"
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      gateway-api:
+        condition: service_started
+    environment:
+      # IMPORTANT: browser should call localhost, not docker DNS
+      - API_BASE_URL=http://localhost:5000
 
 volumes:
   mysql_data:
