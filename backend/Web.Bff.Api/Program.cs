@@ -120,6 +120,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHealthChecks("/health");
+app.MapHealthChecks("/bff/health");
 
 
 app.Run();
