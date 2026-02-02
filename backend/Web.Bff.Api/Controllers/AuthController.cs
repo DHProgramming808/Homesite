@@ -120,7 +120,7 @@ public class AuthController : ControllerBase
 
         var body = await response.Content.ReadAsStringAsync();
 
-        return Results.Json(body); // TODO make sure we are returning the correct structure of the call
+        return Results.Ok(JsonDocument.Parse(body).RootElement); // TODO make sure we are returning the correct structure of the call. status code?
     }
 
 
@@ -145,7 +145,7 @@ public class AuthController : ControllerBase
 
         var body = await response.Content.ReadAsStringAsync();
 
-        return Results.Json(body); // TODO make sure we are returning the correct structure of the call
+        return Results.Ok(JsonDocument.Parse(body).RootElement); // TODO make sure we are returning the correct structure of the call. status code?
     }
 
 
@@ -168,7 +168,7 @@ public class AuthController : ControllerBase
         var response = await client.PostAsync("api/v1/user/logout-all", null); // TODO change the endpoint address from api to auth or something and sync it with the Controller in Auth.Api
         var body = await response.Content.ReadAsStringAsync();
 
-        return Results.Json(body); // TODO make sure we are returning the correct structure of the call
+        return Results.Ok(JsonDocument.Parse(body).RootElement); // TODO make sure we are returning the correct structure of the call. status code?
     }
 
 
@@ -195,7 +195,7 @@ public class AuthController : ControllerBase
 
         var body = await response.Content.ReadAsStringAsync();
 
-        return Results.Json(body); // TODO make sure we are returning the correct structure of the call
+        return Results.Ok(JsonDocument.Parse(body).RootElement); // TODO make sure we are returning the correct structure of the call. status code?
     }
 
 
@@ -213,7 +213,7 @@ public class AuthController : ControllerBase
 
         var body = await response.Content.ReadAsStringAsync();
 
-        return Results.Json(body); // TODO make sure we are returning the correct structure of the call
+        return Results.Ok(JsonDocument.Parse(body).RootElement); // TODO make sure we are returning the correct structure of the call. status code?
     }
 
 
@@ -231,6 +231,6 @@ public class AuthController : ControllerBase
 
         var body = await response.Content.ReadAsStringAsync();
 
-        return Results.Json(body); // TODO make sure we are returning the correct structure of the call
+        return Results.Ok(JsonDocument.Parse(body).RootElement); // TODO make sure we are returning the correct structure of the call. status code?
     }
 }
