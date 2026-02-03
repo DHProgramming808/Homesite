@@ -7,7 +7,13 @@ import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Document(collection = "Recipes")
 public class Recipe {
 
@@ -22,16 +28,6 @@ public class Recipe {
   private List<String> steps = new ArrayList<>();
 
   private Instant createdAt = Instant.now();
+  private Instant updatedAt = Instant.now();
 
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public void setTitle(String title) {
-    this.title = title;
-  }
 }
