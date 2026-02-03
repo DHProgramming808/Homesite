@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class HealthControllerRestWrapperAntiPattern {
+public class RestHealthController { // TODO Deprecate this class once GraphQL is fully adopted
 
 
   @GetMapping("/rest-health")
