@@ -8,6 +8,8 @@ public class RecipesApiApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(RecipesApiApplication.class, args);
+
+    System.out.println("Recipes API started successfully.");
 	}
 
 }
