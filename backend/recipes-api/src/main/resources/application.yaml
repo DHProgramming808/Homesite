@@ -12,3 +12,9 @@ jwt:
   issuer: Auth.api
   audience: Homesite
   secret: placeholder_jwt_key_for_development
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,mappings

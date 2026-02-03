@@ -7,8 +7,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class HealthControllerRestWrapperAntiPattern {
 
 
-  @GetMapping("/health")
+  @GetMapping("/rest-health")
     public String healthCheck() {
         return "OK";
+    }
+
+  @GetMapping("/rest-graphql-health")
+    public String graphqlHealthCheck() {
+        return "GraphQL OK";
     }
 }

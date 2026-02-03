@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class RecipesControllerRestWrapperAntiPattern {
 
 
-    @GetMapping("/recipes")
+    @GetMapping("/rest-recipes")
     public String getRecipes() {
         return "List of featured/top recipes";
     }
 
-    @GetMapping("/recipe/{id}")
+    @GetMapping("/rest-recipe/{id}")
     public String getRecipeById(String id) {
         return "Recipe details for ID: " + id;
     }
