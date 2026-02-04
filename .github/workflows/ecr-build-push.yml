@@ -64,25 +64,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Determine whether to push
-        id: pushflag
-        shell: bash
+      - name: Debug git ref
         run: |
-          if [[ "${GITHUB_REF_NAME}" == "dev" || "${GITHUB_REF_NAME}" == "main" ]]; then
-            echo "push=true" >> $GITHUB_OUTPUT
-          else
-            echo "push=false" >> $GITHUB_OUTPUT
-          fi
+          echo "github.ref_name=${{ github.ref_name }}"
+          echo "github.ref=${{ github.ref }}"
+          echo "github.repository=${{ github.repository }}"
 
+      # Only assume AWS role on dev/main AND only when that service changed
       - name: Configure AWS credentials (OIDC)
-        if: steps.pushflag.outputs.push == 'true' && matrix.changed == 'true'
+        if: (github.ref_name == 'dev' || github.ref_name == 'main') && matrix.changed == 'true'
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ env.ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to ECR
-        if: steps.pushflag.outputs.push == 'true' && matrix.changed == 'true'
+        if: (github.ref_name == 'dev' || github.ref_name == 'main') && matrix.changed == 'true'
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Compute tags
@@ -99,7 +96,7 @@ jobs:
         with:
           context: backend
           file: backend/${{ matrix.dockerfile }}
-          push: ${{ steps.pushflag.outputs.push == 'true' }}
+          push: ${{ (github.ref_name == 'dev' || github.ref_name == 'main') }}
           tags: |
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ matrix.ecr_repo }}:sha-${{ steps.vars.outputs.sha_short }}
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ matrix.ecr_repo }}:${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
