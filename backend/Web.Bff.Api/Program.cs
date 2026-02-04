@@ -81,6 +81,16 @@ builder.Services.AddHttpClient("Auth", c =>
 })
 .AddHttpMessageHandler<CorrelationIdHandler>();
 
+builder.Services.AddHttpClient("Recipes", c =>
+{
+    var baseUrl = builder.Configuration["Services:Recipes"];
+    if (string.IsNullOrWhiteSpace(baseUrl))
+        throw new InvalidOperationException("Services:Recipes is not configured.");
+
+    c.BaseAddress = new Uri(baseUrl);
+})
+.AddHttpMessageHandler<CorrelationIdHandler>();
+
 builder.Services.AddHealthChecks();
 
 
