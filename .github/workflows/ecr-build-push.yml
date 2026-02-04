@@ -1,8 +1,9 @@
-name: Build & Push Docker Images to ECR (immutable tags)
+name: Build Docker Images (push to ECR only on dev/main)
 
 on:
   push:
-    branches: ["dev", "main"]
+    branches:
+      - "**"
     paths:
       - "backend/Gateway.Api/**"
       - "backend/Web.Bff.Api/**"
@@ -25,7 +26,6 @@ jobs:
       gateway: ${{ steps.filter.outputs.gateway }}
       bff: ${{ steps.filter.outputs.bff }}
       auth: ${{ steps.filter.outputs.auth }}
-      workflows: ${{ steps.filter.outputs.workflows }}
     steps:
       - uses: actions/checkout@v4
       - id: filter
@@ -38,10 +38,8 @@ jobs:
               - 'backend/Web.Bff.Api/**'
             auth:
               - 'backend/Auth.Api/**'
-            workflows:
-              - '.github/workflows/**'
 
-  build_push:
+  build_and_maybe_push:
     runs-on: ubuntu-latest
     needs: detect
     strategy:
@@ -61,33 +59,44 @@ jobs:
             repo: homesite/auth-api
             context: backend/Auth.Api
 
-    # Run only for services whose folders changed, OR when the workflow itself changes (so you can validate it)
-    if: matrix.changed == 'true' || needs.detect.outputs.workflows == 'true'
-
     steps:
       - uses: actions/checkout@v4
 
+      - name: Determine whether to push
+        id: pushflag
+        run: |
+          if [[ "${GITHUB_REF_NAME}" == "dev" || "${GITHUB_REF_NAME}" == "main" ]]; then
+            echo "push=true" >> $GITHUB_OUTPUT
+          else
+            echo "push=false" >> $GITHUB_OUTPUT
+          fi
+
+      # Only assume AWS role & login if we will actually push
       - name: Configure AWS credentials (OIDC)
+        if: steps.pushflag.outputs.push == 'true' && matrix.changed == 'true'
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ env.ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to ECR
+        if: steps.pushflag.outputs.push == 'true' && matrix.changed == 'true'
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Compute tags
+        if: matrix.changed == 'true'
         id: vars
         run: |
           echo "sha_short=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
           echo "branch=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
 
-      - name: Build & push ${{ matrix.name }}
+      # Always build when changed; push only on dev/main (immutable-safe tags)
+      - name: Build (and push on dev/main) - ${{ matrix.name }}
         if: matrix.changed == 'true'
         uses: docker/build-push-action@v6
         with:
           context: ${{ matrix.context }}
-          push: true
+          push: ${{ steps.pushflag.outputs.push == 'true' }}
           tags: |
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ matrix.repo }}:sha-${{ steps.vars.outputs.sha_short }}
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ matrix.repo }}:${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
