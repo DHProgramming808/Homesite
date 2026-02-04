@@ -1,5 +1,5 @@
 {
-  "family": "homesite-gateway-dev",
+  "family": "homesite-gateway",
   "networkMode": "awsvpc",
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "512",
@@ -17,25 +17,25 @@
       "secrets": [
         {
           "name": "Logging__LogLevel__Microsoft.AspNetCore",
-          "valueFrom": "arn:aws:ssm:us-east-1:373268394585:parameter/homesite/dev/gateway/Logging__LogLevel__Microsoft.AspNetCore"
+          "valueFrom": "arn:aws:ssm:us-east-1:373268394585:parameter/homesite/prod/gateway/Logging__LogLevel__Microsoft.AspNetCore"
         },
         {
           "name": "Logging__LogLevel__Yarp",
-          "valueFrom": "arn:aws:ssm:us-east-1:373268394585:parameter/homesite/dev/gateway/Logging__LogLevel__Yarp"
+          "valueFrom": "arn:aws:ssm:us-east-1:373268394585:parameter/homesite/prod/gateway/Logging__LogLevel__Yarp"
         },
         {
           "name": "Logging__LogLevel__Yarp.ReverseProxy",
-          "valueFrom": "arn:aws:ssm:us-east-1:373268394585:parameter/homesite/dev/gateway/Logging__LogLevel__Yarp.ReverseProxy"
+          "valueFrom": "arn:aws:ssm:us-east-1:373268394585:parameter/homesite/prod/gateway/Logging__LogLevel__Yarp.ReverseProxy"
         },
         {
           "name": "ReverseProxy__Clusters__bff_cluster__Destinations__bff_destination__Address",
-          "valueFrom": "arn:aws:ssm:us-east-1:373268394585:parameter/homesite/dev/gateway/ReverseProxy__Clusters__bff_cluster__Destinations__bff_destination__Address"
+          "valueFrom": "arn:aws:ssm:us-east-1:373268394585:parameter/homesite/prod/gateway/ReverseProxy__Clusters__bff_cluster__Destinations__bff_destination__Address"
         }
       ],
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/homesite-gateway-dev",
+          "awslogs-group": "/ecs/homesite-gateway-prod",
           "awslogs-create-group": "true",
           "awslogs-region": "us-east-1",
           "awslogs-stream-prefix": "ecs"
