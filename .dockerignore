@@ -1,0 +1,11 @@
+**/bin/
+**/obj/
+**/.vs/
+**/.idea/
+**/.git/
+**/.github/
+**/node_modules/
+frontend/dist/
+**/*.user
+**/*.suo
+**/*.tmp
