@@ -1,4 +1,4 @@
- namespace Web.Bff.Api.DTOs.Auth;
+ namespace Web.Bff.Api.DTOs.Recipes;
 
  public class HealthResponse
  {
