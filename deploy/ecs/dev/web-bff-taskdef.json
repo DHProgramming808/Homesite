@@ -1,0 +1,16 @@
+{
+  "family": "homesite-webbff-dev",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::373268394585:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "web-bff",
+      "image": "373268394585.dkr.ecr.us-east-1.amazonaws.com/homesite/web-bff-api:PLACEHOLDER",
+      "essential": true,
+      "portMappings": [{ "containerPort": 8080, "protocol": "tcp" }]
+    }
+  ]
+}
