@@ -1,0 +1,93 @@
+name: Build & Push Docker Images to ECR (immutable tags)
+
+on:
+  push:
+    branches: ["dev", "main"]
+    paths:
+      - "backend/Gateway.Api/**"
+      - "backend/Web.Bff.Api/**"
+      - "backend/Auth.Api/**"
+      - ".github/workflows/**"
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+  AWS_ACCOUNT_ID: "373268394585"
+  ROLE_ARN: "arn:aws:iam::373268394585:role/github-actions-ecr-push"
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    outputs:
+      gateway: ${{ steps.filter.outputs.gateway }}
+      bff: ${{ steps.filter.outputs.bff }}
+      auth: ${{ steps.filter.outputs.auth }}
+      workflows: ${{ steps.filter.outputs.workflows }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            gateway:
+              - 'backend/Gateway.Api/**'
+            bff:
+              - 'backend/Web.Bff.Api/**'
+            auth:
+              - 'backend/Auth.Api/**'
+            workflows:
+              - '.github/workflows/**'
+
+  build_push:
+    runs-on: ubuntu-latest
+    needs: detect
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: gateway
+            changed: ${{ needs.detect.outputs.gateway }}
+            repo: homesite/gateway-api
+            context: backend/Gateway.Api
+          - name: bff
+            changed: ${{ needs.detect.outputs.bff }}
+            repo: homesite/web-bff-api
+            context: backend/Web.Bff.Api
+          - name: auth
+            changed: ${{ needs.detect.outputs.auth }}
+            repo: homesite/auth-api
+            context: backend/Auth.Api
+
+    # Run only for services whose folders changed, OR when the workflow itself changes (so you can validate it)
+    if: matrix.changed == 'true' || needs.detect.outputs.workflows == 'true'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Compute tags
+        id: vars
+        run: |
+          echo "sha_short=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+          echo "branch=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Build & push ${{ matrix.name }}
+        if: matrix.changed == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          push: true
+          tags: |
+            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ matrix.repo }}:sha-${{ steps.vars.outputs.sha_short }}
+            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ matrix.repo }}:${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
