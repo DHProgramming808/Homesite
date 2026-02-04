@@ -73,12 +73,9 @@ jobs:
 
       - name: Invalidate CloudFront (dev)
         if: github.ref_name == 'dev'
-        run: aws cloudfront create-invalidation \
-          --distribution-id "${{ env.DEV_CF_DISTRIBUTION_ID }}" \
-          --paths "/*"
+        run: aws cloudfront create-invalidation --distribution-id "${{ env.DEV_CF_DISTRIBUTION_ID }}" --paths "/*"
 
       - name: Invalidate CloudFront (prod)
         if: github.ref_name == 'main'
-        run: aws cloudfront create-invalidation \
-          --distribution-id "${{ env.PROD_CF_DISTRIBUTION_ID }}" \
-          --paths "/*"
+        run: aws cloudfront create-invalidation --distribution-id "${{ env.PROD_CF_DISTRIBUTION_ID }}" --paths "/*"
+
