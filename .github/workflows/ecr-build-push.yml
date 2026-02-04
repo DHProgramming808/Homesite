@@ -1,13 +1,13 @@
-name: Build Docker Images (push to ECR only on dev/main)
+name: Build & Deploy Dev (ECR -> ECS)
 
 on:
   push:
-    branches:
-      - "**"
+    branches: ["**"]
     paths:
       - "backend/Gateway.Api/**"
       - "backend/Web.Bff.Api/**"
       - "backend/Auth.Api/**"
+      - "deploy/ecs/**"
       - ".github/workflows/**"
 
 permissions:
@@ -18,6 +18,11 @@ env:
   AWS_REGION: us-east-1
   AWS_ACCOUNT_ID: "373268394585"
   ROLE_ARN: "arn:aws:iam::373268394585:role/github-actions-ecr-push"
+
+  ECS_CLUSTER_DEV: "homesite-dev"
+  ECS_SERVICE_AUTH_DEV: "homesite-auth-dev-service"
+  ECS_SERVICE_BFF_DEV: "homesite-webbff-dev-service"
+  ECS_SERVICE_GATEWAY_DEV: "homesite-gateway-dev-service"
 
 jobs:
   detect:
@@ -34,12 +39,15 @@ jobs:
           filters: |
             gateway:
               - 'backend/Gateway.Api/**'
+              - 'deploy/ecs/dev/gateway-taskdef.json'
             bff:
               - 'backend/Web.Bff.Api/**'
+              - 'deploy/ecs/dev/web-bff-taskdef.json'
             auth:
               - 'backend/Auth.Api/**'
+              - 'deploy/ecs/dev/auth-taskdef.json'
 
-  build_and_maybe_push:
+  build_push_deploy:
     runs-on: ubuntu-latest
     needs: detect
     strategy:
@@ -50,36 +58,45 @@ jobs:
             changed: ${{ needs.detect.outputs.gateway }}
             ecr_repo: homesite/gateway-api
             dockerfile: Gateway.Api/Dockerfile
+            taskdef: deploy/ecs/dev/gateway-taskdef.json
+            container_name: gateway
+            ecs_service_dev: homesite-gateway-dev-service
 
-          - name: bff
+          - name: web-bff
             changed: ${{ needs.detect.outputs.bff }}
             ecr_repo: homesite/web-bff-api
             dockerfile: Web.Bff.Api/Dockerfile
+            taskdef: deploy/ecs/dev/web-bff-taskdef.json
+            container_name: web-bff
+            ecs_service_dev: homesite-webbff-dev-service
 
           - name: auth
             changed: ${{ needs.detect.outputs.auth }}
             ecr_repo: homesite/auth-api
             dockerfile: Auth.Api/Dockerfile
+            taskdef: deploy/ecs/dev/auth-taskdef.json
+            container_name: auth
+            ecs_service_dev: homesite-auth-dev-service
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Debug git ref
+      - name: Debug ref
         run: |
-          echo "github.ref_name=${{ github.ref_name }}"
-          echo "github.ref=${{ github.ref }}"
-          echo "github.repository=${{ github.repository }}"
+          echo "ref_name=${{ github.ref_name }}"
+          echo "ref=${{ github.ref }}"
+          echo "repo=${{ github.repository }}"
 
-      # Only assume AWS role on dev/main AND only when that service changed
+      # Only needed when pushing images (dev/main) or deploying (dev)
       - name: Configure AWS credentials (OIDC)
-        if: (github.ref_name == 'dev' || github.ref_name == 'main') && matrix.changed == 'true'
+        if: matrix.changed == 'true' && (github.ref_name == 'dev' || github.ref_name == 'main')
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ env.ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to ECR
-        if: (github.ref_name == 'dev' || github.ref_name == 'main') && matrix.changed == 'true'
+        if: matrix.changed == 'true' && (github.ref_name == 'dev' || github.ref_name == 'main')
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Compute tags
@@ -88,7 +105,7 @@ jobs:
         shell: bash
         run: |
           echo "sha_short=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
-          echo "branch=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+          echo "image_tag=${GITHUB_REF_NAME}-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
       - name: Build (and push on dev/main) - ${{ matrix.name }}
         if: matrix.changed == 'true'
@@ -99,4 +116,23 @@ jobs:
           push: ${{ (github.ref_name == 'dev' || github.ref_name == 'main') }}
           tags: |
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ matrix.ecr_repo }}:sha-${{ steps.vars.outputs.sha_short }}
-            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ matrix.ecr_repo }}:${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
+            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ matrix.ecr_repo }}:${{ steps.vars.outputs.image_tag }}
+
+      # ---- DEV DEPLOY (only on dev branch) ----
+      - name: Render task definition (dev) - ${{ matrix.name }}
+        if: matrix.changed == 'true' && github.ref_name == 'dev'
+        id: render
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ matrix.taskdef }}
+          container-name: ${{ matrix.container_name }}
+          image: ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ matrix.ecr_repo }}:${{ steps.vars.outputs.image_tag }}
+
+      - name: Deploy to ECS service (dev) - ${{ matrix.name }}
+        if: matrix.changed == 'true' && github.ref_name == 'dev'
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.render.outputs.task-definition }}
+          service: ${{ matrix.ecs_service_dev }}
+          cluster: ${{ env.ECS_CLUSTER_DEV }}
+          wait-for-service-stability: true
