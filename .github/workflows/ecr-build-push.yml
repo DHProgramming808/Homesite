@@ -48,22 +48,25 @@ jobs:
         include:
           - name: gateway
             changed: ${{ needs.detect.outputs.gateway }}
-            repo: homesite/gateway-api
-            context: backend/Gateway.Api
+            ecr_repo: homesite/gateway-api
+            dockerfile: Gateway.Api/Dockerfile
+
           - name: bff
             changed: ${{ needs.detect.outputs.bff }}
-            repo: homesite/web-bff-api
-            context: backend/Web.Bff.Api
+            ecr_repo: homesite/web-bff-api
+            dockerfile: Web.Bff.Api/Dockerfile
+
           - name: auth
             changed: ${{ needs.detect.outputs.auth }}
-            repo: homesite/auth-api
-            context: backend/Auth.Api
+            ecr_repo: homesite/auth-api
+            dockerfile: Auth.Api/Dockerfile
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Determine whether to push
         id: pushflag
+        shell: bash
         run: |
           if [[ "${GITHUB_REF_NAME}" == "dev" || "${GITHUB_REF_NAME}" == "main" ]]; then
             echo "push=true" >> $GITHUB_OUTPUT
@@ -71,7 +74,6 @@ jobs:
             echo "push=false" >> $GITHUB_OUTPUT
           fi
 
-      # Only assume AWS role & login if we will actually push
       - name: Configure AWS credentials (OIDC)
         if: steps.pushflag.outputs.push == 'true' && matrix.changed == 'true'
         uses: aws-actions/configure-aws-credentials@v4
@@ -86,17 +88,18 @@ jobs:
       - name: Compute tags
         if: matrix.changed == 'true'
         id: vars
+        shell: bash
         run: |
           echo "sha_short=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
           echo "branch=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
 
-      # Always build when changed; push only on dev/main (immutable-safe tags)
       - name: Build (and push on dev/main) - ${{ matrix.name }}
         if: matrix.changed == 'true'
         uses: docker/build-push-action@v6
         with:
-          context: ${{ matrix.context }}
+          context: backend
+          file: backend/${{ matrix.dockerfile }}
           push: ${{ steps.pushflag.outputs.push == 'true' }}
           tags: |
-            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ matrix.repo }}:sha-${{ steps.vars.outputs.sha_short }}
-            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ matrix.repo }}:${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
+            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ matrix.ecr_repo }}:sha-${{ steps.vars.outputs.sha_short }}
+            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ matrix.ecr_repo }}:${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
