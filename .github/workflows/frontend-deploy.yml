@@ -1,0 +1,81 @@
+name: Frontend Build & Deploy (Vite -> S3 + CloudFront)
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+    paths:
+      - "frontend/**"
+      - ".github/workflows/frontend-deploy.yml"
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+  ROLE_ARN: arn:aws:iam::373268394585:role/github-actions-ecr-push
+
+  DEV_BUCKET: homesite-frontend-dev
+  PROD_BUCKET: homesite-frontend-prod
+
+  DEV_CF_DISTRIBUTION_ID: EXV7YR2HMYWJ3
+  PROD_CF_DISTRIBUTION_ID: E6H50WI7IBNTO
+
+jobs:
+  build_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: "frontend/package-lock.json"
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      # ---- Build: DEV ----
+      - name: Build (dev)
+        if: github.ref_name == 'dev'
+        working-directory: frontend
+        env:
+          VITE_API_BASE_URL: ${{ vars.DEV_API_BASE_URL }}
+        run: npm run build
+
+      # ---- Build: PROD ----
+      - name: Build (prod)
+        if: github.ref_name == 'main'
+        working-directory: frontend
+        env:
+          VITE_API_BASE_URL: ${{ vars.PROD_API_BASE_URL }}
+        run: npm run build
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Deploy to S3 (dev)
+        if: github.ref_name == 'dev'
+        run: aws s3 sync frontend/dist s3://${{ env.DEV_BUCKET }} --delete
+
+      - name: Deploy to S3 (prod)
+        if: github.ref_name == 'main'
+        run: aws s3 sync frontend/dist s3://${{ env.PROD_BUCKET }} --delete
+
+      - name: Invalidate CloudFront (dev)
+        if: github.ref_name == 'dev'
+        run: aws cloudfront create-invalidation --distribution-id "${{ env.DEV_CF_DISTRIBUTION_ID }}" --paths "/*"
+
+      - name: Invalidate CloudFront (prod)
+        if: github.ref_name == 'main'
+        run: aws cloudfront create-invalidation --distribution-id "${{ env.PROD_CF_DISTRIBUTION_ID }}" --paths "/*"
+
