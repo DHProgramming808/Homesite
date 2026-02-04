@@ -28,3 +28,4 @@ appsettings.*.json
 *.user
 *.suo
 TODO.md
+devcommands.md
