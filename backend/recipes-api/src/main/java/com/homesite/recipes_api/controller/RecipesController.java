@@ -50,7 +50,7 @@ public class RecipesController {
   @MutationMapping
   @PreAuthorize("isAuthenticated()")
   public Recipe createRecipe(@Argument CreateRecipeInput input, JwtAuthenticationToken auth) {
-    int userId = Integer.parseInt(auth.getToken().getClaimAsString(USER_ID_CLAIM));
+    int userId = Integer.parseInt(auth.getToken().getClaimAsString(USER_ID_CLAIM)); // TODO handle potential parsing errors TODO figure out auth jwt vs oauth
 
 
     var now = Instant.now();
@@ -78,7 +78,7 @@ public class RecipesController {
   @MutationMapping
   @PreAuthorize("isAuthenticated()")
   public Recipe updateRecipe(@Argument String id, @Argument UpdateRecipeInput input, JwtAuthenticationToken auth) {
-    int userId = Integer.parseInt(auth.getToken().getClaimAsString(USER_ID_CLAIM));
+    int userId = Integer.parseInt(auth.getToken().getClaimAsString(USER_ID_CLAIM)); // TODO handle potential parsing errors TODO figure out auth jwt vs oauth
 
     Recipe recipe = repo.findById(id).orElseThrow(() -> new RuntimeException("Recipe not found"));
 
