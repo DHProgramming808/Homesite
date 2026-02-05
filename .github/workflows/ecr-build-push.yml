@@ -1,8 +1,9 @@
 name: Build & Deploy Dev (ECR -> ECS)
 
 on:
-  push:
-    branches: ["**"]
+  pull_request:
+    branches: [dev]
+    types: [closed]
     paths:
       - "backend/Gateway.Api/**"
       - "backend/Web.Bff.Api/**"
@@ -26,6 +27,7 @@ env:
 
 jobs:
   detect:
+    if: ${{ github.event.pull_request.merged == true }}
     runs-on: ubuntu-latest
     outputs:
       gateway: ${{ steps.filter.outputs.gateway }}
@@ -89,14 +91,15 @@ jobs:
 
       # Only needed when pushing images (dev/main) or deploying (dev)
       - name: Configure AWS credentials (OIDC)
-        if: matrix.changed == 'true' && (github.ref_name == 'dev' || github.ref_name == 'main')
+        if: matrix.changed == 'true' && github.event.pull_request.base.ref == 'dev'
+
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ env.ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to ECR
-        if: matrix.changed == 'true' && (github.ref_name == 'dev' || github.ref_name == 'main')
+        if: matrix.changed == 'true' && github.event.pull_request.base.ref == 'dev'
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Compute tags
@@ -118,14 +121,14 @@ jobs:
         with:
           context: backend
           file: backend/${{ matrix.dockerfile }}
-          push: ${{ (github.ref_name == 'dev' || github.ref_name == 'main') }}
+          push: ${{ (github.event.pull_request.base.ref == 'dev' || github.event.pull_request.base.ref == 'main') }}
           tags: |
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ matrix.ecr_repo }}:sha-${{ steps.vars.outputs.sha_short }}
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ matrix.ecr_repo }}:${{ steps.vars.outputs.image_tag }}
 
       # ---- DEV DEPLOY (only on dev branch) ----
       - name: Render task definition (dev) - ${{ matrix.name }}
-        if: matrix.changed == 'true' && github.ref_name == 'dev'
+        if: matrix.changed == 'true' && github.event.pull_request.base.ref == 'dev'
         id: render
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
@@ -134,10 +137,13 @@ jobs:
           image: ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ matrix.ecr_repo }}:${{ steps.vars.outputs.image_tag }}
 
       - name: Deploy to ECS service (dev) - ${{ matrix.name }}
-        if: matrix.changed == 'true' && github.ref_name == 'dev'
+        if: matrix.changed == 'true' && github.event.pull_request.base.ref == 'dev'
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.render.outputs.task-definition }}
           service: ${{ matrix.ecs_service_dev }}
           cluster: ${{ env.ECS_CLUSTER_DEV }}
           wait-for-service-stability: true
+
+      # ---- PROD DEPLOY (only on main branch) ----
+      # TODO build out
