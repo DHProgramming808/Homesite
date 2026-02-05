@@ -1,0 +1,83 @@
+/* Auth pages (Login / Register) */
+.authPage {
+  min-height: calc(100svh - 120px);
+  padding-top: 120px;           /* clears fixed navbar */
+  padding-bottom: 80px;
+  display: grid;
+  place-items: center;
+}
+
+.authCard {
+  width: min(520px, 92vw);
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 22px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 16px 60px rgba(0,0,0,.45);
+  padding: 20px;
+}
+
+.authTitle {
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.authSubhead {
+  margin: 10px 0 0;
+  color: rgba(255,255,255,.66);
+  line-height: 1.55;
+}
+
+.authForm {
+  margin-top: 18px;
+  display: grid;
+  gap: 12px;
+}
+
+.authField {
+  display: grid;
+  gap: 8px;
+}
+
+.authLabel {
+  font-size: 13px;
+  color: rgba(255,255,255,.70);
+}
+
+.authInput {
+  width: 100%;
+  color: rgba(255,255,255,.92);
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 14px;
+  padding: 12px 12px;
+  outline: none;
+}
+
+.authInput:focus {
+  border-color: rgba(255,255,255,.22);
+  background: rgba(255,255,255,.08);
+}
+
+.authActions {
+  margin-top: 8px;
+  display: grid;
+  gap: 10px;
+}
+
+.authFooterText {
+  margin: 10px 0 0;
+  color: rgba(255,255,255,.66);
+  font-size: 14px;
+  text-align: center;
+}
+
+.authLink {
+  color: rgba(255,255,255,.92);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.authLink:hover {
+  opacity: 0.9;
+}
