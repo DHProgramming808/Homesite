@@ -128,8 +128,11 @@ public class UserController : ControllerBase
             .Include(rt => rt.User)
             .SingleOrDefault(rt => rt.Token == request.RefreshToken);
 
-        _logger.LogInformation("Refresh attempt for token={TokenPrefix}", request.RefreshToken[..8]);
-        if (stored == null || stored.Revoked || stored.Expires < DateTime.UtcNow)
+        var prefix = string.IsNullOrEmpty(request.RefreshToken)
+            ? "<null>"
+            : request.RefreshToken.Length <= 8 ? request.RefreshToken : request.RefreshToken[..8];
+
+        _logger.LogInformation("Refresh attempt for token={TokenPrefix}", prefix);        if (stored == null || stored.Revoked || stored.Expires < DateTime.UtcNow)
         {
             return Unauthorized();
         }

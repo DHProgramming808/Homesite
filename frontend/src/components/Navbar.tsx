@@ -1,21 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
-import { clearTokens, getAccessToken } from "../auth";
-import { jwtDecode } from "jwt-decode";
 import { useEffect, useState, useRef } from "react";
 
-import '../styles/Navbar.css';
-
+import "../styles/Navbar.css";
 import { useAuth } from "../context/AuthContext";
-
-type JwtPayload = {
-  unique_name?: string;
-  name?: string;
-  email?: string;
-};
 
 export default function Navbar() {
   const navigate = useNavigate();
-  const { username, logout } = useAuth();
+  const { username } = useAuth();
 
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -33,11 +24,10 @@ export default function Navbar() {
     const onScroll = () => {
       const y = window.scrollY;
       setScrolled(y > 12);
-
       lastY.current = y;
     };
 
-    window.addEventListener("scroll", onScroll, {passive: true});
+    window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
 
     return () => window.removeEventListener("scroll", onScroll);
@@ -49,52 +39,40 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", close);
   }, []);
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } catch (error) {
-      console.error("Logout failed:", error);
-    } finally {
-      clearTokens();
-      navigate("/");
-    }
-  };
-
   return (
-    <header
-      className={`navbar ${scrolled ? "navbarScrolled" : ""}`}
-    >
-      <div className = "navInner">
-        {/* LEFT - Logo and Home link */}
+    <header className={`navbar ${scrolled ? "navbarScrolled" : ""}`}>
+      <div className="navInner">
+        {/* LEFT */}
         <Link to="/" className="navHome">
           D Y H
         </Link>
 
-        {/*FLEX SPACER*/}
-        <div className = "navSpacer" />
+        <div className="navSpacer" />
 
-        {/* RIGHT BIAS NAV */}
+        {/* Desktop nav */}
         <nav className="navLinks">
-        {NAV_LINKS.map(link => (
-          <Link key={link.path} to={link.path}>
-            {link.name}
-          </Link>
-        ))}
+          {NAV_LINKS.map((link) => (
+            <Link key={link.path} to={link.path}>
+              {link.name}
+            </Link>
+          ))}
         </nav>
 
+        {/* Mobile nav */}
         <div className="navMenuWrapper">
           <button
-              className = "navMenuButton"
-              onClick = {() => setMenuOpen(prev => !prev)}
-              type = "button"
-              aria-label = "Open menu"
-              aria-expanded = {menuOpen}
+            className="navMenuButton"
+            onClick={() => setMenuOpen((prev) => !prev)}
+            type="button"
+            aria-label="Open menu"
+            aria-expanded={menuOpen}
           >
             <span className="menuIcon">☰</span>
           </button>
+
           {menuOpen && (
             <div className="navMobilePanel" role="menu">
-              {NAV_LINKS.map(link => (
+              {NAV_LINKS.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
@@ -108,28 +86,21 @@ export default function Navbar() {
           )}
         </div>
 
-
-        {/* RIGHT - Auth Links */}
+        {/* RIGHT auth area */}
         {username ? (
-        <>
-          <span style={{ marginRight: "1rem" }}>
-            Logged in as{" "}
-            <button
-              onClick={() => navigate("/stub")}
-            >
-              {username}
-            </button>
-          </span>
-
-
-          <button onClick={handleLogout}>Logout</button>
-        </>
-      ) : (
-        <>
-          <Link to="/login" style={{ marginRight: "1rem" }}>Login</Link>
-          <Link to="/register">Register</Link>
-        </>
-      )}
+          <button
+            type="button"
+            className="navUser"
+            onClick={() => navigate("/stub")}
+            aria-label="Open profile"
+          >
+            {username}
+          </button>
+        ) : (
+          <Link className="btn btnPrimary navLogin" to="/login">
+            Login
+          </Link>
+        )}
       </div>
     </header>
   );

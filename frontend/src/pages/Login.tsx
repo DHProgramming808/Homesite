@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { loginApi } from "../api";
-import { setToken, setTokens }  from "../auth";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+
+import "../styles/Auth.css";
 
 export default function Login() {
   const [email, setUsername] = useState("");
@@ -15,20 +15,9 @@ export default function Login() {
     e.preventDefault();
 
     try {
-
-      const result = await loginApi(email, password); // TODO maybe move this to inside Authcontext?
-      //setToken(result.accessToken);
-      var accessToken = result.accessToken;
-      var refreshToken = result.refreshToken;
-
-      login(accessToken, refreshToken);
-
-      console.log(accessToken);
-      console.log(refreshToken);
-      console.log(result);
-
+      const result = await loginApi(email, password);
+      login(result.accessToken, result.refreshToken);
       navigate("/stub");
-
     } catch (error) {
       console.error(error);
       alert("Login failed");
@@ -36,22 +25,52 @@ export default function Login() {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit = {handleSubmit}>
-        <input
-          placeholder = "Email"
-          value = {email}
-          onChange = {e => setUsername(e.target.value)}
-        />
-        <input
-          type = "password"
-          placeholder = "Password"
-          value = {password}
-          onChange = {e => setPassword(e.target.value)}
-        />
-        <button type = "submit">Login</button>
-      </form>
-    </div>
+    <main className="authPage">
+      <div className="authCard">
+        <h1 className="h2 authTitle">Login</h1>
+        <p className="authSubhead">
+          Welcome back. Sign in to access your profile features.
+        </p>
+
+        <form className="authForm" onSubmit={handleSubmit}>
+          <label className="authField">
+            <span className="authLabel">Email</span>
+            <input
+              className="authInput"
+              placeholder="you@email.com"
+              value={email}
+              onChange={(e) => setUsername(e.target.value)}
+              autoComplete="email"
+              inputMode="email"
+            />
+          </label>
+
+          <label className="authField">
+            <span className="authLabel">Password</span>
+            <input
+              className="authInput"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
+            />
+          </label>
+
+          <div className="authActions">
+            <button className="btn btnPrimary" type="submit">
+              Login
+            </button>
+          </div>
+
+          <p className="authFooterText">
+            Need an account?{" "}
+            <Link className="authLink" to="/register">
+              Register
+            </Link>
+          </p>
+        </form>
+      </div>
+    </main>
   );
 }
