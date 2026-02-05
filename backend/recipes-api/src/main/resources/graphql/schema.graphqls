@@ -41,5 +41,5 @@ input UpdateRecipeInput {
 }
 
 input DeleteRecipeInput {
-  id
+  id: String
 }
