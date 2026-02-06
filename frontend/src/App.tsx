@@ -16,6 +16,7 @@ import AboutMe from "./pages/AboutMe";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Contact from "./pages/Contact";
+import Projects from "./pages/Projects";
 
 
 import { AuthProvider } from "./context/AuthContext";
@@ -34,7 +35,7 @@ export default function App() {
         <Route path = "/register" element = {<Register />} />
         <Route path = "/aboutme" element = {<AboutMe />} />
 
-        <Route path = "/aboutme" element = {<AboutMe />} />
+        <Route path = "/projects" element = {<Projects />} />
 
         <Route path = "/technicalme" element = {<TechnicalMe />} />
         <Route path = "/contact" element = {<Contact />} />
