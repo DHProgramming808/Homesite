@@ -1,0 +1,235 @@
+/* Contact page layout */
+.contactGrid {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.contactCard {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  padding: 18px;
+}
+
+.contactList {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.contactRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.contactLabel {
+  color: rgba(255,255,255,.60);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+}
+
+.contactValue {
+  color: rgba(255,255,255,.90);
+}
+
+.contactDivider {
+  height: 1px;
+  background: rgba(255,255,255,.10);
+  margin: 16px 0;
+}
+
+.contactPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Form */
+.contactForm {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.fieldLabel {
+  color: rgba(255,255,255,.66);
+  font-size: 13px;
+}
+
+.fieldInput,
+.fieldTextarea {
+  width: 100%;
+  color: rgba(255,255,255,.92);
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 14px;
+  padding: 12px 12px;
+  outline: none;
+}
+
+.fieldTextarea {
+  resize: vertical;
+  min-height: 140px;
+}
+
+.fieldInput:focus,
+.fieldTextarea:focus {
+  border-color: rgba(255,255,255,.22);
+  background: rgba(255,255,255,.08);
+}
+
+.contactActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.contactHint {
+  margin: 6px 0 0;
+  color: rgba(255,255,255,.55);
+  font-size: 13px;
+  max-width: 60ch;
+}
+
+.aboutHeaderCtas {
+  margin-top: 18px;
+  display: inline-flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.aboutGrid {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.aboutCard {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  padding: 18px;
+}
+
+.aboutHighlights {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.aboutHighlight {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.aboutLabel {
+  color: rgba(255,255,255,.60);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+}
+
+.aboutValue {
+  color: rgba(255,255,255,.90);
+}
+
+.aboutDivider {
+  height: 1px;
+  background: rgba(255,255,255,.10);
+  margin: 16px 0;
+}
+
+.aboutPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.aboutPill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  color: rgba(255,255,255,.90);
+  font-size: 14px;
+}
+
+.aboutProse {
+  display: grid;
+  gap: 10px;
+}
+
+/* Timeline */
+.aboutTimeline {
+  display: grid;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.aboutStep {
+  display: grid;
+  grid-template-columns: 16px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.aboutDot {
+  width: 10px;
+  height: 10px;
+  margin-top: 6px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.85);
+  box-shadow: 0 0 0 6px rgba(255,255,255,.06);
+}
+
+.aboutStepTitle {
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: rgba(255,255,255,.92);
+}
+
+.aboutStepText {
+  margin-top: 4px;
+}
+
+.aboutBullets {
+  padding-left: 1.2rem;
+  margin: 10px 0 0;
+}
+
+.aboutBullets li {
+  margin: 0.35rem 0;
+}
+
+
+/* Responsive */
+@media (max-width: 900px) {
+  .contactGrid {
+    grid-template-columns: 1fr;
+  }
+}

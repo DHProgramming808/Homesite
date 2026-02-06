@@ -1,0 +1,4 @@
+type Query {
+    hello(name: String = "world"): String!
+    health(healthTest: String = "Graphql is up and running"): String!
+}

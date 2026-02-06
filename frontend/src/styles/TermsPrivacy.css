@@ -1,0 +1,24 @@
+.legalPage {
+  padding-top: 120px;
+  padding-bottom: 96px;
+}
+
+.legalHeader {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.legalContent {
+  max-width: 70ch;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.legalContent ul {
+  padding-left: 1.2rem;
+  margin: 0.75rem 0 0;
+}
+
+.legalContent li {
+  margin: 0.35rem 0;
+}
