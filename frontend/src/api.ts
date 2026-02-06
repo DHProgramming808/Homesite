@@ -73,7 +73,7 @@ export const refreshAccessToken = async () => {
     const refreshToken = getRefreshToken();
     if (!refreshToken) throw new Error("No refresh token");
 
-    const response = await fetch(`${GATEWAY_BASE}/bff/v1/auth/refresh`, {
+    const response = await fetch(`${GATEWAY_BASE}/auth/refresh`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refreshToken }),
