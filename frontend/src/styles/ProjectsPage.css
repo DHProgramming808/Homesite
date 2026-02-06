@@ -1,5 +1,44 @@
 .projRailSection {
   margin-top: 18px;
+  padding: 18px 16px 22px;
+
+  position: relative;
+  border-radius: 26px;
+
+  /* light surface */
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.06),
+      rgba(255,255,255,0.03)
+    );
+
+  box-shadow:
+    0 20px 60px rgba(0,0,0,.35),
+    inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+.projRailSection::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+
+  pointer-events: none;
+
+  background-image: url("/images/grain.png");
+  background-size: 180px 180px;
+  background-repeat: repeat;
+
+  opacity: 0.06; /* subtle */
+  mix-blend-mode: overlay;
+
+  z-index: 0;
+}
+
+.projRailSection > * {
+  position: relative;
+  z-index: 1;
 }
 
 .projRailHeader {
@@ -269,6 +308,13 @@
   justify-content: flex-end;
 }
 
+.projSummary:hover .projSummaryDesc {
+  color: rgba(255,255,255,.82);
+}
+.projSummary:hover .projChevron {
+  opacity: 1;
+}
+
 .projInlineTag {
   font-size: 13px;
   color: rgba(255,255,255,.80);
@@ -353,15 +399,17 @@
     justify-content: flex-start;
     margin-top: 6px;
   }
-}
 
-/* Responsive */
-@media (max-width: 900px) {
   .projBelowGrid {
     grid-template-columns: 1fr;
   }
 
   .projRail {
     grid-auto-columns: minmax(280px, 88vw);
+  }
+
+    .projRailSection {
+    padding: 16px 12px 20px;
+    border-radius: 20px;
   }
 }
