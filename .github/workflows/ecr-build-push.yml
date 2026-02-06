@@ -3,7 +3,6 @@ name: Build & Deploy Dev (ECR -> ECS)
 on:
   push:
     branches: [dev, main]
-    types: [closed]
     paths:
       - "backend/Gateway.Api/**"
       - "backend/Web.Bff.Api/**"
