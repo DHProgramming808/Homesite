@@ -11,26 +11,26 @@ function ProjectRailCard({ project }: { project: Project }) {
     >
       <div className="projRailOverlay" />
 
+      <div className="projRailTop">
+        <h3 className="projRailTitle">{project.title}</h3>
+      </div>
+
+
       <div className="projRailBody">
-        <div className="projRailTop">
-          <h3 className="projRailTitle">{project.title}</h3>
-
-          <div className="projRailMeta">
-            {project.year ? <span className="projMetaPill">{project.year}</span> : null}
-            {project.status ? <span className="projMetaPill">{project.status}</span> : null}
-            {project.role ? <span className="projMetaPill">{project.role}</span> : null}
-          </div>
-        </div>
-
         <p className="projRailDesc">{project.description}</p>
+
 
         {project.tags?.length ? (
           <div className="projRailTags">
+            {project.role ? <span className="projMetaPill">{project.role}</span> : null}
+
             {project.tags.slice(0, 4).map((t) => (
               <span key={t} className="projTag">
                 {t}
               </span>
             ))}
+
+            {project.status ? <span className="projMetaPill">{project.status}</span> : null}
           </div>
         ) : null}
 
@@ -91,8 +91,8 @@ export default function Projects() {
 
 
   return (
-    <main className="container page">
-      <header className="pageHeader">
+    <main className="projPage">
+      <header className="projHeader">
         <h1 className="h1">Projects</h1>
         <p className="subhead contentNarrow" style={{ marginTop: 12 }}>
           My handicraft — some polished, some in-progress — all built with intention.
@@ -103,10 +103,7 @@ export default function Projects() {
       <section className="projRailSection">
         <div className="projRailHeader">
           <div>
-            <h2 className="h2" style={{ margin: 0 }}>Featured</h2>
-            <p className="subhead" style={{ marginTop: 8 }}>
-              Use the arrows (or scroll) to browse.
-            </p>
+            <h2 className="h2" style={{ margin: 0, fontSize: 36 }}>Featured</h2>
           </div>
 
           <div className="projRailNav">
@@ -126,90 +123,89 @@ export default function Projects() {
         </div>
       </section>
 
-      {/* Below the fold content TODO current content is placeholder */}
-      <section className="projListSection">
-        <h2 className="h2 projListTitle">All projects</h2>
-        <p className="subhead projListSub">
-          Click a project to expand details.
-        </p>
+      <section className="container projListSection">
+        <div className="container projListContainer">
 
-        <div className="projList">
-          {projects.map((p) => (
-            <details key={p.id} className="projItem">
-              <summary className="projSummary">
-                <span className="projSummaryLine">
-                  <span className="projSummaryTitle">{p.title}:</span>{" "}
-                  <span className="projSummaryDesc">{p.description}</span>
-                </span>
+          <h2 className="h2 projListTitle" style={{ fontSize: 36 }}>All projects</h2>
 
-                {p.tags?.length ? (
-                  <span className="projSummaryTags" aria-label="Project tags">
-                    {p.tags.slice(0, 3).map((t) => (
-                      <span key={t} className="projInlineTag">
-                        {t}
-                      </span>
-                    ))}
-                    {p.tags.length > 3 ? (
-                      <span className="projInlineMore">+{p.tags.length - 3}</span>
-                    ) : null}
+          <div className="projList">
+            {projects.map((p) => (
+              <details key={p.id} className="projItem">
+                <summary className="projSummary">
+                  <span className="projSummaryLine">
+                    <span className="projSummaryTitle">{p.title}:</span>{" "}
+                    <span className="projSummaryDesc">{p.description}</span>
                   </span>
-                ) : null}
 
-                <span className="projChevron" aria-hidden="true">▾</span>
-              </summary>
-
-              <div className="projDetails">
-                <div className="projDetailGrid">
-                  {p.status ? (
-                    <div className="projDetailRow">
-                      <span className="projDetailLabel">Status</span>
-                      <span className="projDetailValue">{p.status}</span>
-                    </div>
-                  ) : null}
-
-                  {p.role ? (
-                    <div className="projDetailRow">
-                      <span className="projDetailLabel">Role</span>
-                      <span className="projDetailValue">{p.role}</span>
-                    </div>
-                  ) : null}
-
-                  {p.year ? (
-                    <div className="projDetailRow">
-                      <span className="projDetailLabel">Year</span>
-                      <span className="projDetailValue">{p.year}</span>
-                    </div>
-                  ) : null}
-                </div>
-
-                {p.tags?.length ? (
-                  <div className="projDetailBlock">
-                    <div className="projDetailLabel">Tags</div>
-                    <div className="projTagCloud">
-                      {p.tags.map((t) => (
-                        <span key={t} className="projPill">
+                  {p.tags?.length ? (
+                    <span className="projSummaryTags" aria-label="Project tags">
+                      {p.tags.slice(0, 3).map((t) => (
+                        <span key={t} className="projInlineTag">
                           {t}
                         </span>
                       ))}
-                    </div>
-                  </div>
-                ) : null}
+                      {p.tags.length > 3 ? (
+                        <span className="projInlineMore">+{p.tags.length - 3}</span>
+                      ) : null}
+                    </span>
+                  ) : null}
 
-                <div className="projDetailLinks">
-                  {p.repoUrl ? (
-                    <a className="btn" href={p.repoUrl} target="_blank" rel="noreferrer">
-                      GitHub repo
-                    </a>
+                  <span className="projChevron" aria-hidden="true">▾</span>
+                </summary>
+
+                <div className="projDetails">
+                  <div className="projDetailGrid">
+                    {p.status ? (
+                      <div className="projDetailRow">
+                        <span className="projDetailLabel">Status</span>
+                        <span className="projDetailValue">{p.status}</span>
+                      </div>
+                    ) : null}
+
+                    {p.role ? (
+                      <div className="projDetailRow">
+                        <span className="projDetailLabel">Role</span>
+                        <span className="projDetailValue">{p.role}</span>
+                      </div>
+                    ) : null}
+
+                    {p.year ? (
+                      <div className="projDetailRow">
+                        <span className="projDetailLabel">Year</span>
+                        <span className="projDetailValue">{p.year}</span>
+                      </div>
+                    ) : null}
+                  </div>
+
+                  {p.tags?.length ? (
+                    <div className="projDetailBlock">
+                      <div className="projDetailLabel">Tags</div>
+                      <div className="projTagCloud">
+                        {p.tags.map((t) => (
+                          <span key={t} className="projPill">
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
                   ) : null}
-                  {p.liveUrl ? (
-                    <a className="btn btnPrimary" href={p.liveUrl} target="_blank" rel="noreferrer">
-                      Live demo
-                    </a>
-                  ) : null}
+
+                  <div className="projDetailLinks">
+                    {p.repoUrl ? (
+                      <a className="btn" href={p.repoUrl} target="_blank" rel="noreferrer">
+                        GitHub repo
+                      </a>
+                    ) : null}
+                    {p.liveUrl ? (
+                      <a className="btn btnPrimary" href={p.liveUrl} target="_blank" rel="noreferrer">
+                        Live demo
+                      </a>
+                    ) : null}
+                  </div>
                 </div>
-              </div>
-            </details>
-          ))}
+              </details>
+            ))}
+          </div>
         </div>
       </section>
     </main>
