@@ -4,7 +4,7 @@ import type { Project } from "../data/projects";
 export function ProjectCard({project}: {project: Project }) {
   return (
     <Link
-      to={project.href}
+      to={project.liveUrl || "#"}
       className="projectCard"
       style = {{ ["--card-bg" as any]: `url(${project.image})` }}
       aria-label = {project.title }

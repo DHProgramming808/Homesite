@@ -27,19 +27,23 @@ Jan 26 checkpoint
 -fix logo
 -fix logo in footer
 -make the FAQs prettier
+-homepage hero scroll stops halfway through on squeezed window
 
 -make the technical me, an expandable section in the About me
 
 -(longterm) light/dark theme
 
+-move the auth.ts file to /src/data
+
 
 
 ---- Architecture
 --refactor the current backend/Api that handles tokens, users, auth -> backend/Auth.Api -- need verify
--configure CORS only on Gateway before BFF
+--configure CORS only on Gateway before BFF
 -Remove browser facing CORS from auth.api and recipes.api
--Add S3 logging
+-Add S3 logging (long term)
 -Expose some logging to showcase logging and S3 calling
+-Correlation IDs + logging in BFF for request tracing
 
 
 
@@ -52,7 +56,7 @@ Jan 26 checkpoint
 --move refresh token to DB from Backend memory -- need to verification of completion
 -fix bug where once the accesstoken expires, it's not doing the refresh behavior correctly
 -also kick out of username once refresh token is unauthed
--add unique_primary identifier for User table
+-add unique primary id for User table
 
 
 
@@ -66,21 +70,25 @@ Jan 26 checkpoint
 
 ---- Security
 -add cybersec
--DDOS protections?
--if client is hitting the service too often
--api gateway / admin layer
+-manual DDOS protections?
+--if client is hitting the service too often
+-api gateway vs admin layer vs bff
 -content monitoring/moderating (use AI)
 
 
 ---- Infrastructure
 -AWS account -> IAM
 -AWS environment scripts
--CICD
--docker containers
+--CICD
+-add tests in github CI
+-replace restore and build in CI with using the Homesite.sln?
+-ensure frontend deploy should be separate between dev and main
+-long term set up staging/test environment
+--docker containers
 -databases
 -GraphQL
--Build out and configure Gateway Api from scaffold
--rewire auth.api and recipes.api to only accept calls from web.bff.api or admin tests
+--Build out and configure Gateway Api from scaffold
+--rewire auth.api and recipes.api to only accept calls from web.bff.api or admin tests (security groups)
 
 
 
@@ -115,6 +123,4 @@ Jan 26 checkpoint
 
 -Standard error mapping (Auth.Api returns text sometimes; make it consistent JSON)
 
--Correlation IDs + logging in BFF for request tracing
 
--Move Auth.Api behind Gateway only (no direct browser access)

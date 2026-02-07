@@ -64,26 +64,37 @@ export const logoutApi = async () => {
 };
 
 
+let refreshPromise: Promise<{ accessToken: string; refreshToken: string }> | null = null;
+
 export const refreshAccessToken = async () => {
-  const refreshToken = getRefreshToken();
-  if (!refreshToken) throw new Error("No refresh token");
+  if (refreshPromise) return refreshPromise;
 
-  const response = await fetch(`${GATEWAY_BASE}/auth/refresh-token`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ refreshToken }),
-  });
+  refreshPromise = (async () => {
+    const refreshToken = getRefreshToken();
+    if (!refreshToken) throw new Error("No refresh token");
 
-  if (!response.ok) {
-    clearTokens();
-    throw new Error("Refresh failed");
+    const response = await fetch(`${GATEWAY_BASE}/auth/refresh`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refreshToken }),
+    });
+
+    if (!response.ok) {
+      clearTokens();
+      throw new Error("Refresh failed");
+    }
+
+    const data = await response.json();
+    setTokens(data.accessToken, data.refreshToken);
+    return data as { accessToken: string; refreshToken: string };
+  })();
+
+  try {
+    return await refreshPromise;
+  } finally {
+    refreshPromise = null;
   }
-
-  const data = await response.json();
-  setTokens(data.accessToken, data.refreshToken); // TODO move this function to auth.tsx?
-
-  return data as { accessToken: string; refreshToken: string };
-}
+};
 
 
 export const register = async (email: string, username: string, password: string) => {

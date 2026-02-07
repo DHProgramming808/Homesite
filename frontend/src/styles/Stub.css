@@ -1,0 +1,68 @@
+.stubPage {
+  min-height: calc(100svh - 120px);
+  padding-top: 120px;
+  padding-bottom: 80px;
+  display: grid;
+  place-items: center;
+}
+
+.stubCard {
+  width: min(760px, 92vw);
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 22px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 16px 60px rgba(0,0,0,.45);
+  padding: 20px;
+}
+
+.stubHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.stubTitle {
+  margin: 0;
+}
+
+.stubSection {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,.10);
+}
+
+.stubSectionTitle {
+  margin: 0 0 10px;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  color: rgba(255,255,255,.92);
+}
+
+.stubRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 10px 0;
+}
+
+.stubLabel {
+  color: rgba(255,255,255,.60);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+}
+
+.stubValue {
+  color: rgba(255,255,255,.90);
+}
+
+.stubFooter {
+  margin-top: 18px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
