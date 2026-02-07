@@ -1,13 +1,25 @@
 package com.homesite.recipes_api.security;
 
+import java.nio.charset.StandardCharsets;
+
+import javax.crypto.spec.SecretKeySpec;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
 
+  @Value("${security.jwt.secret}")
+  private String jwtSecret;
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -15,10 +27,22 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
               .requestMatchers("/health").permitAll()
+              .requestMatchers("/graphql").permitAll()
                 .anyRequest().permitAll()
+            )
+            .oauth2ResourceServer(oauth2 -> oauth2
+                .jwt(jwt -> jwt
+                    .decoder(jwtDecoder())
+                )
             );
 
         return http.build();
     }
 
+
+    @Bean
+    public JwtDecoder jwtDecoder() {
+      var secretKey = new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+      return NimbusJwtDecoder.withSecretKey(secretKey).build();
+    }
 }

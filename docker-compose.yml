@@ -116,6 +116,27 @@ services:
     ports:
       - "5000:8080"
 
+  recipes-api:
+    build:
+      context: ./backend
+      dockerfile: recipes-api/Dockerfile
+    environment:
+      - ENVIRONMENT=Docker
+      - spring.data.mongodb.spring.mongo.uri=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongo:27017/RecipesDb
+      - security.jwt.secret=${JWT_KEY}
+    depends_on:
+      mongo:
+        condition: service_healthy
+      auth-api:
+        condition: service_started
+      web-bff-api:
+        condition: service_started
+      gateway-api:
+        condition: service_started
+    ports:
+      - "6001:8080"
+
+
   frontend:
     build:
       context: ./frontend

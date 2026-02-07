@@ -1,4 +1,45 @@
 type Query {
-    hello(name: String = "world"): String!
-    health(healthTest: String = "Graphql is up and running"): String!
+  hello(name: String = "world"): String!
+  health(healthTest: String = "Graphql is up and running"): String!
+  getFeaturedRecipes(limit: Int = 8): [Recipe!]!
+  getRecipeById(id: ID!): Recipe
+}
+
+type Mutation {
+  createRecipe(input: CreateRecipeInput!): Recipe!
+  updateRecipe(id: ID!, input: UpdateRecipeInput!): Recipe!
+  deleteRecipe(id: ID!): Boolean!
+}
+
+type Recipe {
+  id: ID!
+  title: String!
+  description: String
+  ingredients: [String!]!
+  steps: [String!]!
+  featured: Boolean!
+  createdByUserId: Int!
+  createdAt: String!
+  updatedAt: String
+}
+
+input CreateRecipeInput {
+  title: String!
+  description: String
+  ingredients: [String!]!
+  steps: [String!]!
+  featured: Boolean = false
+}
+
+input UpdateRecipeInput {
+  id: String
+  title: String!
+  description: String!
+  ingredients: [String!]
+  steps: [String!]
+  featured: Boolean
+}
+
+input DeleteRecipeInput {
+  id: String
 }

@@ -3,6 +3,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Web.Bff.Api.Handlers;
 
+using Web.Bff.Api.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +19,10 @@ builder.Services.Configure<JwtOptions>(
     builder.Configuration.GetSection("Jwt"));
 builder.Services.Configure<CorsOptions>(
     builder.Configuration.GetSection("Cors"));
+
+// -- Bind Services --
+builder.Services.AddScoped<RecipesGraphQlClient>();
+
 
 // ---CORS Setup---
 var cors = builder.Configuration.GetSection("Cors").Get<CorsOptions>() ?? new CorsOptions();
@@ -76,6 +82,16 @@ builder.Services.AddHttpClient("Auth", c =>
     var baseUrl = builder.Configuration["Services:Auth"];
     if (string.IsNullOrWhiteSpace(baseUrl))
         throw new InvalidOperationException("Services:Auth is not configured.");
+
+    c.BaseAddress = new Uri(baseUrl);
+})
+.AddHttpMessageHandler<CorrelationIdHandler>();
+
+builder.Services.AddHttpClient("Recipes", c =>
+{
+    var baseUrl = builder.Configuration["Services:Recipes"];
+    if (string.IsNullOrWhiteSpace(baseUrl))
+        throw new InvalidOperationException("Services:Recipes is not configured.");
 
     c.BaseAddress = new Uri(baseUrl);
 })

@@ -10,10 +10,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.*;
+
+
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Document(collection = "Recipes")
 public class Recipe {
 
@@ -26,6 +30,9 @@ public class Recipe {
 
   private List<String> ingredients = new ArrayList<>();
   private List<String> steps = new ArrayList<>();
+
+  private boolean featured; // TODO This should ideally be stored at the application/database level not at the object level
+  private int createdByUserId;
 
   private Instant createdAt = Instant.now();
   private Instant updatedAt = Instant.now();
