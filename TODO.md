@@ -132,6 +132,7 @@ Feb 7, 2026.
 -migrate ef core from auth.api to auth-db
 -test auth-db
 
+-set up test builds to run on push to dev-staging and staging branches
 
 
 
