@@ -123,8 +123,11 @@ services:
     image: homesite-recipes-api
     environment:
       # - ENVIRONMENT=Docker
-      - SPIRNG_DATA_MONGODB_URI=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongo:27017/RecipesDb
-      - JWT_SECRET=${JWT_KEY}
+      - SPRING_DATA_MONGODB_URI=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongo:27017/RecipesDb?authSource=admin
+      - SPRING_DATA_MONGODB_HOST=mongo
+      - SPRING_DATA_MONGODB_PORT=27017
+      - SPRING_DATA_MONGODB_DATABASE=RecipesDb
+      - JWT_KEY=${JWT_KEY}
       - JWT_ISSUER=Auth.Api
       - JWT_AUDIENCE=Homesite
       - SERVER_PORT=6000

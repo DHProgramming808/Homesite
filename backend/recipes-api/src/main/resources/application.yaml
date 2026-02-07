@@ -3,7 +3,7 @@ spring:
     name: recipes-api
   data:
     mongodb:
-      spring.mongo.uri: ${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/RecipesDb}
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/RecipesDb}
 
 server:
   port: 6000
@@ -11,7 +11,7 @@ server:
 jwt:
   issuer: ${ISSUER:Auth.api}
   audience: ${JWT_AUDIENCE:Homesite}
-  secret: ${JWT_KEY:placeholder_jwt_key_for_development}
+  key: ${JWT_KEY:placeholder_jwt_key_for_development}
 
 management:
   endpoints:
