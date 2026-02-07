@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/recipes")
-public class RecipesControllerRestWrapperAntiPattern {
+public class RestRecipesController { // TODO Deprecate this class once GraphQL is fully adopted
 
 
     @GetMapping("/rest-recipes")

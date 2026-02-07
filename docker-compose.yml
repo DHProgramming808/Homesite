@@ -89,7 +89,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
       - Services__Auth=http://auth-api:8080/
-      # - Services__Recipes=http://recipes-api:8080/
+      - Services__Recipes=http://recipes-api:6000/
       - Jwt__Key=${JWT_KEY}
       - Jwt__Issuer=Auth.Api
       - Jwt__Audience=Homesite
@@ -115,6 +115,31 @@ services:
         condition: service_started
     ports:
       - "5000:8080"
+
+  recipes-api:
+    build:
+      context: ./backend/recipes-api
+      dockerfile: Dockerfile
+    image: homesite-recipes-api
+    environment:
+      # - ENVIRONMENT=Docker
+      - SPIRNG_DATA_MONGODB_URI=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongo:27017/RecipesDb
+      - JWT_SECRET=${JWT_KEY}
+      - JWT_ISSUER=Auth.Api
+      - JWT_AUDIENCE=Homesite
+      - SERVER_PORT=6000
+    depends_on:
+      mongo:
+        condition: service_healthy
+      auth-api:
+        condition: service_started
+      web-bff-api:
+        condition: service_started
+      gateway-api:
+        condition: service_started
+    ports:
+      - "6001:6000"
+
 
   frontend:
     build:
