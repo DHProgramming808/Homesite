@@ -1,8 +1,8 @@
-name: Build & Deploy Dev (ECR -> ECS)
+name: Build & Push Main (ECR) + TODO Deploy Prod (ECS)
 
 on:
   push:
-    branches: ["dev"]
+    branches: ["main"]
     paths:
       - "backend/Gateway.Api/**"
       - "backend/Web.Bff.Api/**"
@@ -19,10 +19,14 @@ env:
   AWS_ACCOUNT_ID: "373268394585"
   ROLE_ARN: "arn:aws:iam::373268394585:role/github-actions-ecr-push"
 
-  ECS_CLUSTER_DEV: "homesite-dev"
-  ECS_SERVICE_AUTH_DEV: "homesite-auth-dev-service"
-  ECS_SERVICE_BFF_DEV: "homesite-webbff-dev-service"
-  ECS_SERVICE_GATEWAY_DEV: "homesite-gateway-dev-service"
+  # TODO: set to "true" once prod ECS is ready and you want auto-deploy from main
+  ENABLE_PROD_DEPLOY: "false"
+
+  # TODO: create prod cluster + services, then fill these in
+  ECS_CLUSTER_PROD: "TODO_FILL_ME"
+  ECS_SERVICE_AUTH_PROD: "TODO_FILL_ME"
+  ECS_SERVICE_BFF_PROD: "TODO_FILL_ME"
+  ECS_SERVICE_GATEWAY_PROD: "TODO_FILL_ME"
 
 jobs:
   detect:
@@ -39,15 +43,15 @@ jobs:
           filters: |
             gateway:
               - 'backend/Gateway.Api/**'
-              - 'deploy/ecs/dev/gateway-taskdef.json'
+              - 'deploy/ecs/prod/gateway-taskdef.json'  # TODO: ensure this file exists
             bff:
               - 'backend/Web.Bff.Api/**'
-              - 'deploy/ecs/dev/web-bff-taskdef.json'
+              - 'deploy/ecs/prod/web-bff-taskdef.json'  # TODO: ensure this file exists
             auth:
               - 'backend/Auth.Api/**'
-              - 'deploy/ecs/dev/auth-taskdef.json'
+              - 'deploy/ecs/prod/auth-taskdef.json'     # TODO: ensure this file exists
 
-  build_push_deploy:
+  build_push_and_todo_deploy:
     runs-on: ubuntu-latest
     needs: detect
     strategy:
@@ -58,25 +62,25 @@ jobs:
             changed: ${{ needs.detect.outputs.gateway }}
             ecr_repo: homesite/gateway-api
             dockerfile: Gateway.Api/Dockerfile
-            taskdef: deploy/ecs/dev/gateway-taskdef.json
+            taskdef: deploy/ecs/prod/gateway-taskdef.json # TODO
             container_name: gateway
-            ecs_service_dev: homesite-gateway-dev-service
+            ecs_service_prod: TODO_FILL_ME                # TODO
 
           - name: web-bff
             changed: ${{ needs.detect.outputs.bff }}
             ecr_repo: homesite/web-bff-api
             dockerfile: Web.Bff.Api/Dockerfile
-            taskdef: deploy/ecs/dev/web-bff-taskdef.json
+            taskdef: deploy/ecs/prod/web-bff-taskdef.json # TODO
             container_name: web-bff
-            ecs_service_dev: homesite-webbff-dev-service
+            ecs_service_prod: TODO_FILL_ME                # TODO
 
           - name: auth
             changed: ${{ needs.detect.outputs.auth }}
             ecr_repo: homesite/auth-api
             dockerfile: Auth.Api/Dockerfile
-            taskdef: deploy/ecs/dev/auth-taskdef.json
+            taskdef: deploy/ecs/prod/auth-taskdef.json    # TODO
             container_name: auth
-            ecs_service_dev: homesite-auth-dev-service
+            ecs_service_prod: TODO_FILL_ME                # TODO
 
     steps:
       - uses: actions/checkout@v4
@@ -93,14 +97,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Configure AWS credentials (OIDC)
-        if: matrix.changed == 'true' && github.ref_name == 'dev'
+        if: matrix.changed == 'true'
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ env.ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to ECR
-        if: matrix.changed == 'true' && github.ref_name == 'dev'
+        if: matrix.changed == 'true'
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Compute tags
@@ -125,8 +129,11 @@ jobs:
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ matrix.ecr_repo }}:sha-${{ steps.vars.outputs.sha_short }}
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ matrix.ecr_repo }}:${{ steps.vars.outputs.image_tag }}
 
-      - name: Render task definition (dev) - ${{ matrix.name }}
-        if: matrix.changed == 'true'
+      # -----------------------------
+      # TODO: PROD DEPLOY (disabled)
+      # -----------------------------
+      - name: Render task definition (prod) - ${{ matrix.name }}
+        if: matrix.changed == 'true' && env.ENABLE_PROD_DEPLOY == 'true'
         id: render
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
@@ -134,11 +141,11 @@ jobs:
           container-name: ${{ matrix.container_name }}
           image: ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ matrix.ecr_repo }}:${{ steps.vars.outputs.image_tag }}
 
-      - name: Deploy to ECS service (dev) - ${{ matrix.name }}
-        if: matrix.changed == 'true'
+      - name: Deploy to ECS service (prod) - ${{ matrix.name }}
+        if: matrix.changed == 'true' && env.ENABLE_PROD_DEPLOY == 'true'
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.render.outputs.task-definition }}
-          service: ${{ matrix.ecs_service_dev }}
-          cluster: ${{ env.ECS_CLUSTER_DEV }}
+          service: ${{ matrix.ecs_service_prod }} # TODO: set real prod service name
+          cluster: ${{ env.ECS_CLUSTER_PROD }}    # TODO: set real prod cluster name
           wait-for-service-stability: true
