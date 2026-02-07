@@ -32,10 +32,13 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-              .requestMatchers("/health").permitAll()
               .requestMatchers("/graphql").permitAll()
               .requestMatchers("/graphiql").permitAll()
-                .anyRequest().authenticated() // TODO consider if we want to allow unauthenticated access to some endpoints like GET /recipes and GET /recipes/{id}
+                .anyRequest().authenticated()
+            )
+            .authorizeHttpRequests(auth -> auth
+              .requestMatchers("/health").permitAll()
+                .anyRequest().permitAll() //TODO ensure this is the correct pattern for allowing unauthenticated access to actuator endpoints without opening up other APIs
             )
             .oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> jwt

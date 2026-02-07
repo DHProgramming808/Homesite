@@ -213,7 +213,8 @@ public class RecipesController : ControllerBase
         string Title,
         string Description,
         List<string> Ingredients,
-        List<string> Steps
+        List<string> Steps,
+        bool? featured = false
     );
 
     public record RecipeDto(
