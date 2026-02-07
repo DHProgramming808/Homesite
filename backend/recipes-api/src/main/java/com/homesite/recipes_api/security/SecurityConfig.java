@@ -18,8 +18,14 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-  @Value("${security.jwt.secret}")
+  @Value("${jwt.secret}")
   private String jwtSecret;
+
+  @Value("${jwt.audience}")
+  private String jwtAudience;
+
+  @Value("${jwt.issuer}")
+  private String jwtIssuer;
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -28,7 +34,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
               .requestMatchers("/health").permitAll()
               .requestMatchers("/graphql").permitAll()
-                .anyRequest().permitAll()
+              .requestMatchers("/graphiql").permitAll()
+                .anyRequest().authenticated() // TODO consider if we want to allow unauthenticated access to some endpoints like GET /recipes and GET /recipes/{id}
             )
             .oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> jwt
@@ -43,6 +50,43 @@ public class SecurityConfig {
     @Bean
     public JwtDecoder jwtDecoder() {
       var secretKey = new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
-      return NimbusJwtDecoder.withSecretKey(secretKey).build();
+      NimbusJwtDecoder jwtDecoder =  NimbusJwtDecoder.withSecretKey(secretKey).build();
+
+      // TODO setup validators for issuer and audience
+      /*
+      OAuth2TokenValidator<Jwt> jwtValidator = JwtValidators.createDefault();
+      if (jwtIssuer != null && !jwtIssuer.isEmpty()) {
+        OAuth2TokenValidator<Jwt> issuerValidator = JwtValidators.createDefaultWithIssuer(jwtIssuer);
+
+        if (jwtAudience != null && !jwtAudience.isEmpty()) {
+          AudienceValidator audienceValidator = new AudienceValidator(jwtAudience);
+          jwtDecoder.setJwtValidator(new DelegatingOAuth2TokenValidator<>(issuerValidator, audienceValidator));
+        } else {
+          jwtDecoder.setJwtValidator(issuerValidator);
+        }
+      } else {
+        jwtDecoder.setJwtValidator(jwtValidator);
+      }
+      */
+
+      return jwtDecoder;
     }
+
+    // TODO implement audience validator
+    /*
+    static class AudienceValidator implements OAuth2TokenValidator<Jwt> {
+        private final String audience;
+
+        AudienceValidator(String audience) { this.audience = audience; }
+
+        @Override
+        public OAuth2TokenValidatorResult validate(Jwt jwt) {
+            if (jwt.getAudience() != null && jwt.getAudience().contains(audience)) {
+                return OAuth2TokenValidatorResult.success();
+            }
+            var error = new OAuth2Error("invalid_token", "Missing or invalid audience", null);
+            return OAuth2TokenValidatorResult.failure(error);
+        }
+    }
+        */
 }
