@@ -1,0 +1,64 @@
+name: Backend PR Build (no deploy)
+
+on:
+  pull_request:
+    branches: [dev-staging, staging]
+    types: [opened, synchronize, reopened]
+    paths:
+      - "backend/Gateway.Api/**"
+      - "backend/Web.Bff.Api/**"
+      - "backend/Auth.Api/**"
+      - ".github/workflows/**"
+
+permissions:
+  contents: read
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    outputs:
+      gateway: ${{ steps.filter.outputs.gateway }}
+      bff: ${{ steps.filter.outputs.bff }}
+      auth: ${{ steps.filter.outputs.auth }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            gateway:
+              - 'backend/Gateway.Api/**'
+            bff:
+              - 'backend/Web.Bff.Api/**'
+            auth:
+              - 'backend/Auth.Api/**'
+
+  build:
+    runs-on: ubuntu-latest
+    needs: detect
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: gateway
+            changed: ${{ needs.detect.outputs.gateway }}
+            dockerfile: Gateway.Api/Dockerfile
+          - name: web-bff
+            changed: ${{ needs.detect.outputs.bff }}
+            dockerfile: Web.Bff.Api/Dockerfile
+          - name: auth
+            changed: ${{ needs.detect.outputs.auth }}
+            dockerfile: Auth.Api/Dockerfile
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image (no push) - ${{ matrix.name }}
+        if: matrix.changed == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: backend
+          file: backend/${{ matrix.dockerfile }}
+          push: false
+          platforms: linux/amd64
+          tags: local/${{ matrix.name }}:pr-${{ github.event.pull_request.number }}
