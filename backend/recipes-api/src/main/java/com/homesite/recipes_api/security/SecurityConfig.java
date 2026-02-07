@@ -32,10 +32,11 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-              .requestMatchers("/health").permitAll()
               .requestMatchers("/graphql").permitAll()
               .requestMatchers("/graphiql").permitAll()
-                .anyRequest().authenticated() // TODO consider if we want to allow unauthenticated access to some endpoints like GET /recipes and GET /recipes/{id}
+              .requestMatchers("/health").permitAll()
+              .requestMatchers("/api/v1/rest-health").permitAll()
+              .anyRequest().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> jwt

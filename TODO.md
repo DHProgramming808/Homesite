@@ -57,6 +57,7 @@ Jan 26 checkpoint
 -fix bug where once the accesstoken expires, it's not doing the refresh behavior correctly
 -also kick out of username once refresh token is unauthed
 -add unique primary id for User table
+-all roles to recipe-api (spring doesn't have a nice translation for .net issued jwt roles)
 
 
 
@@ -126,8 +127,11 @@ Jan 26 checkpoint
 
 Feb 7, 2026.
 -push recipes api prototype
+-setup/wire/test mongodb
+
+-migrate ef core from auth.api to auth-db
 -test auth-db
 
--setup mongodb
+
 
 
