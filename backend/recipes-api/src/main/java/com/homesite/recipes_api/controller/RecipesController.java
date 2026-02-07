@@ -1,17 +1,19 @@
 package com.homesite.recipes_api.controller;
 
+import java.time.Instant;
+import java.util.List;
+
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.MutationMapping;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.stereotype.Controller; //TODO Remove as we aren't using REST here
+
 import com.homesite.recipes_api.model.Recipe;
 import com.homesite.recipes_api.repo.RecipeRepository;
 
 import lombok.Data;
-import org.springframework.graphql.data.method.annotation.*;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping; //TODO Remove as we aren't using REST here
-
-import java.time.Instant;
-import java.util.List;
 
 
 @Controller
@@ -37,12 +39,15 @@ public class RecipesController {
 
     // TODO Implement pagination properly later
     // TODO pull featured recipes ID from a separate collection/table instead of filtering here
+    // TODO error handling
   }
 
 
   @QueryMapping
   public Recipe getRecipeById(@Argument String id) {
     return repo.findById(id).orElse(null);
+
+    // TODO gracefully handle not found case and other potential errors instead of just returning null or throwing raw exceptions
   }
 
 

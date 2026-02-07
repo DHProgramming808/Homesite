@@ -124,3 +124,10 @@ Jan 26 checkpoint
 -Standard error mapping (Auth.Api returns text sometimes; make it consistent JSON)
 
 
+Feb 7, 2026.
+-push recipes api prototype
+-test auth-db
+
+-setup mongodb
+
+
