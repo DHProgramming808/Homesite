@@ -34,11 +34,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
               .requestMatchers("/graphql").permitAll()
               .requestMatchers("/graphiql").permitAll()
-                .anyRequest().authenticated()
-            )
-            .authorizeHttpRequests(auth -> auth
               .requestMatchers("/health").permitAll()
-                .anyRequest().permitAll() //TODO ensure this is the correct pattern for allowing unauthenticated access to actuator endpoints without opening up other APIs
+              .anyRequest().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> jwt

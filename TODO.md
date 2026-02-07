@@ -127,8 +127,11 @@ Jan 26 checkpoint
 
 Feb 7, 2026.
 -push recipes api prototype
+-setup/wire/test mongodb
+
+-migrate ef core from auth.api to auth-db
 -test auth-db
 
--setup mongodb
+
 
 
