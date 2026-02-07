@@ -35,6 +35,7 @@ public class SecurityConfig {
               .requestMatchers("/graphql").permitAll()
               .requestMatchers("/graphiql").permitAll()
               .requestMatchers("/health").permitAll()
+              .requestMatchers("/api/v1/rest-health").permitAll()
               .anyRequest().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> oauth2
