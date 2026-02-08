@@ -39,12 +39,14 @@ public class RecipesController {
 
     // DEBUG
   if (!all.isEmpty()) {
-    System.out.println(all.get(0));
+    System.out.println("DEBUG: found" + all.get(0));
   } else {
     System.out.println("[DEBUG] No featured recipes found.");
   }
 
-    return all.stream().limit(take).toList();
+    List<Recipe> result = all.stream().limit(take).toList();
+    System.out.println("[DEBUG] Returning " + result.size() + " featured recipes.");
+    return result;
 
     // TODO Implement pagination properly later
     // TODO pull featured recipes ID from a separate collection/table instead of filtering here
@@ -57,6 +59,16 @@ public class RecipesController {
     return repo.findById(id).orElse(null);
 
     // TODO gracefully handle not found case and other potential errors instead of just returning null or throwing raw exceptions
+  }
+
+  @QueryMapping
+  public Recipe getRandomRecipe() {
+    long count = repo.count();
+    if (count == 0) {
+      return null; // or throw an exception if you prefer
+    }
+    int idx = (int) (Math.random() * count);
+    return repo.findAll(PageRequest.of(idx, 1)).getContent().stream().findFirst().orElse(null);
   }
 
 
