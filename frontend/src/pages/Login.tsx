@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { loginApi } from "../api";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 import "../styles/Auth.css";
@@ -8,8 +8,13 @@ import "../styles/Auth.css";
 export default function Login() {
   const [email, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
   const navigate = useNavigate();
+  const location = useLocation(); // ✅ top-level hook call
   const { login } = useAuth();
+
+  // ✅ compute "from" once per render
+  const from = (location.state as any)?.from || "/stub";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,7 +22,8 @@ export default function Login() {
     try {
       const result = await loginApi(email, password);
       login(result.accessToken, result.refreshToken);
-      navigate("/stub");
+
+      navigate(from, { replace: true });
     } catch (error) {
       console.error(error);
       alert("Login failed");

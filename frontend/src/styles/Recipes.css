@@ -1,0 +1,193 @@
+/* Recipes module */
+.recipesPage {
+  padding-top: 120px; /* navbar offset */
+  padding-bottom: 80px;
+}
+
+/* ---- Pseudo hero rail ---- */
+.recipesHero {
+  margin-top: 14px;
+  padding: 18px 0 20px;
+  position: relative;
+}
+
+.recipesHeroHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.recipesHeroNav {
+  display: flex;
+  gap: 10px;
+}
+
+.recipesNavBtn {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  color: rgba(255,255,255,.92);
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: transform .2s var(--ease), background .2s var(--ease);
+}
+.recipesNavBtn:hover { background: rgba(255,255,255,.10); transform: translateY(-1px); }
+
+.recipesRailScroller {
+  /* Pads scrollbar L/R without preventing cards from reaching edges */
+  padding-inline: clamp(16px, 3vw, 40px);
+}
+.recipesRail {
+  margin-inline: calc(-1 * clamp(16px, 3vw, 40px));
+
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: clamp(260px, 34vw, 420px);
+  gap: clamp(12px, 2vw, 22px);
+
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+
+  padding-bottom: 12px; /* breathing room above scrollbar */
+  scroll-padding-inline: clamp(12px, 2vw, 32px);
+}
+.recipesRailCard {
+  scroll-snap-align: start;
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  min-height: 220px;
+
+  border: 1px solid rgba(255,255,255,.10);
+  background: var(--card-bg) center / cover no-repeat;
+  transition: transform .35s var(--ease), box-shadow .35s var(--ease), border-color .35s var(--ease);
+}
+.recipesRailCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 60px rgba(0,0,0,.45);
+  border-color: rgba(255,255,255,.16);
+}
+
+.recipesRailOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.72) 82%);
+}
+
+.recipesRailTitle {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 14px 14px 16px;
+  z-index: 1;
+
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  color: rgba(255,255,255,.92);
+}
+
+/* Scrollbar */
+.recipesRail::-webkit-scrollbar { height: 12px; }
+.recipesRail::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,.55);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+.recipesRail::-webkit-scrollbar-track {
+  background: rgba(0,0,0,.15);
+  border-radius: 999px;
+}
+
+/* ---- Search card ---- */
+.recipesSearch {
+  margin-top: 26px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 22px;
+  backdrop-filter: blur(10px);
+  padding: 18px;
+}
+
+.recipesSearchRow {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.recipesInput {
+  flex: 1;
+  min-width: 220px;
+  color: rgba(255,255,255,.92);
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 14px;
+  padding: 12px;
+  outline: none;
+}
+.recipesInput:focus {
+  border-color: rgba(255,255,255,.22);
+  background: rgba(255,255,255,.08);
+}
+
+/* ---- Upload blurb ---- */
+.recipesUploadBlurb {
+  margin-top: 22px;
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+  flex-wrap: wrap;
+
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.03);
+}
+
+/* ---- Recipe page ---- */
+.recipeLayout {
+  padding-top: 120px;
+  padding-bottom: 80px;
+}
+
+.recipeHeroImage {
+  width: 100%;
+  max-height: 520px;
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,.10);
+  object-fit: cover;
+  display: block;
+}
+
+.recipeGrid {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 14px;
+}
+
+.recipeCard {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 22px;
+  backdrop-filter: blur(10px);
+  padding: 18px;
+}
+
+.recipeList {
+  margin: 12px 0 0;
+  padding-left: 1.1rem;
+}
+
+@media (max-width: 900px) {
+  .recipeGrid { grid-template-columns: 1fr; }
+}
