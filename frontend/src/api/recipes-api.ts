@@ -1,3 +1,5 @@
+import { getAccessToken } from "../auth";
+
 export type Recipe = {
   id: string;
   title: string;
@@ -15,9 +17,6 @@ const RECIPES_GRAPHQL_URL = window.__CONFIG__?.RECIPE_BASE_URL ??
   import.meta.env.VITE_RECIPES_API_GRAPHQL_URL ??
   "http://localhost:6001/graphql";
 
-function getAccessToken() {
-  return localStorage.getItem("accessToken");
-}
 
 // GRAPHQL API
 type GraphQLError = {
