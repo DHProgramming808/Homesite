@@ -38,7 +38,11 @@ public class RecipesController {
     int take = (limit == null || limit <=0) ? 8 : Math.min(limit, 50);
 
     // DEBUG
-    System.out.println(all.getFirst().toString());
+  if (!all.isEmpty()) {
+    System.out.println(all.get(0));
+  } else {
+    System.out.println("[DEBUG] No featured recipes found.");
+  }
 
     return all.stream().limit(take).toList();
 

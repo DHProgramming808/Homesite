@@ -19,7 +19,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Document(collection = "Recipes")
+@Document(collection = "recipes")
 public class Recipe {
 
 

@@ -3,7 +3,16 @@ spring:
     name: recipes-api
   data:
     mongodb:
-      uri: ${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/RecipesDb}
+      host: ${SPRING_DATA_MONGODB_HOST:mongo}
+      port: ${SPRING_DATA_MONGODB_PORT:27017}
+      database: ${SPRING_DATA_MONGODB_DATABASE:RecipesDb}
+      username: ${SPRING_DATA_MONGODB_USERNAME:}
+      password: ${SPRING_DATA_MONGODB_PASSWORD:}
+      authentication-database: ${SPRING_DATA_MONGODB_AUTH_DB:admin}
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration
 
 server:
   port: 6000
@@ -18,3 +27,11 @@ management:
     web:
       exposure:
         include: health,info,mappings
+
+logging:
+  level:
+    org.springframework.boot.autoconfigure.mongo: DEBUG
+    org.springframework.data.mongodb: DEBUG
+    com.mongodb: INFO
+    org.mongodb.driver: DEBUG
+

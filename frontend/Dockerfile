@@ -6,13 +6,14 @@ COPY . .
 RUN npm run build
 
 FROM nginx:alpine
+WORKDIR /usr/share/nginx
 
 # Copy built site
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/dist ./html
 
 # Add runtime config entrypoint
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
+COPY docker-entrypoint.sh ./docker-entrypoint.sh
+RUN chmod +x ./docker-entrypoint.sh
 
 EXPOSE 80
-ENTRYPOINT ["/docker-entrypoint.sh"]
+ENTRYPOINT ["/bin/sh", "./docker-entrypoint.sh"]

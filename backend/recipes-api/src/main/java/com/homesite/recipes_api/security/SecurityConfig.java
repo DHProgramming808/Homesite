@@ -33,9 +33,10 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
               .requestMatchers("/graphql").permitAll()
-              .requestMatchers("/graphiql").permitAll()
+              .requestMatchers("/graphql/**").permitAll()
               .requestMatchers("/health").permitAll()
               .requestMatchers("/api/v1/rest-health").permitAll()
+              .requestMatchers("/actuator/**").permitAll()
               .anyRequest().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> oauth2
