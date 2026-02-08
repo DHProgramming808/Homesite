@@ -10,6 +10,7 @@ export type Recipe = {
   createdByUserId: number;
   createdAt: string;   // Instant serialized as ISO string
   updatedAt?: string;  // if you query it
+  imageUrl?: string; // TODO add image support to recipes
 };
 
 
@@ -25,7 +26,7 @@ type GraphQLError = {
   extensions?: Record<string, unknown>;
 }
 
-type GraphQLResposne<T> = {
+type GraphQLResponse<T> = {
   data?: T;
   errors?: GraphQLError[];
 }
@@ -51,11 +52,11 @@ async function graphql<TData>(
   const response = await fetch(url, {
     method: "POST",
     headers,
-    body: JSON.stringify({ query, variables }),
+    body: JSON.stringify({ query, variables: variables ?? {} }),
   });
 
   const responseBody = await response.text();
-  let json: GraphQLResposne<TData>;
+  let json: GraphQLResponse<TData>;
   try {
     json = JSON.parse(responseBody);
   } catch (err) {
@@ -79,10 +80,10 @@ async function graphql<TData>(
 // Queries
 // TODO consider mobing query strings to their own file
 
-export async function getFeaturedREcipes(limit = 8): Promise<Recipe[]> {
+export async function getFeaturedRecipes(limit = 8): Promise<Recipe[]> {
   const query = `
   query GetFeaturedRecipes($limit: Int!) {
-    featuredRecipes(limit: $limit) {
+    getFeaturedRecipes(limit: $limit) {
       id
       title
       description
@@ -92,6 +93,7 @@ export async function getFeaturedREcipes(limit = 8): Promise<Recipe[]> {
       createdByUserId
       createdAt
       updatedAt
+      imageUrl
     }
   }`;
 
@@ -105,7 +107,7 @@ export async function getFeaturedREcipes(limit = 8): Promise<Recipe[]> {
 export async function getRecipeById(id: string): Promise<Recipe | null> {
   const query = `
   query GetRecipeById($id: String!) {
-    recipeById(id: $id) {
+    getRecipeById(id: $id) {
       id
       title
       description
@@ -115,19 +117,20 @@ export async function getRecipeById(id: string): Promise<Recipe | null> {
       createdByUserId
       createdAt
       updatedAt
+      imageUrl
     }
   }`;
 
-  type Data = {recipeById: Recipe | null};
+  type Data = {getRecipeById: Recipe | null};
 
   const response = await graphql<Data>(query, { id }, {auth: false});
-  return response.recipeById;
+  return response.getRecipeById;
 }
 
 export async function getRandomRecipe(): Promise<Recipe | null> {
   const query = `
   query GetRandomRecipe {
-    randomRecipe {
+    getRandomRecipe {
       id
       title
       description
@@ -137,13 +140,14 @@ export async function getRandomRecipe(): Promise<Recipe | null> {
       createdByUserId
       createdAt
       updatedAt
+      imageUrl
     }
   }`;
 
-  type Data = {randomRecipe: Recipe | null};
+  type Data = {getRandomRecipe: Recipe | null};
 
   const response = await graphql<Data>(query, {}, {auth: false});
-  return response.randomRecipe;
+  return response.getRandomRecipe;
 }
 
 
@@ -155,6 +159,7 @@ export type CreateRecipeInput = {
   ingredients: string[];
   steps: string[];
   featured?: boolean;
+  imageUrl?: string;
 };
 
 export async function createRecipe(input: CreateRecipeInput): Promise<Recipe> {
@@ -170,6 +175,7 @@ export async function createRecipe(input: CreateRecipeInput): Promise<Recipe> {
       createdByUserId
       createdAt
       updatedAt
+      imageUrl
     }
   }`;
 
@@ -187,9 +193,10 @@ export type UpdateRecipeInput = {
   ingredients?: string[];
   steps?: string[];
   featured?: boolean;
+  imageUrl?: string;
 };
 
-export async function updateRecipe(input: UpdateRecipeInput, id: string): Promise<Recipe> {
+export async function updateRecipe(id: string, input: Omit<UpdateRecipeInput, "id">): Promise<Recipe> {
   const mutation = `
     mutation UpdateRecipe($id: String!, $input: UpdateRecipeInput!) {
     updateRecipe(id: $id, input: $input) {
@@ -202,6 +209,7 @@ export async function updateRecipe(input: UpdateRecipeInput, id: string): Promis
       createdByUserId
       createdAt
       updatedAt
+      imageUrl
     }
   }`;
 

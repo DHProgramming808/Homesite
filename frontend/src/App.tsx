@@ -27,10 +27,9 @@ import Projects from "./pages/Projects";
 
 import RecipesHome from "./pages/recipes/RecipesHome";
 import RecipePage from "./pages/recipes/RecipePage";
-import RecipesEditor from "./pages/recipes/RecipeEditor";
-import RecipesEditorLogin from "./pages/recipes/RecipeEditorLogin";
+import RecipeEditor from "./pages/recipes/RecipeEditor";
 
-import { AuthProvider } from "./context/AuthContext";
+import { useAuth, AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 
@@ -53,11 +52,19 @@ export default function App() {
 
         <Route path = "/recipes" element = {<RecipesHome />} />
         <Route path = "/recipes/:id" element = {<RecipePage />} />
-        <Route path = "/recipes/edit-login" element = {<RecipesEditorLogin />} />
-        <Route path = "/recipes/edit"
-          element = {
+        <Route
+          path="/recipes/new"
+          element={
             <ProtectedRoute>
-              <RecipesEditor />
+              <RecipeEditor mode="create" />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/recipes/:id/edit"
+          element={
+            <ProtectedRoute>
+              <RecipeEditor mode="edit" />
             </ProtectedRoute>
           }
         />
@@ -87,11 +94,6 @@ export default function App() {
     </AuthProvider>
   );
 }
-
-// TODO remove
-//function ProtectedRoute({ children }: { children: React.JSX.Element }) {
-//  return isAuthenticated() ? children : <Navigate to = "/login" />;
-//}
 
 
 function GetInfo() {
