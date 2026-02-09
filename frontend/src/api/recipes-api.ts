@@ -1,4 +1,6 @@
 import { getAccessToken } from "../auth";
+import type { GraphQLError } from "./api-helper";
+import { ApiError } from "./api-helper";
 
 export type Recipe = {
   id: string;
@@ -21,16 +23,12 @@ const RECIPES_GRAPHQL_URL = window.__CONFIG__?.API_BASE_URL ??
 
 
 // GRAPHQL API
-type GraphQLError = {
-  message: string;
-  path?: (string | number)[];
-  extensions?: Record<string, unknown>;
-}
 
 type GraphQLResponse<T> = {
   data?: T;
   errors?: GraphQLError[];
 }
+
 
 async function graphql<TData>(
   query: string,
@@ -67,11 +65,11 @@ async function graphql<TData>(
 
   if (json.errors?.length) {
     const detail = json.errors.map(e => e.message).join(" | ");
-    throw new Error(`GraphQL errors: ${detail}`);
+    throw new ApiError(`GraphQL errors: ${detail}`, response.status, response.statusText, json.errors);
   }
 
   if (!json.data) {
-    throw new Error("No data in GraphQL response"); // TODO check if an empty response is correct sometimes and doesn't need an thrown error
+    throw new ApiError("No data in GraphQL response", response.status, response.statusText); // TODO check if an empty response is correct sometimes and doesn't need an thrown error
   }
 
   return json.data;
@@ -107,7 +105,7 @@ export async function getFeaturedRecipes(limit = 6): Promise<Recipe[]> {
 
 export async function getRecipeById(id: string): Promise<Recipe | null> {
   const query = `
-  query GetRecipeById($id: String!) {
+  query GetRecipeById($id: ID!) {
     getRecipeById(id: $id) {
       id
       title
@@ -199,7 +197,7 @@ export type UpdateRecipeInput = {
 
 export async function updateRecipe(id: string, input: Omit<UpdateRecipeInput, "id">): Promise<Recipe> {
   const mutation = `
-    mutation UpdateRecipe($id: String!, $input: UpdateRecipeInput!) {
+    mutation UpdateRecipe($id: ID!, $input: UpdateRecipeInput!) {
     updateRecipe(id: $id, input: $input) {
       id
       title
@@ -222,7 +220,7 @@ export async function updateRecipe(id: string, input: Omit<UpdateRecipeInput, "i
 
 export async function deleteRecipe(id: string): Promise<boolean> {
   const mutation = `
-    mutation DeleteRecipe($id: String!) {
+    mutation DeleteRecipe($id: ID!) {
     deleteRecipe(id: $id)
   }`;
 
