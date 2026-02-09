@@ -16,7 +16,6 @@ import com.homesite.recipes_api.repo.RecipeRepository;
 
 import lombok.Data;
 
-
 @Controller
 public class RecipesController {
 

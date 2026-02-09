@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Json;
+using System.Text;
 
 //using Shared.DTOs.Auth;
 using Web.Bff.Api.DTOs.Auth;
@@ -34,6 +35,54 @@ public class RecipesController : ControllerBase
         ?? "missing";
 
 
+    // TODO add error handling, pagination, filtering, etc. as needed
+    [AllowAnonymous]
+    [HttpPost("graphql")]
+    public async Task<IActionResult> RecipesGraphqlPassthrough([FromBody] GraphQlRequest request, CancellationToken ct)
+    {
+        var client = _httpClientFactory.CreateClient("Recipes");
+
+        var authHeader = Request.Headers.Authorization.FirstOrDefault();
+        if (!string.IsNullOrWhiteSpace(authHeader))
+        {
+            client.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse(authHeader);
+        }
+
+        Console.WriteLine("Hitting Bff Recipes GraphQL passthrough with Correlation ID: " + CorrelationId);
+
+        client.DefaultRequestHeaders.Remove("X-Correlation-ID");
+        client.DefaultRequestHeaders.Add("X-Correlation-ID", CorrelationId);
+
+        var jsonContent = JsonSerializer.Serialize( new
+        {
+            query = request.Query,
+            variables = request.Variables ?? new {},
+            operationName = request.OperationName
+        });
+
+        using var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+        HttpResponseMessage downstream;
+
+        try
+        {
+            downstream = await client.PostAsync("/graphql", content, ct);
+        }
+        catch
+        {
+            _logger.LogError("GraphQL passthrough failed to reach downstream service");
+            return StatusCode(503, new { message = "Downstream service unavailable" });
+        }
+
+        var body = await downstream.Content.ReadAsStringAsync(ct);
+        var mediaType = downstream.Content.Headers.ContentType?.MediaType ?? "application/json";
+
+        return Content(body, mediaType);
+    }
+
+
+    // TODO --- deprecate in favor of a single graphql passthrough ---
+
     [AllowAnonymous]
     [HttpGet("featured-recipes")]
     public async Task<IResult> GetFeaturedRecipes()
@@ -42,11 +91,11 @@ public class RecipesController : ControllerBase
         {
             Query = """
             query($limit:Int) {
-              featuredRecipes(limit: $limit) {
+              getFeaturedRecipes(limit: $limit) {
                 id title description featured createdByUserId createdAt updatedAt ingredients steps
               }
             }
-            """, // TODO move to constants TODO see if we can standarize/consolidate GraphQL queries somewhere
+            """, // TODO move to constants // TODO see if we can standarize/consolidate GraphQL queries somewhere
             Variables = new { limit = 10 }
         };
 
