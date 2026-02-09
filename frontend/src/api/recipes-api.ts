@@ -17,7 +17,7 @@ export type Recipe = {
 const RECIPES_GRAPHQL_URL = window.__CONFIG__?.API_BASE_URL ??
   window.__CONFIG__?.RECIPE_BASE_URL ??
   import.meta.env.VITE_RECIPES_API_GRAPHQL_URL ??
-  "http://localhost:5000/recipes/graphql";
+  "http://localhost:5000";
 
 
 // GRAPHQL API
@@ -37,7 +37,7 @@ async function graphql<TData>(
   variables?: Record<string, unknown>,
   opts?: {auth?:boolean}
 ): Promise<TData> {
-  const url = RECIPES_GRAPHQL_URL;
+  const url = RECIPES_GRAPHQL_URL + "/recipes/graphql";
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -81,7 +81,7 @@ async function graphql<TData>(
 // Queries
 // TODO consider mobing query strings to their own file
 
-export async function getFeaturedRecipes(limit = 8): Promise<Recipe[]> {
+export async function getFeaturedRecipes(limit = 6): Promise<Recipe[]> {
   const query = `
   query GetFeaturedRecipes($limit: Int!) {
     getFeaturedRecipes(limit: $limit) {

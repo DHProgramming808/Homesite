@@ -3,10 +3,10 @@ package com.homesite.recipes_api.controller;
 import java.time.Instant;
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Controller;
@@ -81,7 +81,7 @@ public class RecipesController {
     var now = Instant.now();
 
     //check if any required fields are missing
-    if (input.title == null || input.description == null || input.ingredients == null || input.steps == null) {
+    if (input.title == null || input.description == null || input.ingredients == null || input.steps == null || input.imageUrl == null) {
       throw new RuntimeException("Missing required fields");
     }
 
@@ -94,6 +94,7 @@ public class RecipesController {
             .createdByUserId(userId)
             .createdAt(now)
             .updatedAt(now)
+            .imageUrl(input.imageUrl)
             .build();
 
     return repo.save(recipe);
@@ -125,6 +126,9 @@ public class RecipesController {
     }
     if (input.featured != null) {
       recipe.setFeatured(input.featured);
+    }
+    if (input.imageUrl != null) {
+      recipe.setImageUrl(input.imageUrl);
     }
 
     //check if all fields are null or empty
@@ -163,6 +167,7 @@ public class RecipesController {
     public List<String> ingredients;
     public List<String> steps;
     public Boolean featured;
+    public String imageUrl;
   }
 
 
@@ -174,5 +179,6 @@ public class RecipesController {
     public List<String> ingredients;
     public List<String> steps;
     public Boolean featured;
+    public String imageUrl;
   }
 }

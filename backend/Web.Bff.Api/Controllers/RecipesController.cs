@@ -156,7 +156,7 @@ public class RecipesController : ControllerBase
             Query = """
             mutation($input:CreateRecipeInput!) {
               createRecipe(input: $input) {
-                id title description featured createdByUserId createdAt updatedAt ingredients steps
+                id title description featured createdByUserId createdAt updatedAt ingredients steps imageUrl
               }
             }
             """,

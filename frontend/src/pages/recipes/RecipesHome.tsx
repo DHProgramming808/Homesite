@@ -38,7 +38,7 @@ export default function RecipesHome() {
 
   useEffect(() => {
     let alive = true;
-    getFeaturedRecipes(8)
+    getFeaturedRecipes(6)
       .then((r) => { if (alive) setFeatured(r); })
       .catch((e) => { console.error(e); if (alive) setError("Could not load featured recipes."); });
     return () => { alive = false; };
