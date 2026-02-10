@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { getProtectedStub, logoutApi } from "../api";
 import { decodeToken, isTokenExpired, clearTokens } from "../auth";
 import type { DecodedToken } from "../auth";
+import { useAuth } from "../context/AuthContext";
 
 import "../styles/Stub.css";
 
@@ -12,6 +13,8 @@ export default function Stub() {
   const [user, setUser] = useState<DecodedToken | null>(null);
   const navigate = useNavigate();
 
+  const { logout } = useAuth();
+
   const handleLogout = async () => {
     try {
       await logoutApi();
@@ -19,14 +22,18 @@ export default function Stub() {
       // even if API fails, clear local tokens
       console.warn("logoutApi failed, clearing tokens anyway", e);
     } finally {
-      clearTokens();
+      await logout();
       navigate("/");
     }
   };
 
   useEffect(() => {
+    let loggingOut = false;
+
     const interval = window.setInterval(() => {
+      if (loggingOut) return;
       if (isTokenExpired()) {
+        loggingOut = true;
         handleLogout();
       }
     }, 1500);

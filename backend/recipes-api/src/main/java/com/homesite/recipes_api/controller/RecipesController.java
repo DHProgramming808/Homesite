@@ -81,14 +81,17 @@ public class RecipesController {
     var now = Instant.now();
 
     //check if any required fields are missing
-    if (input.title == null || input.description == null || input.ingredients == null || input.steps == null || input.imageUrl == null) {
-      throw new RuntimeException("Missing required fields");
+    if (input.title == null || input.title.isBlank()
+      || input.description == null || input.description.isBlank()
+      || input.ingredients == null || input.ingredients.isEmpty()
+      || input.steps == null || input.steps.isEmpty()) {
+        throw new RuntimeException("Missing required fields");
     }
 
     Recipe recipe = Recipe.builder()
-            .title(input.getTitle())
-            .description(input.getDescription())
-            .ingredients(input.getIngredients())
+            .title(input.title)
+            .description(input.description)
+            .ingredients(input.ingredients)
             .steps(input.steps)
             .featured(input.featured != null && input.featured) // New recipes are not featured by default
             .createdByUserId(userId)
@@ -132,7 +135,7 @@ public class RecipesController {
     }
 
     //check if all fields are null or empty
-    if (input.title == null && input.description == null && input.ingredients == null && input.steps == null && input.featured == null) {
+    if (input.title == null && input.description == null && input.ingredients == null && input.steps == null && input.featured == null && input.imageUrl == null) {
       throw new RuntimeException("No fields to update");
     }
 
