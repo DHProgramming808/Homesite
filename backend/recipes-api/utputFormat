@@ -1,0 +1,12 @@
+HTTP/1.1 401 
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Set-Cookie: JSESSIONID=D83CFBF95AE4EA2ADBFF8691622B8B27; Path=/; HttpOnly
+WWW-Authenticate: Bearer resource_metadata="http://localhost:6001/.well-known/oauth-protected-resource"
+Content-Length: 0
+Date: Sun, 08 Feb 2026 01:51:07 GMT
+

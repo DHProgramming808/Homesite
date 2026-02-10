@@ -18,8 +18,8 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-  @Value("${jwt.secret}")
-  private String jwtSecret;
+  @Value("${jwt.key}")
+  private String jwtKey;
 
   @Value("${jwt.audience}")
   private String jwtAudience;
@@ -33,9 +33,10 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
               .requestMatchers("/graphql").permitAll()
-              .requestMatchers("/graphiql").permitAll()
+              .requestMatchers("/graphql/**").permitAll()
               .requestMatchers("/health").permitAll()
               .requestMatchers("/api/v1/rest-health").permitAll()
+              .requestMatchers("/actuator/**").permitAll()
               .anyRequest().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> oauth2
@@ -50,7 +51,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtDecoder jwtDecoder() {
-      var secretKey = new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+      var secretKey = new SecretKeySpec(jwtKey.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
       NimbusJwtDecoder jwtDecoder =  NimbusJwtDecoder.withSecretKey(secretKey).build();
 
       // TODO setup validators for issuer and audience
