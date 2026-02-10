@@ -373,6 +373,159 @@
   color: rgba(25, 28, 32, 0.92);
 }
 
+/* ---------- Recipe Editor ---------- */
+
+.recipesEditorHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-top: 92px; /* clears transparent navbar */
+}
+
+.recipesEditorHeaderActions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.recipesEditorGrid {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+@media (max-width: 980px) {
+  .recipesEditorGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* reuse your recipeCard if you already have it; otherwise: */
+.recipeCard {
+  background: rgba(255,255,255,0.72);
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.06);
+}
+
+/* Fields */
+.recipesField {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.recipesLabel {
+  font-size: 13px;
+  color: rgba(25, 28, 32, 0.72);
+}
+
+.recipesHelp {
+  font-size: 12px;
+  color: rgba(25, 28, 32, 0.55);
+}
+
+.recipesTextarea {
+  width: 100%;
+  min-height: 110px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(0,0,0,0.14);
+  background: rgba(255,255,255,0.86);
+  color: rgba(25, 28, 32, 0.95);
+  outline: none;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+.recipesTextarea:focus {
+  border-color: rgba(0,0,0,0.25);
+  background: white;
+}
+
+/* List rows */
+.recipesCardHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.recipesList {
+  margin-top: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.recipesListRow {
+  display: grid;
+  grid-template-columns: 1fr 40px;
+  gap: 10px;
+  align-items: center;
+}
+
+.recipesIconBtn {
+  height: 40px;
+  width: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.12);
+  background: rgba(255,255,255,0.75);
+  cursor: pointer;
+}
+
+.recipesIconBtn:hover {
+  background: rgba(255,255,255,0.95);
+}
+
+/* Steps layout */
+.recipesStepRow {
+  display: grid;
+  grid-template-columns: 34px 1fr 40px;
+  gap: 10px;
+  align-items: start;
+}
+
+.recipesStepNumber {
+  margin-top: 12px;
+  font-weight: 600;
+  color: rgba(25, 28, 32, 0.65);
+  text-align: center;
+}
+
+.recipesStepTextarea {
+  min-height: 86px;
+}
+
+/* Checkbox row */
+.recipesCheckboxRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 14px;
+  color: rgba(25, 28, 32, 0.82);
+}
+
+/* Count hint */
+.recipesCountHint {
+  margin-top: 10px;
+  font-size: 12px;
+  color: rgba(25, 28, 32, 0.55);
+}
+
+/* Upload stub */
+.recipesUploadStub {
+  margin-top: 12px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+
 /* mobile: stack */
 @media (max-width: 860px) {
   .recipeTwoCol {
