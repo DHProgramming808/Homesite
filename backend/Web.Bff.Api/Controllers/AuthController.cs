@@ -352,4 +352,19 @@ public class AuthController : ControllerBase
             statusCode: statusCode
         ); // TODO make sure we are returning the correct structure of the call. status code?
     }
+
+
+    // TODO DEBUG
+    [AllowAnonymous]
+    [HttpGet("db-ping")]
+    public async Task<IResult> DbPing()
+    {
+        var client = _httpClientFactory.CreateClient("Auth");
+        var response = await client.GetAsync("db-ping"); // TODO change the endpoint address from api to auth or something and sync it with the Controller in Auth.Api
+        if (!response.IsSuccessStatusCode)
+        {
+            return await HttpErrorMapper.ToErrorResultAsync(response, CorrelationId);
+        }
+        return Results.Ok("BFF can reach Auth API db-ping endpoint");
+    }
 }
