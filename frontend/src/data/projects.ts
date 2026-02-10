@@ -40,7 +40,7 @@ const MOCK_PROJECTS: Project[] = [
     image: "/images/projects/proj2.jpg",
     tags: ["GraphQL", "Java", "Spring Boot", "MongoDB"],
     repoUrl: "https://github.com/DHProgramming808/Homesite/tree/main/backend/recipes-api",
-    liveUrl: "https://recipes.danielyhong.com/",
+    liveUrl: "https://www.danielyhong.com/recipes",
     year: "2026",
     status: "WIP",
     role: "Backend",

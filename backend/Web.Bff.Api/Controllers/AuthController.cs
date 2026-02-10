@@ -110,7 +110,7 @@ public class AuthController : ControllerBase
 
 
     [AllowAnonymous]
-    [HttpPost("refresh-token")]
+    [HttpPost("refresh")]
     public async Task<IResult> RefreshToken([FromBody] object request)
     {
         var client = _httpClientFactory.CreateClient("Auth");
