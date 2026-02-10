@@ -1,4 +1,6 @@
 import { getAccessToken } from "../auth";
+import type { GraphQLError } from "./api-helper";
+import { ApiError } from "./api-helper";
 
 export type Recipe = {
   id: string;
@@ -14,29 +16,26 @@ export type Recipe = {
 };
 
 
-const RECIPES_GRAPHQL_URL = window.__CONFIG__?.RECIPE_BASE_URL ??
+const RECIPES_GRAPHQL_URL = window.__CONFIG__?.API_BASE_URL ??
+  window.__CONFIG__?.RECIPE_BASE_URL ??
   import.meta.env.VITE_RECIPES_API_GRAPHQL_URL ??
-  "http://localhost:6001/graphql";
+  "http://localhost:5000";
 
 
 // GRAPHQL API
-type GraphQLError = {
-  message: string;
-  path?: (string | number)[];
-  extensions?: Record<string, unknown>;
-}
 
 type GraphQLResponse<T> = {
   data?: T;
   errors?: GraphQLError[];
 }
 
+
 async function graphql<TData>(
   query: string,
   variables?: Record<string, unknown>,
   opts?: {auth?:boolean}
 ): Promise<TData> {
-  const url = RECIPES_GRAPHQL_URL;
+  const url = RECIPES_GRAPHQL_URL + "/recipes/graphql";
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -66,11 +65,11 @@ async function graphql<TData>(
 
   if (json.errors?.length) {
     const detail = json.errors.map(e => e.message).join(" | ");
-    throw new Error(`GraphQL errors: ${detail}`);
+    throw new ApiError(`GraphQL errors: ${detail}`, response.status, response.statusText, json.errors);
   }
 
   if (!json.data) {
-    throw new Error("No data in GraphQL response"); // TODO check if an empty response is correct sometimes and doesn't need an thrown error
+    throw new ApiError("No data in GraphQL response", response.status, response.statusText); // TODO check if an empty response is correct sometimes and doesn't need an thrown error
   }
 
   return json.data;
@@ -80,7 +79,7 @@ async function graphql<TData>(
 // Queries
 // TODO consider mobing query strings to their own file
 
-export async function getFeaturedRecipes(limit = 8): Promise<Recipe[]> {
+export async function getFeaturedRecipes(limit = 6): Promise<Recipe[]> {
   const query = `
   query GetFeaturedRecipes($limit: Int!) {
     getFeaturedRecipes(limit: $limit) {
@@ -106,7 +105,7 @@ export async function getFeaturedRecipes(limit = 8): Promise<Recipe[]> {
 
 export async function getRecipeById(id: string): Promise<Recipe | null> {
   const query = `
-  query GetRecipeById($id: String!) {
+  query GetRecipeById($id: ID!) {
     getRecipeById(id: $id) {
       id
       title
@@ -198,7 +197,7 @@ export type UpdateRecipeInput = {
 
 export async function updateRecipe(id: string, input: Omit<UpdateRecipeInput, "id">): Promise<Recipe> {
   const mutation = `
-    mutation UpdateRecipe($id: String!, $input: UpdateRecipeInput!) {
+    mutation UpdateRecipe($id: ID!, $input: UpdateRecipeInput!) {
     updateRecipe(id: $id, input: $input) {
       id
       title
@@ -221,7 +220,7 @@ export async function updateRecipe(id: string, input: Omit<UpdateRecipeInput, "i
 
 export async function deleteRecipe(id: string): Promise<boolean> {
   const mutation = `
-    mutation DeleteRecipe($id: String!) {
+    mutation DeleteRecipe($id: ID!) {
     deleteRecipe(id: $id)
   }`;
 
