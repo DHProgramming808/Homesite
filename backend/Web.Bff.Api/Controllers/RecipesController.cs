@@ -179,7 +179,7 @@ public class RecipesController : ControllerBase
         var client = _httpClientFactory.CreateClient("Recipes");
         var response = await client.GetAsync("api/v1/rest-health");
 
-        if (response.IsSuccessStatusCode)
+        if (!response.IsSuccessStatusCode)
             {
                 return await HttpErrorMapper.ToErrorResultAsync(response, CorrelationId);
             }

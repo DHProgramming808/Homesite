@@ -7,6 +7,7 @@ on:
       - "backend/Gateway.Api/**"
       - "backend/Web.Bff.Api/**"
       - "backend/Auth.Api/**"
+      - "backend/recipes-api/**"
       - "deploy/ecs/**"
       - ".github/workflows/**"
 

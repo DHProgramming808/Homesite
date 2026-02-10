@@ -6,9 +6,10 @@ import java.util.List;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-import org.springframework.stereotype.Controller; //TODO Remove as we aren't using REST here
+import org.springframework.stereotype.Controller;
 
 import com.homesite.recipes_api.model.Recipe;
 import com.homesite.recipes_api.repo.RecipeRepository;
@@ -35,7 +36,17 @@ public class RecipesController {
   public List<Recipe> getFeaturedRecipes(@Argument Integer limit) {
     var all = repo.findByFeaturedTrue();
     int take = (limit == null || limit <=0) ? 8 : Math.min(limit, 50);
-    return all.stream().limit(take).toList();
+
+    // DEBUG
+  if (!all.isEmpty()) {
+    System.out.println("DEBUG: found" + all.get(0));
+  } else {
+    System.out.println("[DEBUG] No featured recipes found.");
+  }
+
+    List<Recipe> result = all.stream().limit(take).toList();
+    System.out.println("[DEBUG] Returning " + result.size() + " featured recipes.");
+    return result;
 
     // TODO Implement pagination properly later
     // TODO pull featured recipes ID from a separate collection/table instead of filtering here
@@ -48,6 +59,16 @@ public class RecipesController {
     return repo.findById(id).orElse(null);
 
     // TODO gracefully handle not found case and other potential errors instead of just returning null or throwing raw exceptions
+  }
+
+  @QueryMapping
+  public Recipe getRandomRecipe() {
+    long count = repo.count();
+    if (count == 0) {
+      return null; // or throw an exception if you prefer
+    }
+    int idx = (int) (Math.random() * count);
+    return repo.findAll(PageRequest.of(idx, 1)).getContent().stream().findFirst().orElse(null);
   }
 
 

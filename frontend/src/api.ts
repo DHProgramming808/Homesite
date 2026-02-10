@@ -5,6 +5,7 @@ declare global {
   interface Window {
     __CONFIG__?: {
       API_BASE_URL?: string;
+      RECIPE_BASE_URL?: string;
     };
   }
 }

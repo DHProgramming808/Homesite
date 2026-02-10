@@ -1,0 +1,10 @@
+# Generic rule for all files
+# Converts CRLF to LF on commit (always) and LF to CRLF on checkout (on Windows)
+* text=auto
+
+# Specific rule for specific filetypes
+Dockerfile text eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.sh text eol=lf
+*.tf text eol=lf
