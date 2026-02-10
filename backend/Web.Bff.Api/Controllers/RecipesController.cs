@@ -37,70 +37,94 @@ public class RecipesController : ControllerBase
 
     // TODO add error handling, pagination, filtering, etc. as needed
     [AllowAnonymous]
-[HttpPost("graphql")]
-public async Task<IActionResult> RecipesGraphqlPassthrough([FromBody] GraphQlRequest request, CancellationToken ct)
-{
-    var client = _httpClientFactory.CreateClient("Recipes");
-
-    var authHeader = Request.Headers.Authorization.FirstOrDefault();
-    if (!string.IsNullOrWhiteSpace(authHeader))
+    [HttpPost("graphql")]
+    public async Task<IActionResult> RecipesGraphqlPassthrough(
+        [FromBody] GraphQlRequest request,
+        CancellationToken ct)
     {
-        client.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse(authHeader);
-    }
+        var client = _httpClientFactory.CreateClient("Recipes");
 
-    _logger.LogInformation("Hitting Bff Recipes GraphQL passthrough with Correlation ID: {CorrelationId}", CorrelationId);
-
-    client.DefaultRequestHeaders.Remove("X-Correlation-ID");
-    client.DefaultRequestHeaders.Add("X-Correlation-ID", CorrelationId);
-
-    var jsonContent = JsonSerializer.Serialize(new
-    {
-        query = request.Query,
-        variables = request.Variables ?? new { },
-        operationName = request.OperationName
-    });
-
-    using var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-
-    HttpResponseMessage downstream;
-    try
-    {
-        // IMPORTANT: use a relative path without leading slash unless your BaseAddress expects it
-        downstream = await client.PostAsync("graphql", content, ct);
-    }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex, "GraphQL passthrough failed to reach downstream service");
-        return StatusCode(503, new { message = "Downstream service unavailable" });
-    }
-
-    var body = await downstream.Content.ReadAsStringAsync(ct);
-    var contentType = downstream.Content.Headers.ContentType?.ToString() ?? "application/json";
-
-    // If downstream returns empty body, return an explicit error (prevents frontend JSON.parse crash)
-    if (string.IsNullOrWhiteSpace(body))
-    {
-        _logger.LogWarning(
-            "Downstream GraphQL returned empty body. Status={Status} Reason={Reason}",
-            (int)downstream.StatusCode,
-            downstream.ReasonPhrase
+        _logger.LogInformation(
+            "Hitting Bff Recipes GraphQL passthrough with Correlation ID: {CorrelationId}",
+            CorrelationId
         );
 
-        return StatusCode(502, new
+        // Build the GraphQL payload
+        var payload = new
         {
-            message = "Empty response from recipes GraphQL service",
-            downstreamStatus = (int)downstream.StatusCode,
-            downstreamReason = downstream.ReasonPhrase
-        });
-    }
+            query = request.Query,
+            variables = request.Variables ?? new { },
+            operationName = request.OperationName
+        };
 
-    return new ContentResult
-    {
-        Content = body,
-        ContentType = contentType,
-        StatusCode = (int)downstream.StatusCode
-    };
-}
+        var jsonContent = JsonSerializer.Serialize(payload);
+        using var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+        // Build request message (avoid DefaultRequestHeaders bleed)
+        using var msg = new HttpRequestMessage(HttpMethod.Post, "graphql")
+        {
+            Content = content
+        };
+
+        // Forward Authorization header (robust)
+        if (Request.Headers.TryGetValue("Authorization", out var authValues))
+        {
+            var authHeader = authValues.FirstOrDefault();
+            if (!string.IsNullOrWhiteSpace(authHeader))
+            {
+                // Don't parse unless you want strict validation; this avoids edge parsing issues
+                msg.Headers.TryAddWithoutValidation("Authorization", authHeader);
+
+                // Optional: log just the prefix to confirm it's actually present
+                var prefix = authHeader.Length > 25 ? authHeader[..25] + "…" : authHeader;
+                _logger.LogInformation("Forwarding Authorization header: {AuthPrefix}", prefix);
+            }
+        }
+        else
+        {
+            _logger.LogWarning("No Authorization header on incoming request to BFF /recipes/graphql");
+        }
+
+        // Forward correlation id per request
+        msg.Headers.TryAddWithoutValidation("X-Correlation-ID", CorrelationId);
+
+        HttpResponseMessage downstream;
+        try
+        {
+            downstream = await client.SendAsync(msg, ct);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GraphQL passthrough failed to reach downstream service");
+            return StatusCode(503, new { message = "Downstream service unavailable" });
+        }
+
+        var body = await downstream.Content.ReadAsStringAsync(ct);
+        var contentType = downstream.Content.Headers.ContentType?.ToString() ?? "application/json";
+
+        if (string.IsNullOrWhiteSpace(body))
+        {
+            _logger.LogWarning(
+                "Downstream GraphQL returned empty body. Status={Status} Reason={Reason}",
+                (int)downstream.StatusCode,
+                downstream.ReasonPhrase
+            );
+
+            return StatusCode(502, new
+            {
+                message = "Empty response from recipes GraphQL service",
+                downstreamStatus = (int)downstream.StatusCode,
+                downstreamReason = downstream.ReasonPhrase
+            });
+        }
+
+        return new ContentResult
+        {
+            Content = body,
+            ContentType = contentType,
+            StatusCode = (int)downstream.StatusCode
+        };
+    }
 
 
 
