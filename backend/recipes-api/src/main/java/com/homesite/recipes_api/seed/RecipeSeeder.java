@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import com.homesite.recipes_api.model.Recipe;
@@ -56,6 +55,7 @@ public class RecipeSeeder implements ApplicationRunner {
                 .createdByUserId(1)
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
+                .imageUrl("https://example.com/spicy-garlic-noodles.jpg") // Placeholder image URL
                 .build();
 
         recipeRepository.save(recipe);

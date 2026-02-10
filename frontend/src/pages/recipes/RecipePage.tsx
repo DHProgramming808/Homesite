@@ -21,18 +21,22 @@ export default function RecipePage() {
 
   if (error) {
     return (
-      <main className="container recipeLayout">
-        <h1 className="h2">Recipe</h1>
-        <p className="subhead">{error}</p>
-        <Link className="btn" to="/recipes">Back to Recipes</Link>
+      <main className="recipesTheme">
+        <div className="container recipeLayout">
+          <h1 className="h2">Recipe</h1>
+          <p className="subhead">{error}</p>
+          <Link className="btn" to="/recipes">Back to Recipes</Link>
+        </div>
       </main>
     );
   }
 
   if (!recipe) {
     return (
-      <main className="container recipeLayout">
-        <p className="subhead">Loading…</p>
+      <main className="recipesTheme">
+        <div className="container recipeLayout">
+          <p className="subhead">Loading…</p>
+        </div>
       </main>
     );
   }
@@ -40,43 +44,47 @@ export default function RecipePage() {
   const heroImg = recipe.imageUrl;
 
   return (
-    <main className="container recipeLayout">
-      <header style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
-        <div>
-          <h1 className="h2" style={{ margin: 0 }}>{recipe.title}</h1>
-          <p className="subhead" style={{ marginTop: 8 }}>
-            <Link to="/recipes" className="authLink">← Back to recipes</Link>
-          </p>
+    <main className="recipesTheme">
+      <div className="recipesTopShade" aria-hidden="true">
+
+        <div className="container recipeDetailPage">
+          <header className="recipeHeader">
+            <div>
+              <h1 className="recipeTitle">{recipe.title}</h1>
+              <p className="recipeMeta">
+                By <span className="recipeAuthor">{recipe.createdByUserId ?? "Unknown"}</span>
+              </p>
+            </div>
+          </header>
+
+          {recipe.imageUrl ? (
+            <div className="recipeHeroWrap">
+              <img className="recipeHeroImage" src={recipe.imageUrl} alt={recipe.title} />
+            </div>
+          ) : null}
+
+          <section className="recipeTwoCol">
+            <aside className="recipeIngredients">
+              <h2 className="recipeSectionTitle">Ingredients</h2>
+              <ul className="recipeList">
+                {recipe.ingredients.map((ing, idx) => (
+                  <li key={idx}>{ing}</li>
+                ))}
+              </ul>
+            </aside>
+
+            <article className="recipeSteps">
+              <h2 className="recipeSectionTitle">Directions</h2>
+              <ol className="recipeStepsList">
+                {recipe.steps.map((step, idx) => (
+                  <li key={idx}>{step}</li>
+                ))}
+              </ol>
+            </article>
+          </section>
         </div>
 
-        <Link className="btn" to={`/recipes/${recipe.id}/edit`}>
-          Edit
-        </Link>
-      </header>
-
-      {heroImg ? (
-        <img className="recipeHeroImage" src={heroImg} alt={recipe.title} />
-      ) : null}
-
-      <section className="recipeGrid">
-        <div className="recipeCard">
-          <h2 className="h2" style={{ marginTop: 0 }}>Ingredients</h2>
-          <ul className="recipeList subhead">
-            {recipe.ingredients?.length
-              ? recipe.ingredients.map((x, i) => <li key={i}>{x}</li>)
-              : <li>(none yet)</li>}
-          </ul>
-        </div>
-
-        <div className="recipeCard">
-          <h2 className="h2" style={{ marginTop: 0 }}>Steps</h2>
-          <ol className="recipeList subhead">
-            {recipe.steps?.length
-              ? recipe.steps.map((x, i) => <li key={i}>{x}</li>)
-              : <li>(none yet)</li>}
-          </ol>
-        </div>
-      </section>
+      </div>
     </main>
   );
 }

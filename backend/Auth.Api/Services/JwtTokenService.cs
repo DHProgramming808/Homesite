@@ -53,7 +53,8 @@ public class JwtTokenService
         {
             Token = Guid.NewGuid().ToString(),
             UserId = user.Id,
-            Expires = DateTime.UtcNow.AddDays(_jwtOptions.RefreshTokenDays)
+            Expires = DateTime.UtcNow.AddDays(_jwtOptions.RefreshTokenDays),
+            Revoked = false
         };
         return refreshToken;
     }

@@ -8,10 +8,10 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
 import lombok.Builder.Default;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.*;
 
 
 
@@ -41,5 +41,7 @@ public class Recipe {
   private Instant createdAt = Instant.now();
   @Default
   private Instant updatedAt = Instant.now();
+
+  private String imageUrl; // TODO add image handling later, this is just a placeholder for now
 
 }

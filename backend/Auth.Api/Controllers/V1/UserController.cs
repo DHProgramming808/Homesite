@@ -81,7 +81,7 @@ public class UserController : ControllerBase
         _logger.LogInformation("Logout attempt userId={UserId}", userId);
         if (userId == null || token == null || token.Revoked || token.Expires < DateTime.UtcNow)
         {
-            return Unauthorized();
+            return Ok();
         }
         if (token.UserId != int.Parse(userId))
         {
@@ -128,16 +128,42 @@ public class UserController : ControllerBase
             .Include(rt => rt.User)
             .SingleOrDefault(rt => rt.Token == request.RefreshToken);
 
+        _logger.LogInformation(
+            "Refresh debug: reqToken={Token} storedFound={Found} revoked={Revoked} expires={Expires:o} now={Now:o}",
+            request.RefreshToken,
+            stored != null,
+            stored?.Revoked,
+            stored?.Expires,
+            DateTime.UtcNow
+        );
+
+        Console.WriteLine($"Refresh debug: reqToken={request.RefreshToken} storedFound={stored != null} revoked={stored?.Revoked} expires={stored?.Expires:o} now={DateTime.UtcNow:o}");
+        Console.WriteLine($"Refresh debug: storedUser={stored?.Token}");
+
         var prefix = string.IsNullOrEmpty(request.RefreshToken)
             ? "<null>"
             : request.RefreshToken.Length <= 8 ? request.RefreshToken : request.RefreshToken[..8];
 
-        _logger.LogInformation("Refresh attempt for token={TokenPrefix}", prefix);        if (stored == null || stored.Revoked || stored.Expires < DateTime.UtcNow)
+        _logger.LogInformation("Refresh attempt for token={TokenPrefix}", prefix);
+        if (stored == null || stored.Revoked || stored.Expires < DateTime.UtcNow)
         {
-            return Unauthorized();
+            // return Unauthorized();
+            // DEBUG
+            if (stored == null)
+            {
+                return Unauthorized($"Refresh failed: token not found for token={prefix}");
+            }
+            else if (stored.Revoked)
+            {
+                return Unauthorized($"Refresh failed: token revoked for token={prefix}");
+            }
+            else if (stored.Expires < DateTime.UtcNow)
+            {
+                return Unauthorized($"Refresh failed: token expired for token={prefix}");
+            }
         }
 
-        var newAccessTokenString = _jwtTokenService.WriteAccessToken(stored.User);;
+        var newAccessTokenString = _jwtTokenService.WriteAccessToken(stored.User);
 
         stored.Revoked = true;
 

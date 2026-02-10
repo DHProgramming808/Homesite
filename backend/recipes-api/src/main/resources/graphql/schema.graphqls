@@ -21,6 +21,7 @@ type Recipe {
   createdByUserId: Int!
   createdAt: String!
   updatedAt: String
+  imageUrl: String
 }
 
 input CreateRecipeInput {
@@ -29,6 +30,7 @@ input CreateRecipeInput {
   ingredients: [String!]!
   steps: [String!]!
   featured: Boolean = false
+  imageUrl: String
 }
 
 input UpdateRecipeInput {
@@ -38,6 +40,7 @@ input UpdateRecipeInput {
   ingredients: [String!]
   steps: [String!]
   featured: Boolean
+  imageUrl: String
 }
 
 input DeleteRecipeInput {
