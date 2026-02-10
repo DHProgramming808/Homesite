@@ -65,11 +65,21 @@
     rgba(10, 12, 16, 0.00)
   );
 }
+.recipesTopShade,
+.recipesTopShade::before,
+.recipesTopShade::after,
+.recipesHero::before,
+.recipesHero::after,
+.recipesRailOverlay {
+  pointer-events: none;
+}
 
 /* Recipes module */
 .recipesPage {
   padding-top: 120px; /* navbar offset */
   padding-bottom: 80px;
+  position: relative;
+  z-index: 1;
 }
 
 /* ---- Pseudo hero rail ---- */
@@ -132,8 +142,8 @@
   overflow: hidden;
 
   flex: 0 0 auto;
-  width: min(560px, 82vw);
-  height: min(320px, 48vh);
+  width: min(900px, 82vw);
+  height: min(560px, 48vh);
   border-radius: 22px;
 
   border: 1px solid rgba(255,255,255,.10);
