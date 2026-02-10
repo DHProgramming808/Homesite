@@ -55,6 +55,15 @@ async function graphql<TData>(
   });
 
   const responseBody = await response.text();
+
+  if (!responseBody || !responseBody.trim()) {
+    const contentType = response.headers.get("content-type");
+    throw new Error(
+      `GraphQL returned empty body (status ${response.status}). content-type = ${contentType ?? "n/a"}`
+
+    );
+  }
+
   let json: GraphQLResponse<TData>;
   try {
     json = JSON.parse(responseBody);
