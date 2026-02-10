@@ -127,4 +127,18 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapGet("/db-ping", async (AuthDbContext db) =>
+{
+    try
+    {
+        await db.Database.ExecuteSqlRawAsync("SELECT 1");
+        return Results.Ok("Database connection successful");
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogError(ex, "Database connection failed");
+        return Results.StatusCode(500);
+    }
+});
+
 app.Run();

@@ -1,15 +1,6 @@
 import { getAccessToken, getRefreshToken, setTokens, clearTokens } from "../auth";
 
 
-declare global {
-  interface Window {
-    __CONFIG__?: {
-      API_BASE_URL?: string;
-      RECIPE_BASE_URL?: string;
-    };
-  }
-}
-
 const GATEWAY_BASE = window.__CONFIG__?.API_BASE_URL ??
   import.meta.env.VITE_API_BASE_URL ??
   "http://localhost:5000";
@@ -57,7 +48,7 @@ export const logoutApi = async () => {
      },
     body: JSON.stringify({ refreshToken }),
   });
-  if (!response.ok) {
+  if (!response.ok && response.status !== 204) {
     throw new Error("Logout failed");
   }
 

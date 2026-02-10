@@ -2,5 +2,5 @@ namespace Shared.DTOs.Auth;
 
 public class RefreshRequest
 {
-    public string RefreshToken = null!;
+    public string RefreshToken { get; set;}
 }
