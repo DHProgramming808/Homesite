@@ -37,48 +37,71 @@ public class RecipesController : ControllerBase
 
     // TODO add error handling, pagination, filtering, etc. as needed
     [AllowAnonymous]
-    [HttpPost("graphql")]
-    public async Task<IActionResult> RecipesGraphqlPassthrough([FromBody] GraphQlRequest request, CancellationToken ct)
+[HttpPost("graphql")]
+public async Task<IActionResult> RecipesGraphqlPassthrough([FromBody] GraphQlRequest request, CancellationToken ct)
+{
+    var client = _httpClientFactory.CreateClient("Recipes");
+
+    var authHeader = Request.Headers.Authorization.FirstOrDefault();
+    if (!string.IsNullOrWhiteSpace(authHeader))
     {
-        var client = _httpClientFactory.CreateClient("Recipes");
-
-        var authHeader = Request.Headers.Authorization.FirstOrDefault();
-        if (!string.IsNullOrWhiteSpace(authHeader))
-        {
-            client.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse(authHeader);
-        }
-
-        Console.WriteLine("Hitting Bff Recipes GraphQL passthrough with Correlation ID: " + CorrelationId);
-
-        client.DefaultRequestHeaders.Remove("X-Correlation-ID");
-        client.DefaultRequestHeaders.Add("X-Correlation-ID", CorrelationId);
-
-        var jsonContent = JsonSerializer.Serialize( new
-        {
-            query = request.Query,
-            variables = request.Variables ?? new {},
-            operationName = request.OperationName
-        });
-
-        using var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-
-        HttpResponseMessage downstream;
-
-        try
-        {
-            downstream = await client.PostAsync("/graphql", content, ct);
-        }
-        catch
-        {
-            _logger.LogError("GraphQL passthrough failed to reach downstream service");
-            return StatusCode(503, new { message = "Downstream service unavailable" });
-        }
-
-        var body = await downstream.Content.ReadAsStringAsync(ct);
-        var mediaType = downstream.Content.Headers.ContentType?.MediaType ?? "application/json";
-
-        return Content(body, mediaType);
+        client.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse(authHeader);
     }
+
+    _logger.LogInformation("Hitting Bff Recipes GraphQL passthrough with Correlation ID: {CorrelationId}", CorrelationId);
+
+    client.DefaultRequestHeaders.Remove("X-Correlation-ID");
+    client.DefaultRequestHeaders.Add("X-Correlation-ID", CorrelationId);
+
+    var jsonContent = JsonSerializer.Serialize(new
+    {
+        query = request.Query,
+        variables = request.Variables ?? new { },
+        operationName = request.OperationName
+    });
+
+    using var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+    HttpResponseMessage downstream;
+    try
+    {
+        // IMPORTANT: use a relative path without leading slash unless your BaseAddress expects it
+        downstream = await client.PostAsync("graphql", content, ct);
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "GraphQL passthrough failed to reach downstream service");
+        return StatusCode(503, new { message = "Downstream service unavailable" });
+    }
+
+    var body = await downstream.Content.ReadAsStringAsync(ct);
+    var contentType = downstream.Content.Headers.ContentType?.ToString() ?? "application/json";
+
+    // If downstream returns empty body, return an explicit error (prevents frontend JSON.parse crash)
+    if (string.IsNullOrWhiteSpace(body))
+    {
+        _logger.LogWarning(
+            "Downstream GraphQL returned empty body. Status={Status} Reason={Reason}",
+            (int)downstream.StatusCode,
+            downstream.ReasonPhrase
+        );
+
+        return StatusCode(502, new
+        {
+            message = "Empty response from recipes GraphQL service",
+            downstreamStatus = (int)downstream.StatusCode,
+            downstreamReason = downstream.ReasonPhrase
+        });
+    }
+
+    return new ContentResult
+    {
+        Content = body,
+        ContentType = contentType,
+        StatusCode = (int)downstream.StatusCode
+    };
+}
+
 
 
     // TODO --- deprecate in favor of a single graphql passthrough ---
