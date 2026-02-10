@@ -143,7 +143,7 @@ public class AuthController : ControllerBase
 
     [Authorize]
     [HttpPost("logout")]
-    public async Task<IResult> Logout()
+    public async Task<IResult> Logout([FromBody] LogoutRequest request)
     {
         var client = _httpClientFactory.CreateClient("Auth");
 
@@ -154,7 +154,10 @@ public class AuthController : ControllerBase
         }
         // TODO currently refresh token is not being sent. Auth.Api technically doesn't need it, but for extra security we might want to send it along and verify it there before logging out
 
-        var response = await client.PostAsync("api/v1/user/logout", null); // TODO change the endpoint address from api to auth or something and sync it with the Controller in Auth.Api
+        var json = JsonSerializer.Serialize(new { refreshToken = request.RefreshToken });
+        using var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+        var response = await client.PostAsync("api/v1/user/logout", content); // TODO change the endpoint address from api to auth or something and sync it with the Controller in Auth.Api
 
         if (!response.IsSuccessStatusCode)
         {
