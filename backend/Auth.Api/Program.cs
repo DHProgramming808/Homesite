@@ -131,8 +131,8 @@ app.MapGet("/db-ping", async (AuthDbContext db) =>
 {
     try
     {
-        await db.Database.ExecuteSqlRawAsync("SELECT 1");
-        return Results.Ok("Database connection successful");
+        var canConnect = await db.Database.CanConnectAsync();
+        return canConnect ? Results.Ok("db ok") : Results.Problem("db fail");
     }
     catch (Exception ex)
     {

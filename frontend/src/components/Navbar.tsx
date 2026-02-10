@@ -19,6 +19,10 @@ export default function Navbar() {
   ];
 
   useEffect(() => {
+    console.log("[Navbar] username:", username);
+  }, []);
+
+  useEffect(() => {
     lastY.current = window.scrollY;
 
     const onScroll = () => {

@@ -25,6 +25,18 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+function decodeJwt(token: string): any {
+  if (!token) return null;
+
+  try {
+    const payload = token.split(".")[1];
+    return JSON.parse(atob(payload));
+  } catch (error) {
+    console.error("Failed to decode token:", error);
+    return null;
+  }
+}
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [username, setUsername] = useState<string | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(getAccessToken());
@@ -39,10 +51,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
     try {
-      const decoded = jwtDecode<JwtPayload>(accessToken);
+      const decoded = decodeJwt(accessToken);
+      if (!decoded) throw new Error("Failed to decode token");
 
-      setUsername(decoded.name || decoded.unique_name || null);
-      setRole(decoded.role ?? null);
+      const username =
+        decoded.name ??
+        decoded.unique_name;
+
+      setUsername(username ?? null);
+      setRole(decoded.role ?? "user");
+
+      console.log("Decoded name:", decoded); // Debug log
+      console.log(accessToken);
 
       const exp = decoded.exp ? decoded.exp * 1000 : 0;
       const timeout = exp - Date.now() - 60000; // Refresh 1 minute before expiry

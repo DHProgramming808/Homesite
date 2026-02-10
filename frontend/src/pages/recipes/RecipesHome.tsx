@@ -60,83 +60,80 @@ export default function RecipesHome() {
 
   return (
     <main className="recipesTheme">
-      <div className="recipesTopShade" aria-hidden="true">
+      <div className="recipesTopShade" aria-hidden="true"/>
 
-        <div className="container recipesPage">
-          <header>
-            <h1 className="h1">Recipes</h1>
-            <p className="subhead" style={{ marginTop: 12, maxWidth: "70ch" }}>
-              A small collection of dishes I like enough to write down.
-            </p>
-          </header>
+      <div className="container recipesPage">
+        <header>
+          <h1 className="h1">Recipes</h1>
+          <p className="subhead" style={{ marginTop: 12, maxWidth: "70ch" }}>
+            A small collection of dishes I like enough to write down.
+          </p>
+        </header>
 
-          {/* Featured rail */}
-          <section className="recipesHero">
-            <div className="recipesHeroHeader">
-              <div>
-                <h2 className="h2" style={{ margin: 0 }}>Featured</h2>
-                <p className="subhead" style={{ marginTop: 8 }}>Scroll or use arrows.</p>
-              </div>
-
-              <div className="recipesHeroNav">
-                <button className="recipesNavBtn" type="button" onClick={() => scrollRail("left")} aria-label="Scroll left">
-                  ←
-                </button>
-                <button className="recipesNavBtn" type="button" onClick={() => scrollRail("right")} aria-label="Scroll right">
-                  →
-                </button>
-              </div>
+        {/* Featured rail */}
+        <section className="recipesHero">
+          <div className="recipesHeroHeader">
+            <div>
+              <h2 className="h2" style={{ margin: 0 }}>Featured</h2>
+              <p className="subhead" style={{ marginTop: 8 }}>Scroll or use arrows.</p>
             </div>
 
-            <div className="recipesRailScroller">
-              <div ref={railRef} className="recipesRail" aria-label="Featured recipes carousel">
-                {featured.map((r) => (
-                  <FeaturedRecipeCard key={r.id} recipe={r} />
-                ))}
-              </div>
-            </div>
-
-            {error ? <p className="subhead" style={{ marginTop: 10 }}>{error}</p> : null}
-          </section>
-
-          {/* Search by ID */}
-          <section className="recipesSearch">
-
-            <div className="recipesSectionHead">
-              <h2 className="recipesSectionTitle" style={{ margin: 0 }}>Find a recipe</h2>
-              <p className="recipesSectionSub" style={{ marginTop: 8 }}>
-                For now: search by recipe id (we’ll add name/tag search later).
-              </p>
-            </div>
-            <form className="recipesSearchRow" onSubmit={onSearch}>
-              <input
-                className="recipesInput"
-                value={id}
-                onChange={(e) => setId(e.target.value)}
-                placeholder="Enter recipe id…"
-              />
-              <button className="btn btnPrimary" type="submit">
-                Search
+            <div className="recipesHeroNav">
+              <button className="recipesNavBtn" type="button" onClick={() => scrollRail("left")} aria-label="Scroll left">
+                ←
               </button>
-            </form>
-          </section>
-
-          {/* Upload / create blurb */}
-          <section className="recipesUploadBlurb">
-            <div className="recipesSectionHead">
-              <h3 className="recipesSectionTitle" style={{ margin: 0, letterSpacing: "-0.01em" }}>Have a recipe to share?</h3>
-              <p className="recipesSectionSub" style={{ marginTop: 8, maxWidth: "70ch" }}>
-                Upload a new recipe (ingredients + steps + image). Editing and richer search are coming.
-              </p>
+              <button className="recipesNavBtn" type="button" onClick={() => scrollRail("right")} aria-label="Scroll right">
+                →
+              </button>
             </div>
+          </div>
 
-            <Link className="btn btnPrimary" to="/recipes/new">
-              Create recipe
-            </Link>
-          </section>
-        </div>
+          <div className="recipesRailScroller">
+            <div ref={railRef} className="recipesRail" aria-label="Featured recipes carousel">
+              {featured.map((r) => (
+                <FeaturedRecipeCard key={r.id} recipe={r} />
+              ))}
+            </div>
+          </div>
 
+          {error ? <p className="subhead" style={{ marginTop: 10 }}>{error}</p> : null}
+        </section>
 
+        {/* Search by ID */}
+        <section className="recipesSearch">
+
+          <div className="recipesSectionHead">
+            <h2 className="recipesSectionTitle" style={{ margin: 0 }}>Find a recipe</h2>
+            <p className="recipesSectionSub" style={{ marginTop: 8 }}>
+              For now: search by recipe id (we’ll add name/tag search later).
+            </p>
+          </div>
+          <form className="recipesSearchRow" onSubmit={onSearch}>
+            <input
+              className="recipesInput"
+              value={id}
+              onChange={(e) => setId(e.target.value)}
+              placeholder="Enter recipe id…"
+            />
+            <button className="btn btnPrimary" type="submit">
+              Search
+            </button>
+          </form>
+        </section>
+
+        {/* Upload / create blurb */}
+        <section className="recipesUploadBlurb">
+          <div className="recipesSectionHead">
+            <h3 className="recipesSectionTitle" style={{ margin: 0, letterSpacing: "-0.01em" }}>Have a recipe to share?</h3>
+            <p className="recipesSectionSub" style={{ marginTop: 8, maxWidth: "70ch" }}>
+              Upload a new recipe (ingredients + steps + image). Editing and richer search are coming.
+            </p>
+          </div>
+
+          <Link className="btn btnPrimary" to="/recipes/new">
+            Create recipe
+          </Link>
+        </section>
       </div>
     </main>
   );
