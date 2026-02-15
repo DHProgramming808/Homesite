@@ -11,23 +11,37 @@ const GATEWAY_BASE = window.__CONFIG__?.API_BASE_URL ??
 
 export const getProjects = async () => {
     try {
-        const response = await fetch(`$GATEWAY_BASE/projects/get-projects`);
+        const response = await fetch(`${GATEWAY_BASE}/projects/get-projects`);
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         return await response.json();
     } catch(err) {
-        console.error("Error fetching /projects", err);
+        console.error("Error fetching projects", err);
         return null;
     }
 };
+
+export const getProjectsById = async (projectId: string) => {
+    try {
+        const response = await fetch(`${GATEWAY_BASE}/projects/get-project/${projectId}`);
+
+        if (!response.ok) {
+            throw new Error(`error: ${response.status}`);
+        }
+        return await response.json();
+    } catch (err) {
+        console.error("Error fetching project", err);
+        return null;
+    }
+}
 
 export const createProject = async (project: Project): Promise<boolean> => {
     let token = getAccessToken();
     
     try {
-        let response = await fetch(`${GATEWAY_BASE}/auth/delete-project/`, {
+        let response = await fetch(`${GATEWAY_BASE}/projects/create-project/`, {
 
             method: "POST",
             headers: {
@@ -53,7 +67,7 @@ export const deleteProject = async(projectID: string): Promise<boolean> => {
     let token = getAccessToken();
 
     try {
-        let response = await fetch(`${GATEWAY_BASE}/auth/delete-project/${projectID}`,  {
+        let response = await fetch(`${GATEWAY_BASE}/projects/delete-project/${projectID}`,  {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${token}`,
