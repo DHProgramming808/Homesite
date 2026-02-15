@@ -52,7 +52,7 @@ async function fetchReadmeText(repoUrl?: string): Promise<{ text: string; rawUrl
     throw new Error("Could not find README.md in the repository");
 }
 
-export default function ProjectStub () {
+export default function ProjectWip () {
   const { id } = useParams<{ id: string }>();
 
   const [projects, setProjects] = useState<Project[] | null>(null);
