@@ -159,6 +159,7 @@ services:
     environment:
       # IMPORTANT: browser should call localhost, not docker DNS
       - API_BASE_URL=${API_BASE_URL}
+      - RECIPE_BASE_URL=${API_BASE_URL}
 
 volumes:
   mysql_data:

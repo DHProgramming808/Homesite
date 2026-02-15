@@ -34,7 +34,7 @@ const MOCK_PROJECTS: Project[] = [
     image: "/images/projects/proj1.jpg",
     tags: ["C#", ".NET", "React", "TypeScript", "AWS", "Docker", "CI/CD", "MySQL"],
     repoUrl: "https://github.com/DHProgramming808/Homesite",
-    liveUrl: "https://www.danielyhong.com",
+    liveUrl: "https://www.DOMAIN_URL",
     year: "2026",
     status: "WIP",
     role: "Full-stack",
@@ -47,7 +47,7 @@ const MOCK_PROJECTS: Project[] = [
     image: "/images/projects/proj2.jpg",
     tags: ["GraphQL", "Java", "Spring Boot", "MongoDB"],
     repoUrl: "https://github.com/DHProgramming808/Homesite/tree/main/backend/recipes-api",
-    liveUrl: "https://www.danielyhong.com/recipes",
+    liveUrl: "https://www.DOMAIN_URL/recipes",
     year: "2026",
     status: "WIP",
     role: "Backend",
@@ -60,11 +60,10 @@ const MOCK_PROJECTS: Project[] = [
     image: "/images/projects/proj3.jpg",
     tags: [".NET", "JWT", "Docker"],
     repoUrl: "https://github.com/DHProgramming808/TwentyOneRoRWebApp",
-    liveUrl: "https://YOUR_DOMAIN.com/login",
+    liveUrl: "https://twentyone.DOMAIN_URL",
     year: "2026",
     status: "WIP",
     role: "Full-stack",
-    featured: true,
   },
   {
     id: "AI assistant",
@@ -73,7 +72,7 @@ const MOCK_PROJECTS: Project[] = [
     image: "/images/projects/proj4.jpg",
     tags: ["Python", "LLMs", "AI"],
     repoUrl: "https://github.com/DHProgramming808/ai-assistant",
-    liveUrl: "https://example.com",
+    liveUrl: "https://assistant.DOMAIN_URL",
     year: "2025",
     status: "Archived",
     role: "Backend",
@@ -85,10 +84,11 @@ const MOCK_PROJECTS: Project[] = [
     image: "/images/projects/proj5.jpg",
     tags: [""],
     repoUrl: "https://github.com/DHProgramming808/",
-    liveUrl: "https://example.com",
+    liveUrl: "https://parser.DOMAIN_URL",
     year: "2025",
     status: "Archived",
     role: "Backend",
+    featured: true,
   },
   {
     id: "project six",
@@ -97,33 +97,39 @@ const MOCK_PROJECTS: Project[] = [
     image: "/images/projects/proj6.jpg",
     tags: [""],
     repoUrl: "https://github.com/DHProgramming808/",
-    liveUrl: "https://example.com",
+    liveUrl: "https://projectsix.DOMAIN_URL",
     year: "2024",
     status: "WIP",
     role: "Engineer",
   }
 ];
 
-export async function getProjects(): Promise<Project[]> { // TODO deprecate once api is fleshed out
-  return Promise.resolve(MOCK_PROJECTS);
+export async function getProjectsData(): Promise<Project[]> { // TODO deprecate once api is fleshed out
+  const projects = MOCK_PROJECTS;
+
+  return projects.map((p) => {
+    if (!p.liveUrl) return p;
+
+    return {
+      ...p,
+      liveUrl: p.liveUrl.includes("DOMAIN_URL")
+        ? p.liveUrl.replace("DOMAIN_URL", DOMAIN_URL)
+        : p.liveUrl,
+    };
+  });
 }
 
-export async function getProjectsAPI(): Promise<Project[]> { // TODO once above is deprecated, rename
-  // Later:
-  // const res = await fetch("/api/projects");
-  // return await res.json();
+export async function getProjectsAPI(): Promise<Project[]> {
+  const projects = await getProjects();
 
-  let projects = getProjects();
-  Project[] projectsPromise = Project[];
+  return projects.map((p: Project) => {
+    if (!p.liveUrl) return p;
 
-  foreach (project in projects) {
-    //replace live url DOMAIN_URL with environment domain url 
-    envUrl = projects.liveUrl.replace("DOMAIN_URL", DOMAIN_URL);
-    projects.liveUrl = envUrl;
-
-    projectsPromise.append(project);
-  }
-
-
-  return Promise.resolve(projectsPromise);
+    return {
+      ...p,
+      liveUrl: p.liveUrl.includes("DOMAIN_URL")
+        ? p.liveUrl.replace("DOMAIN_URL", DOMAIN_URL)
+        : p.liveUrl,
+    };
+  });
 }

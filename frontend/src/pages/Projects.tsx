@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { getProjects, type Project } from "../data/projects";
+import { getProjectsData, type Project } from "../data/projects";
 
 import "../styles/ProjectsPage.css";
 
@@ -60,7 +60,7 @@ export default function Projects() {
   useEffect(() => {
     let alive = true;
 
-    getProjects().then((projects) => {
+    getProjectsData().then((projects) => {
       if (!alive) return;
       setProjects(projects);
     });

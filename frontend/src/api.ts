@@ -6,6 +6,7 @@ declare global {
     __CONFIG__?: {
       API_BASE_URL?: string;
       RECIPE_BASE_URL?: string;
+      DOMAIN_URL?: string;
     };
   }
 }
