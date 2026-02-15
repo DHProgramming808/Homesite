@@ -5,6 +5,7 @@ export type Project = {
   id: string;
   title: string;
   description?: string;
+  descriptionLong?: string;
 
   image: string;         // background image url
   tags?: string[];
@@ -79,11 +80,11 @@ const MOCK_PROJECTS: Project[] = [
   },
   {
     id: "parser",
-    title: "project five",
+    title: "Concept Parser",
     description: "Use AI to find relevant concepts in text/csv files and return concept codes",
     image: "/images/projects/proj5.jpg",
     tags: [""],
-    repoUrl: "https://github.com/DHProgramming808/",
+    repoUrl: "https://github.com/DHProgramming808/PolicyParser",
     liveUrl: "https://parser.DOMAIN_URL",
     year: "2025",
     status: "Archived",

@@ -417,3 +417,25 @@
   gap: 10px;
   flex-wrap: wrap;
 }
+
+.projPageInner {
+  width: 50%;
+  min-width: 860px;
+  margin: 0 auto;
+}
+
+/* stack cards vertically (repo above demo status) */
+.projBelowStack {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+/* optional: make it responsive on small screens */
+@media (max-width: 920px) {
+  .projPageInner {
+    width: 100%;
+    min-width: 0;
+    padding: 0 16px;
+  }
+}

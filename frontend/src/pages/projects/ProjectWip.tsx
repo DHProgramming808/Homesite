@@ -8,11 +8,11 @@ type ReadmeState =
   | { status: "error"; error: string };
 
 
-function parseGithubRepo(repoRul?: string): { owner: string; repo: string } | null {
-  if (!repoRul) return null;
+function parseGithubRepo(repoUrl?: string): { owner: string; repo: string } | null {
+  if (!repoUrl) return null;
 
   try {
-    const url = new URL(repoRul);
+    const url = new URL(repoUrl);
     if (url.hostname !== "github.com") return null;
 
     const parts = url.pathname.split("/").filter(Boolean);
@@ -143,145 +143,139 @@ export default function ProjectWip () {
 
   return (
     <main className="projPage">
-      <header className="projHeader">
-        <h1 className="h1">{project.title}</h1>
-        <p className="subhead contentNarrow" style={{ marginTop: 12 }}>
-          {project.description ? project.description : ""}
-        </p>
-      </header>
+      <div className="projPageInner">
+        <header className="projHeader" style={{ background: "rgba(104, 90, 90, 0.38)"}}>
+          <h1 className="h1">{project.title}</h1>
+          <p className="subhead contentNarrow" style={{ marginTop: 12, paddingBottom: 6 }}>
+            {project.description ? project.description : ""}
+          </p>
+        </header>
 
-      <section className = "projRailSection">
-        <div className="projRailHeader">
-          <div>
-            <h2 style = {{margin: 0}}>Preview</h2>
-            <p style = {{marginTop: 6, opacity: 0.8}}>
-              Repo Preview
-            </p>
+        <section className="projRailSection">
+          <div className="projRailHeader">
+
+
+            <div className="projDetailLinks">
+              <Link to="/projects">Back to Projects</Link>
+              {project.repoUrl ? (
+                <a href={project.repoUrl} target="_blank" rel="noreferrer">
+                  GitHub
+                </a>
+              ) : null}
+            </div>
           </div>
 
-          <div className="projDetailLinks">
-            <Link to="/projects">Back to Projects</Link>
-            {project.repoUrl ? (
-              <a href={project.repoUrl} target="_blank" rel="noreferrer">
-                GitHub
-              </a>
-            ) : null}
-            <Link to={contactHref}>Request a Live Demo</Link>
-          </div>
-        </div>
-
-        <article
-          className="projRailCard"
-          style={{ ["--card-bg" as any]: `url(${project.image})` }}
-        >
-          <div className = "projRailTop">
-            <h3 className = "projRailTitle">{project.title}</h3>
-          </div>
-
-          <div className="projRailBody">
-            <div className = "projRailMeta">
-              {project.year ? <span className="projMetaPill">{project.year}</span> : null}
-              {project.status ? <span className="projMetaPill">{project.status}</span> : null}
-              {project.role ? <span className="projMetaPill">{project.role}</span> : null}
+          <article
+            className="projRailCard"
+            style={{ ["--card-bg" as any]: `url(${project.image})` }}
+          >
+            <div className="projRailTop">
+              <h3 className="projRailTitle">{project.title}</h3>
             </div>
 
-            {project.description ? <p className="projDescription">{project.description}</p> : null}
-
-            {project.tags?.length ? (
-              <div className = "projRailTags">
-                {project.tags.filter(Boolean).slice(0,10).map((t) => (
-                  <span key={t} className="projTag">
-                    {t}
-                  </span>
-                ))}
+            <div className="projRailBody">
+              <div className="projRailMeta">
+                {project.year ? <span className="projMetaPill">{project.year}</span> : null}
+                {project.status ? <span className="projMetaPill">{project.status}</span> : null}
+                {project.role ? <span className="projMetaPill">{project.role}</span> : null}
               </div>
-            ) : null}
 
-            <div className = "projRailActions">
-              <Link to = {contactHref}>Request a Live Demo</Link>
-              <Link to = "/projects">View All Projects</Link>
-            </div>
-          </div>
-        </article>
+              {project.description ? (
+                <p className="projRailDesc">{project.description}</p>
+              ) : null}
 
-        <div className="projBelow">
-          <div className="projBelowGrid">
-            <div className="projBelowCard">
-              <h3 style={{ marginTop: 0 }}>Live demo status</h3>
-              <ul className="projBullets">
-                <li>
-                  This project’s live environment is <strong>offline</strong> by default to keep costs low.
-                </li>
-                <li>
-                  Click <strong>Request a Live Demo</strong> and I’ll spin it up for you.
-                </li>
-                <li>
-                  Future: auto spin-up for ~30 minutes then shutdown.
-                </li>
-              </ul>
+              {project.tags?.length ? (
+                <div className="projRailTags">
+                  {project.tags.filter(Boolean).slice(0, 10).map((t) => (
+                    <span key={t} className="projTag">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
 
-              <div className="projDetailLinks">
+              <div className="projRailActions">
                 <Link to={contactHref}>Request a Live Demo</Link>
-                {project.liveUrl ? (
-                  <span className="projInlineMore">
-                    (Live URL listed but may be down)
-                  </span>
-                ) : null}
               </div>
             </div>
+          </article>
 
-            <div className="projBelowCard">
-              <h3 style={{ marginTop: 0 }}>Repository preview</h3>
+          <div className="projBelow">
+            {/* STACK (repo first, then demo status) */}
+            <div className="projBelowStack">
+              <div className="projBelowCard">
+                <h3 style={{ marginTop: 0, textAlign: "left" }}>Repository preview</h3>
 
-              {!project.repoUrl ? (
-                <p style={{ marginTop: 8, opacity: 0.8 }}>No repo URL provided for this project.</p>
-              ) : (
-                <>
-                  <div className="projDetailLinks">
-                    <a href={project.repoUrl} target="_blank" rel="noreferrer">
-                      Open repo
-                    </a>
-
-                    {readme.status === "loaded" ? (
-                      <a href={readme.rawUrl} target="_blank" rel="noreferrer">
-                        README raw
+                {!project.repoUrl ? (
+                  <p style={{ marginTop: 8, opacity: 0.8 }}>No repo URL provided for this project.</p>
+                ) : (
+                  <>
+                    <div className="projDetailLinks">
+                      <a href={project.repoUrl} target="_blank" rel="noreferrer">
+                        Open repo
                       </a>
-                    ) : null}
-                  </div>
 
-                  <div style={{ marginTop: 10 }}>
-                    {readme.status === "loading" || readme.status === "idle" ? (
-                      <p style={{ marginTop: 8, opacity: 0.8 }}>Loading README…</p>
-                    ) : readme.status === "error" ? (
-                      <p style={{ marginTop: 8, opacity: 0.8 }}>
-                        Couldn’t load README: <code>{readme.error}</code>
-                      </p>
-                    ) : (
-                      <pre
-                        style={{
-                          margin: 0,
-                          marginTop: 8,
-                          padding: 14,
-                          borderRadius: 14,
-                          border: "1px solid rgba(255,255,255,.10)",
-                          background: "rgba(0,0,0,.25)",
-                          maxHeight: 520,
-                          overflow: "auto",
-                          whiteSpace: "pre-wrap",
-                          lineHeight: 1.45,
-                          color: "rgba(255,255,255,.86)",
-                        }}
-                      >
-                        {readme.text}
-                      </pre>
-                    )}
-                  </div>
-                </>
-              )}
+                      {readme.status === "loaded" ? (
+                        <a href={readme.rawUrl} target="_blank" rel="noreferrer">
+                          README raw
+                        </a>
+                      ) : null}
+                    </div>
+
+                    <div style={{ marginTop: 10, textAlign: "left" }}>
+                      {readme.status === "loading" || readme.status === "idle" ? (
+                        <p style={{ marginTop: 8, opacity: 0.8 }}>Loading README…</p>
+                      ) : readme.status === "error" ? (
+                        <p style={{ marginTop: 8, opacity: 0.8 }}>
+                          Couldn’t load README: <code>{readme.error}</code>
+                        </p>
+                      ) : (
+                        <pre
+                          style={{
+                            margin: 0,
+                            marginTop: 8,
+                            padding: 14,
+                            borderRadius: 14,
+                            border: "1px solid rgba(255,255,255,.10)",
+                            background: "rgba(0,0,0,.25)",
+                            maxHeight: 520,
+                            overflow: "auto",
+                            whiteSpace: "pre-wrap",
+                            lineHeight: 1.45,
+                            color: "rgba(255,255,255,.86)",
+                          }}
+                        >
+                          {readme.text}
+                        </pre>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <div className="projBelowCard">
+                <h3 style={{ marginTop: 0 }}>Live demo status</h3>
+                <ul className="projBullets">
+                  <li>
+                    This project’s live environment is <strong>offline</strong> by default to keep costs low.
+                  </li>
+                  <li>
+                    Click <strong>Request a Live Demo</strong> and I’ll spin it up for you.
+                  </li>
+                  <li>Future: auto spin-up for ~30 minutes then shutdown.</li>
+                </ul>
+
+                <div className="projDetailLinks">
+                  <Link to={contactHref}>Request a Live Demo</Link>
+                  {project.liveUrl ? (
+                    <span className="projInlineMore">(Live URL listed but may be down)</span>
+                  ) : null}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </main>
   );
 
