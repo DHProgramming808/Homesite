@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Json;
+using System.Text;
 
 //using Shared.DTOs.Auth;
 using Web.Bff.Api.DTOs.Auth;
@@ -19,7 +20,7 @@ public class ProjectsController : ControllerBase
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<ProjectsController> _logger;
 
-    public ProjectsController(IHttpClientFactory httpClientFactory, Ilogger<ProjectsController> logger)
+    public ProjectsController(IHttpClientFactory httpClientFactory, ILogger<ProjectsController> logger)
     {
         _httpClientFactory = httpClientFactory;
         _logger = logger;
@@ -32,12 +33,12 @@ public class ProjectsController : ControllerBase
 
     [AllowAnonymous]
     [HttpGet("get-projects")]
-    public async Task <IActionResult> GetAllProjects()
+    public async Task <IResult> GetAllProjects()
     {
         _logger.LogInformation("Get Projects");
 
         var client = _httpClientFactory.CreateClient("Auth"); //TODO switch over to homesite container.
-        var response = await client.PostAsJsonAsync("api/v1/projects/get-projects");
+        var response = await client.GetAsync("api/v1/projects/get-projects");
 
         var body = await response.Content.ReadAsStringAsync();
         var statusCode = (int)response.StatusCode;
@@ -55,24 +56,24 @@ public class ProjectsController : ControllerBase
             body ?? "",
             mediaType ?? "text/plain",
             statusCode: statusCode
-        ); 
+        );
     }
 
     [AllowAnonymous]
     [HttpGet("get-project/{id}")]
-    public async Task <IActionResult> GetProjectById([FromRoute] string id)
+    public async Task <IResult> GetProjectById([FromRoute] string id)
     {
         _logger.LogInformation("Get Project By ID");
 
         var client = _httpClientFactory.CreateClient("Auth");
-        var response = await client.PostAsJsonAsync("api/v1/projects/get-projects");
+        var response = await client.GetAsync($"api/v1/projects/get-project/{id}");
 
         if (!response.IsSuccessStatusCode)
         {
-            _logger.LogWarning("failed to get Recipe {id}");
+            _logger.LogWarning("failed to get Project {id}");
             return await HttpErrorMapper.ToErrorResultAsync(response, CorrelationId);
         }
-        
+
         var body = await response.Content.ReadAsStringAsync();
         var statusCode = (int)response.StatusCode;
         var mediaType = response.Content.Headers.ContentType?.MediaType;
@@ -89,7 +90,7 @@ public class ProjectsController : ControllerBase
             body ?? "",
             mediaType ?? "text/plain",
             statusCode: statusCode
-        ); 
+        );
     }
 
     // TODO

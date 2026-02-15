@@ -66,7 +66,7 @@ const MOCK_PROJECTS: Project[] = [
     role: "Full-stack",
   },
   {
-    id: "AI assistant",
+    id: "assistant",
     title: "AI Assistant",
     description: "Agentic AI assistant using LLMs to perform tasks",
     image: "/images/projects/proj4.jpg",
@@ -78,7 +78,7 @@ const MOCK_PROJECTS: Project[] = [
     role: "Backend",
   },
   {
-    id: "Text Parser",
+    id: "parser",
     title: "project five",
     description: "Use AI to find relevant concepts in text/csv files and return concept codes",
     image: "/images/projects/proj5.jpg",
@@ -91,7 +91,7 @@ const MOCK_PROJECTS: Project[] = [
     featured: true,
   },
   {
-    id: "project six",
+    id: "projectsix",
     title: "project six",
     description: "Small utilities for workflows: scripts, integrations, and time savers.",
     image: "/images/projects/proj6.jpg",
