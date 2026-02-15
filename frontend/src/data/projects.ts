@@ -1,5 +1,6 @@
 import { getProjects } from "../api/projects-api"
 
+
 export type Project = {
   id: string;
   title: string;
@@ -16,6 +17,10 @@ export type Project = {
 
   featured?: boolean;
 };
+
+const DOMAIN_URL = window.__CONFIG__?.DOMAIN_URL ??
+  import.meta.env.VITE_DOMAIN_URL ??
+  "localhost:3000"
 
 /**
  * Mock data for now.
@@ -99,22 +104,26 @@ const MOCK_PROJECTS: Project[] = [
   }
 ];
 
-export async function getProjects(): Promise<Project[]> {
+export async function getProjects(): Promise<Project[]> { // TODO deprecate once api is fleshed out
+  return Promise.resolve(MOCK_PROJECTS);
+}
+
+export async function getProjectsAPI(): Promise<Project[]> { // TODO once above is deprecated, rename
   // Later:
   // const res = await fetch("/api/projects");
   // return await res.json();
 
-  let url = 
-  Project[] projects = [];
+  let projects = getProjects();
+  Project[] projectsPromise = Project[];
 
-  //getProjects();
+  foreach (project in projects) {
+    //replace live url DOMAIN_URL with environment domain url 
+    envUrl = projects.liveUrl.replace("DOMAIN_URL", DOMAIN_URL);
+    projects.liveUrl = envUrl;
 
-  foreach (project in MOCK_PROJECTS) {
-    //replace live url DOMAIN_URL with environment domain url
-
-    Projects.append(project);
+    projectsPromise.append(project);
   }
 
 
-  return Promise.resolve(Projects);
+  return Promise.resolve(projectsPromise);
 }
