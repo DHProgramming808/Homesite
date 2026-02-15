@@ -1,5 +1,5 @@
 import { getProjects } from "../api/projects-api"
-import const {GATEWAY_BASE}
+
 
 export type Project = {
   id: string;
@@ -17,6 +17,10 @@ export type Project = {
 
   featured?: boolean;
 };
+
+const DOMAIN_URL = window.__CONFIG__?.DOMAIN_URL ??
+  import.meta.env.VITE_DOMAIN_URL ??
+  "localhost:3000"
 
 /**
  * Mock data for now.
