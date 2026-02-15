@@ -32,6 +32,7 @@ jobs:
       gateway: ${{ steps.filter.outputs.gateway }}
       bff: ${{ steps.filter.outputs.bff }}
       auth: ${{ steps.filter.outputs.auth }}
+      recipes: ${{ steps.filter.outputs.recipes }}
     steps:
       - uses: actions/checkout@v4
       - id: filter
@@ -47,6 +48,9 @@ jobs:
             auth:
               - 'backend/Auth.Api/**'
               - 'deploy/ecs/dev/auth-taskdef.json'
+            recipes:
+              - 'backend/recipes-api/**'
+              - 'deploy/ecs/dev/recipes-taskdef.json'
 
   build_push_deploy:
     runs-on: ubuntu-latest
@@ -78,6 +82,14 @@ jobs:
             taskdef: deploy/ecs/dev/auth-taskdef.json
             container_name: auth
             ecs_service_dev: homesite-auth-dev-service
+
+          - name: recipes
+            changed: ${{ needs.detect.outputs.recipes }}
+            ecr_repo: homesite/recipes-api
+            dockerfile: recipes-api/Dockerfile
+            taskdef: deploy/ecs/dev/recipes-taskdef.json
+            container_name: recipes
+            ecs_service_dev: homesite-recipes-dev-service
 
     steps:
       - uses: actions/checkout@v4
