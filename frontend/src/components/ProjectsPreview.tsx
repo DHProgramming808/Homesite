@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getProjects, type Project } from "../data/projects";
+import { getProjectsData, type Project } from "../data/projects";
 import { ProjectCard } from "./ProjectCard";
 
 export function ProjectsPreview() {
@@ -9,7 +9,7 @@ export function ProjectsPreview() {
   useEffect(() => {
     let alive = true;
 
-    getProjects().then((projects) => {
+    getProjectsData().then((projects) => {
       if (!alive) return;
       setProjects(projects.slice(0, 4));
     });
