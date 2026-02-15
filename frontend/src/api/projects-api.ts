@@ -18,10 +18,24 @@ export const getProjects = async () => {
         }
         return await response.json();
     } catch(err) {
-        console.error("Error fetching /projects", err);
+        console.error("Error fetching projects", err);
         return null;
     }
 };
+
+export const getProjectsById = async (projectId: string) => {
+    try {
+        const response = await fetch(`$GATEWAY_BASE/projects/get-projects`);
+
+        if (!response.ok) {
+            throw new Error(`error: ${response.status}`);
+        }
+        return await response.json();
+    } catch (err) {
+        console.error("Error fetching project", err);
+        return null;
+    }
+}
 
 export const createProject = async (project: Project): Promise<boolean> => {
     let token = getAccessToken();

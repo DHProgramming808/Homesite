@@ -1,4 +1,4 @@
-import {} from ""../api/projects-api"
+import { getProjects } from "../api/projects-api"
 
 export type Project = {
   id: string;

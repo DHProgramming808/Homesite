@@ -23,6 +23,8 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 
 import Projects from "./pages/Projects";
+import Project from "./pages/projects/ProjectPage";
+import ProjectStub from "./pages/projects/ProjectStub";
 // TODO add more pages and routes as needed, and add some nice styling to the whole app
 
 import RecipesHome from "./pages/recipes/RecipesHome";
