@@ -1,3 +1,5 @@
+import {} from ""../api/projects-api"
+
 export type Project = {
   id: string;
   title: string;
@@ -72,9 +74,9 @@ const MOCK_PROJECTS: Project[] = [
     role: "Backend",
   },
   {
-    id: "project five",
+    id: "Text Parser",
     title: "project five",
-    description: "API patterns focused on reliability, observability, and safe evolution.",
+    description: "Use AI to find relevant concepts in text/csv files and return concept codes",
     image: "/images/projects/proj5.jpg",
     tags: [""],
     repoUrl: "https://github.com/DHProgramming808/",
@@ -102,5 +104,17 @@ export async function getProjects(): Promise<Project[]> {
   // const res = await fetch("/api/projects");
   // return await res.json();
 
-  return Promise.resolve(MOCK_PROJECTS);
+  let url = 
+  Project[] projects = [];
+
+  //getProjects();
+
+  foreach (project in MOCK_PROJECTS) {
+    //replace live url DOMAIN_URL with environment domain url
+
+    Projects.append(project);
+  }
+
+
+  return Promise.resolve(Projects);
 }
