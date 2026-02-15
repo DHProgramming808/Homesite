@@ -18,6 +18,7 @@ export type Recipe = {
 
 const RECIPES_GRAPHQL_URL = window.__CONFIG__?.API_BASE_URL ??
   window.__CONFIG__?.RECIPE_BASE_URL ??
+  import.meta.env.VITE_API_BASE_URL ??
   import.meta.env.VITE_RECIPES_API_GRAPHQL_URL ??
   "http://localhost:5000";
 
