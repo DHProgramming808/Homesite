@@ -9,13 +9,11 @@
 }
 
 .projRailSection {
-
   margin-top: 18px;
   padding: 24px 40px 24px;
 
   position: relative;
 
-  /* light surface */
   background:
     linear-gradient(
       180deg,
@@ -39,7 +37,7 @@
   background-size: 180px 180px;
   background-repeat: repeat;
 
-  opacity: 0.06; /* subtle */
+  opacity: 0.06;
   mix-blend-mode: overlay;
 
   z-index: 0;
@@ -81,7 +79,6 @@
   transform: translateY(-1px);
 }
 
-/* Rail */
 .projRail {
   display: grid;
   grid-auto-flow: column;
@@ -149,8 +146,6 @@
 }
 
 .projRailTop {
-  display: grid;
-
   position: absolute;
   inset: 0;
   z-index: 1;
@@ -159,7 +154,7 @@
   align-items: center;
   justify-content: center;
 
-  pointer-events: none; /* clicks go through to card */
+  pointer-events: none;
   text-align: center;
 }
 
@@ -217,7 +212,6 @@
   flex-wrap: wrap;
 }
 
-/* Below-the-fold section */
 .projBelow {
   margin-top: 28px;
   padding-top: 22px;
@@ -289,21 +283,20 @@
 .projList {
   margin-top: 12px;
   display: grid;
-  gap: 18px; /* whitespace separation instead of borders */
+  gap: 18px;
 }
 
 .projItem {
   background: transparent;
 }
 
-/* Summary row */
 .projSummary {
   list-style: none;
   cursor: pointer;
   user-select: none;
 
   display: grid;
-  grid-template-columns: 1fr auto auto; /* text | tags | chevron */
+  grid-template-columns: 1fr auto auto;
   gap: 12px;
   align-items: center;
 
@@ -315,7 +308,7 @@
 }
 
 .projSummaryLine {
-  min-width: 0; /* enable truncation */
+  min-width: 0;
   font-size: clamp(22px, 2.3vw, 34px);
   line-height: 1.1;
   letter-spacing: -0.02em;
@@ -331,7 +324,6 @@
   color: rgba(255,255,255,.70);
 }
 
-/* Tags on the right */
 .projSummaryTags {
   display: flex;
   gap: 10px;
@@ -357,7 +349,6 @@
   color: rgba(255,255,255,.55);
 }
 
-/* Chevron */
 .projChevron {
   opacity: .7;
   transition: transform .25s var(--ease), opacity .25s var(--ease);
@@ -368,7 +359,6 @@
   opacity: 1;
 }
 
-/* Expanded content */
 .projDetails {
   padding: 0 0 8px;
   color: rgba(255,255,255,.72);
@@ -419,12 +409,11 @@
 }
 
 .projPageInner {
-  width: 50%;
-  min-width: 860px;
+  width: min(980px, 100%);
   margin: 0 auto;
+  padding: 0 16px;
 }
 
-/* stack cards vertically (repo above demo status) */
 .projBelowStack {
   display: grid;
   grid-template-columns: 1fr;
@@ -445,7 +434,37 @@
   background: rgba(255,255,255,.10);
 }
 
-/* optional: make it responsive on small screens */
+.projShotsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  width: 100%;
+  max-width: 100%;
+}
+
+.projShot {
+  display: block;
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.10);
+  aspect-ratio: 16 / 9;
+}
+
+.projShot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 700px) {
+  .projShotsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 920px) {
   .projPageInner {
     width: 100%;
