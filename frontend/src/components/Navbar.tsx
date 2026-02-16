@@ -43,6 +43,10 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", close);
   }, []);
 
+  useEffect(() => {
+    console.log("[Navbar] username changed:", username);
+  }, [username]);
+
   return (
     <header className={`navbar ${scrolled ? "navbarScrolled" : ""}`}>
       <div className="navInner">

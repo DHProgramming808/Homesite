@@ -69,8 +69,8 @@ export const decodeToken = (): DecodedToken | null => {
 
 // TODO determine if this needs to be cleaned up further with the old token functions
 export const logout = () => {
-  clearTokens();
-  window.location.href = "/login";
+  clearTokens();   // state
+  window.location.href = "/";
 };
 
 export const getTokenExpiration = (): number | null => {

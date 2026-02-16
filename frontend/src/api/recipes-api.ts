@@ -18,6 +18,7 @@ export type Recipe = {
 
 const RECIPES_GRAPHQL_URL = window.__CONFIG__?.API_BASE_URL ??
   window.__CONFIG__?.RECIPE_BASE_URL ??
+  import.meta.env.VITE_API_BASE_URL ??
   import.meta.env.VITE_RECIPES_API_GRAPHQL_URL ??
   "http://localhost:5000";
 
@@ -55,6 +56,15 @@ async function graphql<TData>(
   });
 
   const responseBody = await response.text();
+
+  if (!responseBody || !responseBody.trim()) {
+    const contentType = response.headers.get("content-type");
+    throw new Error(
+      `GraphQL returned empty body (status ${response.status}). content-type = ${contentType ?? "n/a"}`
+
+    );
+  }
+
   let json: GraphQLResponse<TData>;
   try {
     json = JSON.parse(responseBody);

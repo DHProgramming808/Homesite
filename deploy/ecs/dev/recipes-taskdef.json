@@ -1,0 +1,45 @@
+{
+  "family": "homesite-recipes-dev",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::373268394585:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "recipes",
+      "image": "373268394585.dkr.ecr.us-east-1.amazonaws.com/homesite/recipes-api:PLACEHOLDER",
+      "essential": true,
+      "portMappings": [
+        { "containerPort": 6000, "protocol": "tcp" }
+      ],
+      "secrets": [
+        {
+          "name": "SPRING_DATA_MONGODB_URI",
+          "valueFrom": "arn:aws:ssm:us-east-1:373268394585:parameter/homesite/dev/recipes/SPRING_DATA_MONGODB_URI"
+        },
+        {
+          "name": "ISSUER",
+          "valueFrom": "arn:aws:ssm:us-east-1:373268394585:parameter/homesite/dev/recipes/ISSUER"
+        },
+        {
+          "name": "JWT_AUDIENCE",
+          "valueFrom": "arn:aws:ssm:us-east-1:373268394585:parameter/homesite/dev/recipes/JWT_AUDIENCE"
+        },
+        {
+          "name": "JWT_KEY",
+          "valueFrom": "arn:aws:ssm:us-east-1:373268394585:parameter/homesite/dev/recipes/JWT_KEY"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/homesite-recipes-dev",
+          "awslogs-create-group": "true",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}

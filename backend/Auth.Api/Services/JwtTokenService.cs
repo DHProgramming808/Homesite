@@ -41,7 +41,7 @@ public class JwtTokenService
             expires: DateTime.UtcNow.AddMinutes(_jwtOptions.AccessTokenMinutes),
             signingCredentials: new SigningCredentials(
                 _key,
-                SecurityAlgorithms.HmacSha256Signature
+                SecurityAlgorithms.HmacSha256
         ));
 
         return token;

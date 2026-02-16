@@ -15,15 +15,25 @@ type JwtPayload = {
 
 interface AuthContextType {
   username: string | null;
-  accesstoken: string | null;
+  accessToken: string | null;
   refreshToken: string | null;
   role: string | null;
   login: (accessToken: string, refreshToken: string) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
   isAuth: () => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// TODO make these claims decoder more robust and flexible to different claim types and naming conventions
+const CLAIM_NAME =
+  "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name";
+const CLAIM_EMAIL =
+  "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress";
+const CLAIM_SUB =
+  "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
+const CLAIM_ROLE =
+  "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
 
 function decodeJwt(token: string): any {
   if (!token) return null;
@@ -42,10 +52,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string | null>(getAccessToken());
   const [refreshToken, setRefreshToken] = useState<string | null>(getRefreshToken());
   const [role, setRole] = useState<string | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
 
 
   useEffect(() => {
-    if (!accessToken || !refreshToken) {
+    if (!accessToken || !refreshToken || !isAuthenticated()) {
       setUsername(null);
       setRole(null);
       return;
@@ -55,13 +66,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (!decoded) throw new Error("Failed to decode token");
 
       const username =
-        decoded.name ??
-        decoded.unique_name;
+        decoded[CLAIM_NAME] ??
+        decoded[CLAIM_EMAIL];
 
       setUsername(username ?? null);
-      setRole(decoded.role ?? "user");
+      setRole(decoded[CLAIM_ROLE] ?? "user");
+      setEmail(decoded[CLAIM_EMAIL] ?? null);
 
-      console.log("Decoded name:", decoded); // Debug log
+      // Debug log
+      console.log("Decoded name:", username);
       console.log(accessToken);
 
       const exp = decoded.exp ? decoded.exp * 1000 : 0;
@@ -73,6 +86,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       const timer = setTimeout(async () => {
+        if (!getRefreshToken()) return;
         const data = await refreshAccessToken();
         setAccessToken(data.accessToken);
         setRefreshToken(data.refreshToken);
@@ -94,13 +108,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setTokens(newAccessToken, newRefreshToken);
   };
 
-  const logout = () => {
-    logoutApi();
-    clearTokens();
-    setAccessToken(null);
-    setRefreshToken(null);
-    setUsername(null);
-    setRole(null);
+  //reconfigure to be used instead of the logout function in auth.tsx, to ensure context is properly cleared on logout
+  const logout = async () => {
+    try {
+      await logoutApi();
+    } catch (error) {
+      console.error("Logout API error:", error);
+    } finally {
+      clearTokens();
+      setAccessToken(null);
+      setRefreshToken(null);
+      setUsername(null);
+      setRole(null);
+    }
+
   };
 
   const isAuth = () => {
@@ -134,27 +155,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     */
 
   useEffect(() => {
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key !== "accessToken" && event.key !== "refreshToken") {
-        setUsername(null);
-        return;
-      }
+    const onStorage = (e: StorageEvent) => {
+      if (e.key !== "accessToken" && e.key !== "refreshToken") return;
 
-      const newAccessToken = getAccessToken();
-      const newRefreshToken = getRefreshToken();
-
-      setAccessToken(newAccessToken);
-      setRefreshToken(newRefreshToken);
+      setAccessToken(getAccessToken());
+      setRefreshToken(getRefreshToken());
     };
 
-    window.addEventListener("storage", handleStorageChange);
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
   }, []);
 
   return (
-    <AuthContext.Provider value={{ username, role, accesstoken: accessToken, refreshToken, login, logout: logout, isAuth }}>
+    <AuthContext.Provider value={{ username, role, accessToken: accessToken, refreshToken, login, logout: logout, isAuth }}>
       {children}
     </AuthContext.Provider>
   );
