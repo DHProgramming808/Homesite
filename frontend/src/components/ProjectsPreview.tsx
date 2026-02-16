@@ -11,7 +11,12 @@ export function ProjectsPreview() {
 
     getProjectsData().then((projects) => {
       if (!alive) return;
-      setProjects(projects.slice(0, 4));
+
+      const topFeatured = projects
+      .filter(p => p.featured)
+      .slice(0, 4);
+
+      setProjects(topFeatured);
     });
 
     return () => { alive = false; };

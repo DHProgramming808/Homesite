@@ -2,6 +2,8 @@ import { use, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getProjectsData, type Project } from "../../data/projects";
 
+import "../../styles/ProjectsPage.css";
+
 type ReadmeState =
   | { status: "idle" | "loading"; text?: string; rawUrl?: string }
   | { status: "loaded"; text: string; rawUrl: string }

@@ -2,53 +2,63 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { getProjectsData, type Project } from "../data/projects";
 
 import "../styles/ProjectsPage.css";
+import { Link } from "react-router-dom";
 
 function ProjectRailCard({ project }: { project: Project }) {
   return (
-    <article
-      className="projRailCard"
-      style={{ ["--card-bg" as any]: `url("${project.image}")` }}
+    <Link
+      to={`/project/${project.id}` || "#"}
+      style = {{ ["--card-bg" as any]: `url(${project.image})` }}
+      aria-label = {project.title }
     >
-      <div className="projRailOverlay" />
 
-      <div className="projRailTop">
-        <h3 className="projRailTitle">{project.title}</h3>
-      </div>
+      <article
+        className="projRailCard"
+        style={{ ["--card-bg" as any]: `url("${project.image}")` }}
+      >
+        <div className="projRailOverlay" />
 
-
-      <div className="projRailBody">
-        <p className="projRailDesc">{project.description}</p>
-
-
-        {project.tags?.length ? (
-          <div className="projRailTags">
-            {project.role ? <span className="projMetaPill">{project.role}</span> : null}
-
-            {project.tags.slice(0, 4).map((t) => (
-              <span key={t} className="projTag">
-                {t}
-              </span>
-            ))}
-
-            {project.status ? <span className="projMetaPill">{project.status}</span> : null}
-          </div>
-        ) : null}
-
-        <div className="projRailActions">
-          {project.repoUrl ? (
-            <a className="btn" href={project.repoUrl} target="_blank" rel="noreferrer">
-              GitHub
-            </a>
-          ) : null}
-
-          {project.liveUrl ? (
-            <a className="btn btnPrimary" href={project.liveUrl} target="_blank" rel="noreferrer">
-              Live demo
-            </a>
-          ) : null}
+        <div className="projRailTop">
+          <h3 className="projRailTitle">{project.title}</h3>
         </div>
-      </div>
-    </article>
+
+
+        <div className="projRailBody">
+          <p className="projRailDesc">{project.description}</p>
+
+
+          {project.tags?.length ? (
+            <div className="projRailTags">
+              {project.role ? <span className="projMetaPill">{project.role}</span> : null}
+
+              {project.tags.slice(0, 4).map((t) => (
+                <span key={t} className="projTag">
+                  {t}
+                </span>
+              ))}
+
+              {project.status ? <span className="projMetaPill">{project.status}</span> : null}
+            </div>
+          ) : null}
+
+          <div className="projRailActions">
+            {project.repoUrl ? (
+              <a className="btn" href={project.repoUrl} target="_blank" rel="noreferrer">
+                GitHub
+              </a>
+            ) : null}
+
+            {project.liveUrl ? (
+              <a className="btn btnPrimary" href={project.liveUrl} target="_blank" rel="noreferrer">
+                Live demo
+              </a>
+            ) : null}
+          </div>
+        </div>
+      </article>
+
+    </Link>
+
   );
 }
 
@@ -191,6 +201,11 @@ export default function Projects() {
                   ) : null}
 
                   <div className="projDetailLinks">
+                    {p.id ? (
+                      <Link className="btn" to={`/project/${p.id}`}>
+                        About this project
+                      </Link>
+                    ) : null}
                     {p.repoUrl ? (
                       <a className="btn" href={p.repoUrl} target="_blank" rel="noreferrer">
                         GitHub repo
