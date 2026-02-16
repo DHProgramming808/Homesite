@@ -68,6 +68,7 @@ const MOCK_PROJECTS: Project[] = [
     year: "2026",
     status: "WIP",
     role: "Full-stack",
+    featured: true,
   },
   {
     id: "assistant",

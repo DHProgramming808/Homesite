@@ -4,10 +4,34 @@ import { ApiError } from "./api-helper";
 
 import type { Project } from "../data/projects";
 
+
 const GATEWAY_BASE = window.__CONFIG__?.API_BASE_URL ??
   import.meta.env.VITE_API_BASE_URL ??
   "http://localhost:5000";
 
+
+export type LinkCheckResult = {
+  ok: boolean;
+  status?: number;
+  message?: string;
+};
+
+
+export const checkExternalLink = async (url: string): Promise<LinkCheckResult> => {
+  try {
+    const res = await fetch(
+      `${GATEWAY_BASE}/projects/link-check?url=${encodeURIComponent(url)}`,
+      { method: "GET" }
+    );
+
+    if (!res.ok) return { ok: false, status: res.status };
+
+    const data = (await res.json()) as LinkCheckResult;
+    return data;
+  } catch (err) {
+    return { ok: false, status: 0, message: (err as Error).message };
+  }
+};
 
 export const getProjects = async () => {
     try {
@@ -39,7 +63,7 @@ export const getProjectsById = async (projectId: string) => {
 
 export const createProject = async (project: Project): Promise<boolean> => {
     let token = getAccessToken();
-    
+
     try {
         let response = await fetch(`${GATEWAY_BASE}/projects/create-project/`, {
 
@@ -60,7 +84,7 @@ export const createProject = async (project: Project): Promise<boolean> => {
     } catch (err) {
         console.error("Error:", err );
         return false;
-    }   
+    }
 }
 
 export const deleteProject = async(projectID: string): Promise<boolean> => {
