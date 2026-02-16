@@ -23,6 +23,8 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 
 import Projects from "./pages/Projects";
+import Project from "./pages/projects/ProjectPage";
+import ProjectWip from "./pages/projects/ProjectWip";
 // TODO add more pages and routes as needed, and add some nice styling to the whole app
 
 import RecipesHome from "./pages/recipes/RecipesHome";
@@ -49,6 +51,9 @@ export default function App() {
         <Route path = "/contact" element = {<Contact />} />
 
         <Route path = "/projects" element = {<Projects />} />
+        <Route path = "/projectwip/:id" element = {<ProjectWip />} />
+        <Route path = "/project/:id" element = {<Project />} />
+
 
         <Route path = "/recipes" element = {<RecipesHome />} />
         <Route path = "/recipes/:id" element = {<RecipePage />} />

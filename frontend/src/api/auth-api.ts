@@ -9,7 +9,7 @@ const GATEWAY_BASE = window.__CONFIG__?.API_BASE_URL ??
 // TODO move get Auth.Api /info and Auth.Api /health to separate api file?
 export const getInfo = async () => {
   try {
-    const response = await fetch(`${GATEWAY_BASE}/auth/get-info`); //TODO configure this for local and remote hosting
+    const response = await fetch(`${GATEWAY_BASE}/auth/get-info`); 
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
