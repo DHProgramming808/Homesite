@@ -1,10 +1,15 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
 import { getProtectedStub, logoutApi } from "../api";
 import { decodeToken, isTokenExpired, clearTokens } from "../auth";
 import type { DecodedToken } from "../auth";
+=======
+import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+>>>>>>> Stashed changes
 =======
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
@@ -17,6 +22,7 @@ export default function Stub() {
   const [email] = useState("");
   const [password] = useState("");
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
   const handleLogout = async () => {
     try {
@@ -45,6 +51,10 @@ export default function Stub() {
 
     return () => window.clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
+=======
+  const statusText = useMemo(() => {
+    return "Auth + backend services are currently paused to save on server costs.";
+>>>>>>> Stashed changes
 =======
   const statusText = useMemo(() => {
     return "Auth + backend services are currently paused to save on server costs.";
