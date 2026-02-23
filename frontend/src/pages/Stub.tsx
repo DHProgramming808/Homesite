@@ -1,17 +1,23 @@
+<<<<<<< Updated upstream
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
 import { getProtectedStub, logoutApi } from "../api";
 import { decodeToken, isTokenExpired, clearTokens } from "../auth";
 import type { DecodedToken } from "../auth";
+=======
+import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+>>>>>>> Stashed changes
 
 import "../styles/Stub.css";
 
 export default function Stub() {
-  const [message, setMessage] = useState("");
-  const [user, setUser] = useState<DecodedToken | null>(null);
-  const navigate = useNavigate();
+  // purely cosmetic: lets the inputs look like a login form
+  const [email] = useState("");
+  const [password] = useState("");
 
+<<<<<<< Updated upstream
   const handleLogout = async () => {
     try {
       await logoutApi();
@@ -39,6 +45,10 @@ export default function Stub() {
 
     return () => window.clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
+=======
+  const statusText = useMemo(() => {
+    return "Auth + backend services are currently paused to save on server costs.";
+>>>>>>> Stashed changes
   }, []);
 
   return (
@@ -46,40 +56,55 @@ export default function Stub() {
       <div className="stubCard">
         <div className="stubHeader">
           <div>
-            <h1 className="h2 stubTitle">Profile</h1>
-            <p className="subhead">Authenticated area (stub page for now).</p>
+            <h1 className="h2 stubTitle">Login</h1>
+            <p className="subhead">
+              {statusText} If you’d like a live demo, reach out and I’ll spin it up.
+            </p>
           </div>
-
-          <button className="btn btnPrimary" type="button" onClick={handleLogout}>
-            Logout
-          </button>
         </div>
 
-        {user ? (
-          <div className="stubSection">
-            <h3 className="stubSectionTitle">User Info</h3>
-
-            <div className="stubRow">
-              <span className="stubLabel">Username</span>
-              <span className="stubValue">{user.unique_name || user.name || "Unknown"}</span>
-            </div>
-
-            <div className="stubRow">
-              <span className="stubLabel">Token expires</span>
-              <span className="stubValue">
-                {user.exp ? new Date(user.exp * 1000).toLocaleString() : "Unknown"}
-              </span>
-            </div>
-          </div>
-        ) : (
-          <div className="stubSection">
-            <p className="subhead">Loading user…</p>
-          </div>
-        )}
-
+        {/* Disabled “login” form */}
         <div className="stubSection">
-          <h3 className="stubSectionTitle">API Message</h3>
-          <p className="subhead">{message || "…"}</p>
+          <h3 className="stubSectionTitle">Sign in</h3>
+
+          <div className="stubRow" style={{ alignItems: "center" }}>
+            <span className="stubLabel">Email</span>
+            <input
+              className="stubValue"
+              style={{ width: "100%" }}
+              value={email}
+              placeholder="email@example.com"
+              disabled
+              readOnly
+            />
+          </div>
+
+          <div className="stubRow" style={{ alignItems: "center" }}>
+            <span className="stubLabel">Password</span>
+            <input
+              className="stubValue"
+              style={{ width: "100%" }}
+              value={password}
+              placeholder="••••••••"
+              type="password"
+              disabled
+              readOnly
+            />
+          </div>
+
+          <div style={{ marginTop: 14, display: "flex", gap: 10, flexWrap: "wrap" }}>
+            <button className="btn btnPrimary" type="button" disabled>
+              Login (Temporarily Disabled)
+            </button>
+
+            <Link className="btn" to="/contact">
+              Request a live demo
+            </Link>
+          </div>
+
+          <p className="subhead" style={{ marginTop: 10 }}>
+            Note: this site is still fully viewable — projects and pages are available without login.
+          </p>
         </div>
 
         <div className="stubFooter">
@@ -88,6 +113,9 @@ export default function Stub() {
           </Link>
           <Link className="btn" to="/aboutme">
             About Me
+          </Link>
+          <Link className="btn" to="/contact">
+            Contact
           </Link>
         </div>
       </div>
