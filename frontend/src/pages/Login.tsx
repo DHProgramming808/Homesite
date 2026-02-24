@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { loginApi } from "../api";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -10,32 +9,27 @@ export default function Login() {
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
-  const location = useLocation(); // ✅ top-level hook call
+  const location = useLocation();
   const { login } = useAuth();
 
-  // ✅ compute "from" once per render
   const from = (location.state as any)?.from || "/stub";
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // 🔒 Disable submit entirely
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    try {
-      const result = await loginApi(email, password);
-      login(result.accessToken, result.refreshToken);
-
-      navigate(from, { replace: true });
-    } catch (error) {
-      console.error(error);
-      alert("Login failed");
-    }
+    return;
   };
 
   return (
     <main className="authPage">
       <div className="authCard">
         <h1 className="h2 authTitle">Login</h1>
-        <p className="authSubhead">
-          Welcome back. Sign in to access your profile features.
+
+        {/* 🔒 Disabled notice */}
+        <p className="authSubhead" style={{ marginBottom: "1rem" }}>
+          Authentication services are temporarily paused to reduce hosting costs.
+          <br />
+          If you'd like a live demo, please reach out and I’ll spin everything up.
         </p>
 
         <form className="authForm" onSubmit={handleSubmit}>
@@ -45,9 +39,8 @@ export default function Login() {
               className="authInput"
               placeholder="you@email.com"
               value={email}
-              onChange={(e) => setUsername(e.target.value)}
-              autoComplete="email"
-              inputMode="email"
+              disabled
+              readOnly
             />
           </label>
 
@@ -58,21 +51,27 @@ export default function Login() {
               type="password"
               placeholder="••••••••"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="current-password"
+              disabled
+              readOnly
             />
           </label>
 
           <div className="authActions">
-            <button className="btn btnPrimary" type="submit">
-              Login
+            <button
+              className="btn btnPrimary"
+              type="submit"
+              disabled
+              style={{ opacity: 0.6, cursor: "not-allowed" }}
+            >
+              Login (Temporarily Disabled)
             </button>
           </div>
 
+          {/* 👇 Replace Register with Live Demo CTA */}
           <p className="authFooterText">
-            Need an account?{" "}
-            <Link className="authLink" to="/register">
-              Register
+            Interested in seeing it live?{" "}
+            <Link className="authLink" to="/contact">
+              Request a Demo
             </Link>
           </p>
         </form>
