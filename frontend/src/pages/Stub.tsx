@@ -1,92 +1,71 @@
-import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-
-import { getProtectedStub, logoutApi } from "../api";
-import { decodeToken, isTokenExpired, clearTokens } from "../auth";
-import type { DecodedToken } from "../auth";
-import { useAuth } from "../context/AuthContext";
-
+import { Link } from "react-router-dom";
 import "../styles/Stub.css";
 
 export default function Stub() {
-  const [message, setMessage] = useState("");
-  const [user, setUser] = useState<DecodedToken | null>(null);
-  const navigate = useNavigate();
-
-  const { logout } = useAuth();
-
-  const handleLogout = async () => {
-    try {
-      await logoutApi();
-    } catch (e) {
-      // even if API fails, clear local tokens
-      console.warn("logoutApi failed, clearing tokens anyway", e);
-    } finally {
-      await logout();
-      navigate("/");
-    }
-  };
-
-  useEffect(() => {
-    let loggingOut = false;
-
-    const interval = window.setInterval(() => {
-      if (loggingOut) return;
-      if (isTokenExpired()) {
-        loggingOut = true;
-        handleLogout();
-      }
-    }, 1500);
-
-    setUser(decodeToken());
-
-    getProtectedStub()
-      .then((data) => setMessage(data.message))
-      .catch(() => handleLogout());
-
-    return () => window.clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
     <main className="stubPage">
       <div className="stubCard">
         <div className="stubHeader">
           <div>
-            <h1 className="h2 stubTitle">Profile</h1>
-            <p className="subhead">Authenticated area (stub page for now).</p>
+            <h1 className="h2 stubTitle">Login</h1>
+            <p className="subhead">
+              Auth + backend services are currently paused to save on server costs.
+              If you’d like a live demo, reach out and I’ll spin it up.
+            </p>
           </div>
-
-          <button className="btn btnPrimary" type="button" onClick={handleLogout}>
-            Logout
-          </button>
         </div>
 
-        {user ? (
-          <div className="stubSection">
-            <h3 className="stubSectionTitle">User Info</h3>
-
-            <div className="stubRow">
-              <span className="stubLabel">Username</span>
-              <span className="stubValue">{user.unique_name || user.name || "Unknown"}</span>
-            </div>
-
-            <div className="stubRow">
-              <span className="stubLabel">Token expires</span>
-              <span className="stubValue">
-                {user.exp ? new Date(user.exp * 1000).toLocaleString() : "Unknown"}
-              </span>
-            </div>
-          </div>
-        ) : (
-          <div className="stubSection">
-            <p className="subhead">Loading user…</p>
-          </div>
-        )}
-
+        {/* Non-interactive “login” form */}
         <div className="stubSection">
-          <h3 className="stubSectionTitle">API Message</h3>
-          <p className="subhead">{message || "…"}</p>
+          <h3 className="stubSectionTitle">Sign in</h3>
+
+          {/* This wrapper makes EVERYTHING inside non-clickable/non-focusable */}
+          <div
+            aria-disabled="true"
+            style={{
+              pointerEvents: "none",
+              opacity: 0.6,
+              filter: "grayscale(0.2)",
+            }}
+          >
+            <div className="stubRow" style={{ alignItems: "center" }}>
+              <span className="stubLabel">Email</span>
+              <input
+                style={{ width: "100%" }}
+                value=""
+                placeholder="email@example.com"
+                disabled
+                readOnly
+                tabIndex={-1}
+              />
+            </div>
+
+            <div className="stubRow" style={{ alignItems: "center" }}>
+              <span className="stubLabel">Password</span>
+              <input
+                style={{ width: "100%" }}
+                value=""
+                placeholder="••••••••"
+                type="password"
+                disabled
+                readOnly
+                tabIndex={-1}
+              />
+            </div>
+
+            <div style={{ marginTop: 14, display: "flex", gap: 10, flexWrap: "wrap" }}>
+              <button className="btn btnPrimary" type="button" disabled tabIndex={-1}>
+                Login (Temporarily Disabled)
+              </button>
+            </div>
+          </div>
+
+          {/* This button stays clickable */}
+          <div style={{ marginTop: 14 }}>
+            <Link className="btn" to="/contact">
+              Request a live demo
+            </Link>
+          </div>
         </div>
 
         <div className="stubFooter">
@@ -95,6 +74,9 @@ export default function Stub() {
           </Link>
           <Link className="btn" to="/aboutme">
             About Me
+          </Link>
+          <Link className="btn" to="/contact">
+            Contact
           </Link>
         </div>
       </div>
