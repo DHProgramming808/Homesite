@@ -67,7 +67,6 @@ export default function Login() {
             </button>
           </div>
 
-          {/* 👇 Replace Register with Live Demo CTA */}
           <p className="authFooterText">
             Interested in seeing it live?{" "}
             <Link className="authLink" to="/contact">
